@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities
 
 import com.github.m5rian.discord.objects.entities.User
-import com.github.m5rian.discord.utilities.InstantSerializer
+import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

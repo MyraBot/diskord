@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.m5rian.discord.objects.entities.Embed
+import com.github.myraBot.diskord.common.entities.embed.Embed
 import kotlinx.serialization.Serializable
 
 @Serializable
