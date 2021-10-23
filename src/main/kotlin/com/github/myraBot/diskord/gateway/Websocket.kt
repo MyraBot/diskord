@@ -111,7 +111,7 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        val d = IdentifyResponse(DiscordBot.token, 512, Properties())
+        val d = IdentifyResponse(DiscordBot.token, GatewayIntent.getID(DiscordBot.intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
     }
