@@ -7,10 +7,12 @@ val logging_version: String by project
 plugins {
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.serialization") version "1.5.30"
+    `maven-publish`
 }
 
 group = "com.github.myraBot"
-version = "1.0-SNAPSHOT"
+version = "0.7-DEVELOPMENT"
+val id = "Diskord"
 
 repositories {
     mavenCentral()
@@ -27,10 +29,37 @@ dependencies {
     testImplementation("ch.qos.logback:logback-classic:$logging_version")
 }
 
-tasks.test {
-    useJUnit()
+// Publishing
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "jfrog"
+            url = uri("https://m5rian.jfrog.io/artifactory/java")
+            credentials {
+                username = System.getenv("JFROG_USERNAME")
+                password = System.getenv("JFROG_PASSWORD")
+            }
+        }
+    }
+
+    publications {
+        create<MavenPublication>("jfrog") {
+            from(components["java"])
+
+            group = project.group as String
+            version = project.version as String
+            artifactId = id
+
+            artifact(sourcesJar)
+        }
+    }
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "16"
 }
