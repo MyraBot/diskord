@@ -18,6 +18,7 @@ import java.time.Instant
 @Serializable
 data class Message(
         val id: String,
+        @SerialName("channel_id") internal val channelId: String,
         @SerialName("author") val user: User,
         val content: String,
         @Serializable(with = InstantSerializer::class) val timestamp: Instant,
