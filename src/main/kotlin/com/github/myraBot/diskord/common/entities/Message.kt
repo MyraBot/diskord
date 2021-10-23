@@ -29,8 +29,11 @@ data class Message(
         @SerialName("mention_roles") val mentionedRoles: List<String>,
         @SerialName("mention_channels") val mentionedChannels: List<TextChannel> = emptyList(),
         val pinned: Boolean,
+        @SerialName("webhook_id") internal val webhookId: String? = null,
         @Serializable(with = MessageTypeSerializer::class) val type: Type
 ) {
+    val isWebhook: Boolean get() = webhookId == null
+
     /**
      * [Documentation](https://discord.com/developers/docs/resources/channel#message-object-message-types)
      */
