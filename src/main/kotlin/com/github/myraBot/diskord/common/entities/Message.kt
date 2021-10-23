@@ -19,7 +19,9 @@ import java.time.Instant
 data class Message(
         val id: String,
         @SerialName("channel_id") internal val channelId: String,
+        @SerialName("guild_id") internal val guildId: String? = null,
         @SerialName("author") val user: User,
+        val member: Member? = null,
         val content: String,
         @Serializable(with = InstantSerializer::class) val timestamp: Instant,
         @Serializable(with = InstantSerializer::class) val edited: Instant?,
@@ -33,6 +35,7 @@ data class Message(
         @Serializable(with = MessageTypeSerializer::class) val type: Type
 ) {
     val isWebhook: Boolean get() = webhookId == null
+    val guild: Guild? get() = guildId?.let { Guild(it) }
 
     /**
      * [Documentation](https://discord.com/developers/docs/resources/channel#message-object-message-types)
