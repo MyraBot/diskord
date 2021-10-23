@@ -11,9 +11,9 @@ import kotlinx.serialization.encodeToString
 data class TextChannel(
         @SerialName("channel_id") val id: String
 ) {
-    suspend fun send(builder: MessageBuilder.() -> Unit) {
+    suspend fun send(builder: MessageBuilder.() -> Unit): Message {
         val message = MessageBuilder().apply(builder)
         val json = JSON.encodeToString(message)
-        Endpoints.createMessage.execute(json) { arg("channel.id", id) }
+        return Endpoints.createMessage.execute(json) { arg("channel.id", id) }
     }
 }
