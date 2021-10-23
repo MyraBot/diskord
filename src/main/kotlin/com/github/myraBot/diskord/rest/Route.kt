@@ -8,21 +8,36 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.KSerializer
 
-class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>) {
+class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>? = null) {
 
     suspend fun execute(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): R {
+        val res = executeHttpRequest(json, argBuilder).readText()
+        return JSON.decodeFromString(serializer!!, res)
+    }
+
+    suspend fun <T> executeWithType(serializer: KSerializer<T>, json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): T {
+        val res = executeHttpRequest(json, argBuilder).readText()
+        return JSON.decodeFromString(serializer, res)
+    }
+
+    /**
+     *  Executes the Http request.
+     *
+     * @param json Json data to send with the request.
+     * @param argBuilder Variables to replace.
+     * @return Return a [HttpResponse] of the executed request.
+     */
+    private suspend fun executeHttpRequest(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): HttpResponse {
         val args = RouteArguments().apply(argBuilder).entries
         var route = Endpoints.baseUrl + path
         args.forEach { route = route.replace("{${it.first}}", it.second.toString()) }
 
-        val response = CLIENT.request<HttpResponse>(route) {
+        return CLIENT.request(route) {
             method = httpMethod
-            contentType(ContentType.Application.Json)
+            json?.let { contentType(ContentType.Application.Json) }
             header("Authorization", "Bot ${DiscordBot.token}")
             json?.let { body = it }
-        }.readText()
-
-        return (JSON.decodeFromString(serializer, response))
+        }
     }
 
 }
