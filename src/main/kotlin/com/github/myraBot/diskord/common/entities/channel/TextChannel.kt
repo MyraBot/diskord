@@ -1,6 +1,7 @@
-package com.github.myraBot.diskord.common.entities
+package com.github.myraBot.diskord.common.entities.channel
 
 import com.github.m5rian.discord.JSON
+import com.github.myraBot.diskord.common.entities.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import kotlinx.serialization.SerialName
@@ -9,7 +10,11 @@ import kotlinx.serialization.encodeToString
 
 @Serializable
 data class TextChannel(
-        @SerialName("channel_id") val id: String
+        @SerialName("id") val id: String,
+        @Serializable(with = ChannelSerializer::class) val type: Channel.Type,
+        @SerialName("guild_id") internal val guildId: String? = null,
+        val position: Int,
+        val name: String
 ) {
     suspend fun send(builder: MessageBuilder.() -> Unit): Message {
         val message = MessageBuilder().apply(builder)
