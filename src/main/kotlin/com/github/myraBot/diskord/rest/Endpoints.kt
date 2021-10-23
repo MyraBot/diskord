@@ -10,15 +10,11 @@ import io.ktor.http.*
 
 object Endpoints {
     const val baseUrl = "https://discord.com/api/v6"
+    const val imageBaseUrl = "https://cdn.discordapp.com/"
 
     val createMessage = Route<Message>(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
     val getChannel = Route<Channel>(HttpMethod.Get, "/channels/{channel.id}")
     val getUser = Route<User>(HttpMethod.Get, "/users/{user.id}", User.serializer())
     val getGuildMember = Route<Member>(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", Member.serializer())
     val getBotApplication = Route<Application>(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
-}
-
-class RouteArguments {
-    val entries = mutableListOf<Pair<String, Any>>()
-    fun arg(key: String, value: String) = entries.add(Pair(key, value))
 }
