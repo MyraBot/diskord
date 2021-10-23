@@ -7,7 +7,6 @@ import com.github.myraBot.diskord.common.entities.Message
 import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredFunctions
@@ -32,8 +31,8 @@ object Events {
             .forEach { listener ->
                 val eventFunctions = listener::class.declaredFunctions
                     .filter {
-                        val klass = it.valueParameters.firstOrNull()?.type?.classifier as KClass<*>
-                        Event::class.isSuperclassOf(klass)
+                        val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter false
+                        Event::class.isSuperclassOf(klass as KClass<*>)
                     }
                     .filter { it.hasAnnotation<ListenTo>() }
                 listener.functions.addAll(eventFunctions)
