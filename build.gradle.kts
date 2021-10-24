@@ -24,9 +24,15 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Serializer
+    // Reflections
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    compileOnly("org.reflections:reflections:0.9.11")
+
     compileOnly("ch.qos.logback:logback-classic:$logging_version")
 
     testImplementation("ch.qos.logback:logback-classic:$logging_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    testImplementation("org.reflections:reflections:0.9.11")
 }
 
 // Publishing

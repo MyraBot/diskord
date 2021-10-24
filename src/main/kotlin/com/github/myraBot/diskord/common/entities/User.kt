@@ -6,5 +6,5 @@ import com.github.myraBot.diskord.common.CdnEndpoints
 class User(
         val data: UserData
 ) {
-    val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("{user_id}", data.id); arg("{user_avatar}", data.avatarHash) }
+    val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", data.id); arg("user_avatar", data.avatarHash) }
 }

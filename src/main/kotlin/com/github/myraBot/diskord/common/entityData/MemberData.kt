@@ -7,7 +7,6 @@ import java.time.Instant
 
 @Serializable
 data class MemberData(
-        internal val guildId: String,
         val nick: String? = null,
         val avatar: String? = null,
         val roles: Array<String>,

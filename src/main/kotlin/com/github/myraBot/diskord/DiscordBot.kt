@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.gateway.listeners.Events
 object DiscordBot {
     var token: String = ""
     val listeners: MutableList<EventListener> = mutableListOf()
+    var listenerPackage: String = ""
     val intents: MutableList<GatewayIntent> = mutableListOf()
 
     fun addListeners(vararg listeners: EventListener) {
