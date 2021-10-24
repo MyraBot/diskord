@@ -8,14 +8,9 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.KSerializer
 
-class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>? = null) {
+class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>) {
 
     suspend fun execute(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): R {
-        val res = executeHttpRequest(json, argBuilder).readText()
-        return JSON.decodeFromString(serializer!!, res)
-    }
-
-    suspend fun <T> executeWithType(serializer: KSerializer<T>, json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): T {
         val res = executeHttpRequest(json, argBuilder).readText()
         return JSON.decodeFromString(serializer, res)
     }

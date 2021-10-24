@@ -1,8 +1,8 @@
-package com.github.myraBot.diskord.common.entities
+package com.github.myraBot.diskord.common.entityData
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Role(
+data class GuildData(
         val id: String
 )

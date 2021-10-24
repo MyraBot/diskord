@@ -1,25 +1,10 @@
-package com.github.m5rian.discord.objects.entities
+package com.github.myraBot.diskord.common.entities
 
-import com.github.myraBot.diskord.rest.CdnEndpoints
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.github.m5rian.discord.objects.entities.UserData
+import com.github.myraBot.diskord.common.CdnEndpoints
 
-/**
- * [Documentation](https://discord.com/developers/docs/resources/user#user-object)
- */
-@Serializable
-data class User(
-        val id: String,
-        val username: String,
-        val discriminator: String,
-        @SerialName("avatar") internal val avatarHash: String,
-        val bot: Boolean = false,
-        val system: Boolean = false,
-        @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
-    //val locale: String,
-    //val verified: Boolean,
-    //val flags: Int,
-    //@SerialName("public_flags") val publicFlags: Int
+class User(
+        val data: UserData
 ) {
-    val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("{user_id}", id); arg("{user_avatar}", avatarHash) }
+    val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("{user_id}", data.id); arg("{user_avatar}", data.avatarHash) }
 }

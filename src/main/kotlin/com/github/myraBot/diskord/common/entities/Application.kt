@@ -1,11 +1,8 @@
 package com.github.myraBot.diskord.common.entities
 
-import com.github.myraBot.diskord.rest.Endpoints
-import kotlinx.serialization.Serializable
+import com.github.myraBot.diskord.common.entityData.ApplicationData
+import com.github.myraBot.diskord.rest.behaviors.ApplicationBehavior
 
-@Serializable
-data class Application(
-        val id: String
-) {
-    suspend fun getUser(id: String) = Endpoints.getUser.execute { arg("user.id", id) }
-}
+class Application(
+        val data: ApplicationData
+)  : ApplicationBehavior

@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.channel
+package com.github.myraBot.diskord.common.entityData.channel
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -9,7 +9,8 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-abstract class Channel(
+@Serializable
+data class ChannelData(
         val id: String,
         @Serializable(with = ChannelSerializer::class) val type: Type,
         @SerialName("guild_id") internal val guildId: String? = null,
@@ -31,10 +32,10 @@ abstract class Channel(
     }
 }
 
-object ChannelSerializer : KSerializer<Channel.Type> {
+object ChannelSerializer : KSerializer<ChannelData.Type> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelType", PrimitiveKind.INT)
-    override fun serialize(encoder: Encoder, value: Channel.Type) = encoder.encodeInt(value.id)
-    override fun deserialize(decoder: Decoder): Channel.Type = Channel.Type.values().first { it.id == decoder.decodeInt() }
+    override fun serialize(encoder: Encoder, value: ChannelData.Type) = encoder.encodeInt(value.id)
+    override fun deserialize(decoder: Decoder): ChannelData.Type = ChannelData.Type.values().first { it.id == decoder.decodeInt() }
 
 }
 

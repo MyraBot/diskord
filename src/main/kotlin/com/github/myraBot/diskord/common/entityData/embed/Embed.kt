@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.embed
+package com.github.myraBot.diskord.common.entityData.embed
 
 import com.github.myraBot.diskord.utilities.ColourSerializer
 import com.github.myraBot.diskord.utilities.InstantSerializer

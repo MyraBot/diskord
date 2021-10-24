@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.embed
+package com.github.myraBot.diskord.common.entityData.embed
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

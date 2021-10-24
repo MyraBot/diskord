@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.gateway.listeners
 import com.github.m5rian.discord.DiscordBot
 import com.github.m5rian.discord.JSON
 import com.github.m5rian.discord.OptCode
-import com.github.myraBot.diskord.common.entities.Message
+import com.github.myraBot.diskord.common.entityData.message.MessageData
 import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
@@ -21,7 +21,7 @@ object Events {
 
         when (income.t) {
             "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(income.d!!)
-            "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement<Message>(income.d!!))
+            "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement<MessageData>(income.d!!))
             else -> JSON.decodeFromJsonElement<UnknownEvent>(income.d!!)
         }.call()
     }
