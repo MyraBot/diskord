@@ -1,7 +1,6 @@
 package com.github.myraBot.diskord.rest.behaviors
 
-import com.github.myraBot.diskord.common.entities.TextChannel
-import com.github.myraBot.diskord.common.entityData.channel.ChannelData
+import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.rest.Endpoints
 
 interface GetTextChannelBehavior {
