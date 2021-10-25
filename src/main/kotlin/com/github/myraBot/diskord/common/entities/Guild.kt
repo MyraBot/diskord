@@ -4,4 +4,6 @@ import com.github.myraBot.diskord.common.entityData.GuildData
 
 class Guild(
         val data: GuildData
-)
+) {
+    val id: String = data.id
+}
