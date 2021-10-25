@@ -7,6 +7,8 @@ data class MessageCreateEvent(
         val message: Message,
 ) : Event() {
     val content = message.content
+    val isWebhook = message.isWebhook
+    val isSystem = message.isSystem
     val user = message.user
     val channel = message.channel
     val guild = message.guild

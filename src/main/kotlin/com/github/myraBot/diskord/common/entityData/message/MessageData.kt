@@ -28,5 +28,6 @@ data class MessageData(
         @SerialName("mention_channels") val mentionedChannels: List<ChannelData> = emptyList(),
         val pinned: Boolean,
         @SerialName("webhook_id") internal val webhookId: String? = null,
-        @Serializable(with = MessageTypeSerializer::class) val type: MessageType
+        val type: MessageType,
+        val flags: MessageFlags = MessageFlags(0)
 )

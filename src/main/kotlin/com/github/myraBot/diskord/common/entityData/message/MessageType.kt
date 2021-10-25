@@ -11,7 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 /**
  * [Documentation](https://discord.com/developers/docs/resources/channel#message-object-message-types)
  */
-@Serializable
+@Serializable(with = MessageType.Serializer::class)
 enum class MessageType(val code: Int) {
     DEFAULT(0),
     RECIPIENT_ADD(1),
@@ -35,11 +35,11 @@ enum class MessageType(val code: Int) {
     CHAT_INPUT_COMMAND(20),
     THREAD_STARTER_MESSAGE(21),
     GUILD_INVITE_REMINDER(22),
-    CONTEXT_MENU_COMMAND(23)
-}
+    CONTEXT_MENU_COMMAND(23);
 
-object MessageTypeSerializer : KSerializer<MessageType> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("MessageType", PrimitiveKind.INT)
-    override fun serialize(encoder: Encoder, value: MessageType) = encoder.encodeInt(value.code)
-    override fun deserialize(decoder: Decoder): MessageType = MessageType.values().first { it.code == decoder.decodeInt() }
+    internal object Serializer : KSerializer<MessageType> {
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("MessageType", PrimitiveKind.INT)
+        override fun serialize(encoder: Encoder, value: MessageType) = encoder.encodeInt(value.code)
+        override fun deserialize(decoder: Decoder): MessageType = values().first { it.code == decoder.decodeInt() }
+    }
 }
