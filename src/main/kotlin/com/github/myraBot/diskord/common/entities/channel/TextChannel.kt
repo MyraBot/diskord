@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities
+package com.github.myraBot.diskord.common.entities.channel
 
 import com.github.myraBot.diskord.common.entityData.channel.ChannelData
 import com.github.myraBot.diskord.rest.behaviors.channel.impl.TextChannelBehavior
