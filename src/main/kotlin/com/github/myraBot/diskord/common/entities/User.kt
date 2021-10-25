@@ -6,5 +6,8 @@ import com.github.myraBot.diskord.common.CdnEndpoints
 class User(
         val data: UserData
 ) {
+    val id: String = data.id
+    val name: String = data.username
+    val discriminator: String = data.discriminator
     val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", data.id); arg("user_avatar", data.avatarHash) }
 }
