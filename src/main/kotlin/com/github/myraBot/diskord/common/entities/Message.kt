@@ -1,9 +1,9 @@
 package com.github.myraBot.diskord.common.entities
 
+import com.github.myraBot.diskord.common.entities.channel.MessageChannel
 import com.github.myraBot.diskord.common.entityData.GuildData
 import com.github.myraBot.diskord.common.entityData.message.MessageData
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
-import com.github.myraBot.diskord.rest.behaviors.getChannel
 
 class Message(
         val data: MessageData,
@@ -13,7 +13,7 @@ class Message(
     val member: Member?
         get() = if (data.guildId == null) null
         else if (data.member == null) null
-        else Member(GuildData(data.guildId), data.member)
+        else Member(GuildData(data.guildId), data.member, data.user)
     val guild: Guild? get() = data.guildId?.let { Guild(GuildData(it)) }
-    suspend fun channel(): TextChannel = getChannel(data.channelId)
+    val channel = MessageChannel(data.channelId)
 }
