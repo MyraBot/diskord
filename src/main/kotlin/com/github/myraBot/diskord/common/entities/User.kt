@@ -9,5 +9,6 @@ class User(
     val id: String = data.id
     val name: String = data.username
     val discriminator: String = data.discriminator
+    val isBot: Boolean = data.bot
     val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", data.id); arg("user_avatar", data.avatarHash) }
 }
