@@ -3,11 +3,11 @@ package com.github.myraBot.diskord.gateway.listeners
 import com.github.m5rian.discord.DiscordBot
 import com.github.myraBot.diskord.common.entities.Application
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.behaviors.DefaultBehavior
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
 
-abstract class Event {
-    suspend fun getApplication(): Application = Application(Endpoints.getBotApplication.execute())
+abstract class Event : DefaultBehavior {
 
     /**
      * Calls all registered events which [ListenTo] the called event.
