@@ -4,7 +4,7 @@ import com.github.myraBot.diskord.common.entityData.GuildData
 import com.github.myraBot.diskord.rest.behaviors.GuildBehavior
 
 class Guild(
-        val data: GuildData
+        override val guildData: GuildData
 ) : GuildBehavior {
-    override val id: String = data.id
+    override val id: String = guildData.id
 }
