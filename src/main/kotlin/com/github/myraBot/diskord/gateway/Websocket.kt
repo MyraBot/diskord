@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.gateway
 
 import com.github.m5rian.discord.*
+import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.rest.Endpoints
 import io.ktor.client.features.websocket.*
@@ -30,7 +31,7 @@ object Websocket {
      */
     suspend fun connect() {
         val response = CLIENT.get<HttpResponse>("${Endpoints.baseUrl}/gateway/bot") {
-            header("Authorization", "Bot ${DiscordBot.token}")
+            header("Authorization", "Bot ${Diskord.token}")
         }.readText()
         val json = JSON.decodeFromString<JsonObject>(response)
 
@@ -111,7 +112,7 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        val d = IdentifyResponse(DiscordBot.token, GatewayIntent.getID(DiscordBot.intents), Properties())
+        val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(Diskord.intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
     }

@@ -1,8 +1,8 @@
 package com.github.myraBot.diskord.rest
 
 import com.github.m5rian.discord.CLIENT
-import com.github.m5rian.discord.DiscordBot
 import com.github.m5rian.discord.JSON
+import com.github.myraBot.diskord.Diskord
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -30,7 +30,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
         return CLIENT.request(route) {
             method = httpMethod
             json?.let { contentType(ContentType.Application.Json) }
-            header("Authorization", "Bot ${DiscordBot.token}")
+            header("Authorization", "Bot ${Diskord.token}")
             json?.let { body = it }
         }
     }

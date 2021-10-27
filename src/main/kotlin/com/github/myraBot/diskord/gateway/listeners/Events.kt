@@ -1,9 +1,9 @@
 package com.github.myraBot.diskord.gateway.listeners
 
-import com.github.m5rian.discord.DiscordBot
 import com.github.m5rian.discord.JSON
 import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
+import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.entities.Message
 import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
@@ -28,15 +28,15 @@ object Events {
         }.call()
     }
 
-    fun register() {
+    fun register(packageName: String, listeners: MutableList<EventListener>) {
         info(this::class) { "Registering discord event listeners" }
 
         // Load custom registered listeners
-        DiscordBot.listeners.forEach { listener -> loadListener(listener) }.also {
+        listeners.forEach { listener -> loadListener(listener) }.also {
 
             // Load listeners by reflection
-            if (DiscordBot.listenerPackage.isNotBlank()) {
-                Reflections(DiscordBot.listenerPackage).getSubTypesOf(EventListener::class.java)
+            if (packageName.isNotBlank()) {
+                Reflections(packageName).getSubTypesOf(EventListener::class.java)
                     .map { it.kotlin.objectInstance }
                     .forEach { listener ->
                         if (listener == null) throw IllegalStateException("Make sure all listeners are objects!")
@@ -56,7 +56,7 @@ object Events {
                 Event::class.isSuperclassOf(klass as KClass<*>)
             }.let {
                 listener.functions.addAll(it) // Load all functions in the listener
-                DiscordBot.listeners.add(listener) // Add listener with functions to the registered listeners
+                Diskord.listeners.add(listener) // Add listener with functions to the registered listeners
             }
     }
 
