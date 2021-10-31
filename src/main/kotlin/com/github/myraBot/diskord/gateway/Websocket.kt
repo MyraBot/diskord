@@ -112,6 +112,7 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
+        trace(this::class) { "Connecting with intents of ${Diskord.intents} (${GatewayIntent.getID(Diskord.intents)})" }
         val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(Diskord.intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
