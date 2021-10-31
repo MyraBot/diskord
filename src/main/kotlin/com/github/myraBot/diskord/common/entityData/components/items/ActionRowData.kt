@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entityData.interaction.components.items
+package com.github.myraBot.diskord.common.entityData.components.items
 
 import com.github.myraBot.diskord.common.entitythis.interaction.components.Component
 import com.github.myraBot.diskord.rest.builders.ComponentType

@@ -1,8 +1,8 @@
 package com.github.myraBot.diskord.rest.builders
 
 import com.github.myraBot.diskord.common.entityData.embed.Embed
-import com.github.myraBot.diskord.common.entityData.interaction.components.items.ActionRowData
-import com.github.myraBot.diskord.common.entityData.interaction.components.items.button.ButtonData
+import com.github.myraBot.diskord.common.entityData.components.items.ActionRowData
+import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonData
 import com.github.myraBot.diskord.common.entitythis.interaction.components.Component
 import com.github.myraBot.diskord.common.entitythis.interaction.components.asComponent
 import kotlinx.serialization.SerialName

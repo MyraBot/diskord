@@ -1,6 +1,6 @@
-package com.github.myraBot.diskord.common.entityData.interaction.components.items.button
+package com.github.myraBot.diskord.common.entityData.components.items.button
 
-import com.github.myraBot.diskord.common.entityData.interaction.EmojiData
+import com.github.myraBot.diskord.common.entityData.EmojiData
 import com.github.myraBot.diskord.rest.builders.ComponentType
 
 /**

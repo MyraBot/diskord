@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.myraBot.diskord.common.entityData.interaction.components.items.button.ButtonData
-import com.github.myraBot.diskord.common.entityData.interaction.components.items.button.ButtonStyle
+import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonData
+import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonStyle
 
 object Button {
 
