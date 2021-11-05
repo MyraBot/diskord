@@ -1,5 +1,6 @@
 package com.github.m5rian.discord
 
+import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

@@ -1,4 +1,4 @@
-package com.github.m5rian.discord
+package com.github.myraBot.diskord.utilities
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*

@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.entityData.components.items
 
-import com.github.myraBot.diskord.common.entitythis.interaction.components.Component
+import com.github.myraBot.diskord.common.entityData.components.Component
 import com.github.myraBot.diskord.rest.builders.ComponentType
 import kotlinx.serialization.Serializable
 
@@ -9,6 +9,6 @@ import kotlinx.serialization.Serializable
  * [Documentation](https://discord.com/developers/docs/interactions/message-components#action-rows)
  */
 data class ActionRowData(
-        val type: Int = ComponentType.actionRow,
+        val type: ComponentType = ComponentType.ACTION_ROW,
         val components: MutableList<Component> = mutableListOf()
 )

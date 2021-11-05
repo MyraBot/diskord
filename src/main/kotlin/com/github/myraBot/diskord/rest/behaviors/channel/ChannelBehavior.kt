@@ -1,10 +1,10 @@
 package com.github.myraBot.diskord.rest.behaviors.channel
 
-import com.github.m5rian.discord.JSON
 import com.github.myraBot.diskord.common.entities.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.Entity
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
+import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.encodeToString
 
 interface ChannelBehavior : Entity {

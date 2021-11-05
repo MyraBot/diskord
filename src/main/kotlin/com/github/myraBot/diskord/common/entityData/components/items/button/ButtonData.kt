@@ -6,7 +6,7 @@ import com.github.myraBot.diskord.rest.builders.ComponentType
 /**
  * [Documentation](https://discord.com/developers/docs/interactions/message-components#button-object)
  *
- * @property type Integer type, for buttons 2.
+ * @property type Component type.
  * @property style A [ButtonStyle] entry.
  * @property label Text that appears on the button
  * @property emoji An [EmojiData] object, only requires [EmojiData.name], [EmojiData.id] and [EmojiData.animated].
@@ -15,7 +15,7 @@ import com.github.myraBot.diskord.rest.builders.ComponentType
  * @property disabled Whether the button is disabled.
  */
 data class ButtonData(
-        val type: Int = ComponentType.button,
+        val type: ComponentType = ComponentType.BUTTON,
         var style: ButtonStyle,
         var label: String? = null,
         var emoji: EmojiData? = null,

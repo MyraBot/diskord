@@ -1,17 +1,22 @@
 package com.github.myraBot.diskord.rest
 
-import com.github.m5rian.discord.CLIENT
-import com.github.m5rian.discord.JSON
+import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.Diskord
+import com.github.myraBot.diskord.utilities.CLIENT
+import com.github.myraBot.diskord.utilities.JSON
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 
 class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>) {
 
     suspend fun execute(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): R {
         val res = executeHttpRequest(json, argBuilder).readText()
+        trace(this::class) { res }
+
+        if (serializer == Unit.serializer()) return Unit as R
         return JSON.decodeFromString(serializer, res)
     }
 

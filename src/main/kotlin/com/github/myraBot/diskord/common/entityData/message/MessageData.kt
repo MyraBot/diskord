@@ -3,10 +3,11 @@ package com.github.myraBot.diskord.common.entityData.message
 import com.github.m5rian.discord.objects.entities.UserData
 import com.github.myraBot.diskord.common.entityData.MemberData
 import com.github.myraBot.diskord.common.entityData.channel.ChannelData
-import com.github.myraBot.diskord.common.entitythis.interaction.components.Component
+import com.github.myraBot.diskord.common.entityData.components.Component
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 import java.time.Instant
 
 /**
@@ -31,5 +32,5 @@ data class MessageData(
         @SerialName("webhook_id") internal val webhookId: String? = null,
         val type: MessageType,
         val flags: MessageFlags = MessageFlags(0),
-        val components: List<Component>? = null
+        val components: MutableList<Component> = mutableListOf()
 )

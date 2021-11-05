@@ -12,7 +12,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
             arg("guild.id", this@GuildBehavior.id)
             arg("user.id", id)
         }
-        return Member(guildData, memberData, memberData.user!!)
+        return Member(guildData.id, memberData)
     }
 
     suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.execute().id)

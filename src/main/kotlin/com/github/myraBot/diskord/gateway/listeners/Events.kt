@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.gateway.listeners
 
-import com.github.m5rian.discord.JSON
+import com.github.myraBot.diskord.utilities.JSON
 import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
 import com.github.myraBot.diskord.Diskord
@@ -8,6 +8,7 @@ import com.github.myraBot.diskord.common.entities.Message
 import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
 import kotlin.reflect.KClass
@@ -21,10 +22,12 @@ object Events {
     suspend fun resolve(income: OptCode) {
         println(income.toJson())
 
+        val data = income.d!!
         when (income.t) {
-            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(income.d!!)
-            "MESSAGE_CREATE" -> MessageCreateEvent(Message(JSON.decodeFromJsonElement(income.d!!)))
-            else -> JSON.decodeFromJsonElement<UnknownEvent>(income.d!!)
+            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data)
+            "MESSAGE_CREATE" -> MessageCreateEvent(Message(JSON.decodeFromJsonElement(data)))
+            "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
+            else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
         }.call()
     }
 

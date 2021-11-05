@@ -10,7 +10,7 @@ abstract class Event : DefaultBehavior {
     /**
      * Calls all registered events which [ListenTo] the called event.
      */
-    suspend fun call() {
+    open suspend fun call() {
         Diskord.listeners.forEach { listener ->
             listener.functions
                 .filter { it.findAnnotation<ListenTo>()?.event == this::class }

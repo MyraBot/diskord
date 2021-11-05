@@ -4,6 +4,8 @@ import com.github.m5rian.discord.*
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.utilities.CLIENT
+import com.github.myraBot.diskord.utilities.JSON
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*

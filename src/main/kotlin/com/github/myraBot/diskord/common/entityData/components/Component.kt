@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entitythis.interaction.components
+package com.github.myraBot.diskord.common.entityData.components
 
 import com.github.myraBot.diskord.common.entityData.EmojiData
 import com.github.myraBot.diskord.common.entityData.components.items.ActionRowData
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Component(
-        var type: Int = 1,
+        @Serializable(with = ComponentType.Serializer::class) var type: ComponentType,
         @SerialName("custom_id") var id: String? = null,
         var disabled: Boolean = false,
         var style: ButtonStyle? = null,
@@ -25,7 +25,7 @@ data class Component(
         val placeholder: String? = null,
         @SerialName("min_values") val minValues: Int? = null,
         @SerialName("max_values") val maxValues: Int? = null,
-        val components: MutableList<Component> = mutableListOf() // Items must be action rows
+        val components: MutableList<Component> = mutableListOf()
 ) {
     /**
      * @return Return a boolean whether the last [components] entry is full or not.
@@ -33,10 +33,21 @@ data class Component(
     fun isFull(): Boolean {
         return when {
             this.components.size == 0 -> false
-            this.components.find { it.type == ComponentType.button } != null && this.components.size == 5 -> true
-            this.components.find { it.type == ComponentType.selectMenu } != null && this.components.size == 1 -> true
+            this.components.find { it.type == ComponentType.BUTTON } != null && this.components.size == 5 -> true
+            this.components.find { it.type == ComponentType.SELECT_MENU } != null && this.components.size == 1 -> true
             else -> false
         }
+    }
+
+    fun asButton(): ButtonData {
+        return ButtonData(
+            style = style!!,
+            label = label,
+            emoji = emoji,
+            id = id,
+            url = url,
+            disabled = disabled
+        )
     }
 }
 
