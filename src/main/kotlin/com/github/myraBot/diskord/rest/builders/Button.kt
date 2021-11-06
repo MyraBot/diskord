@@ -1,14 +1,19 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonData
-import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonStyle
+import com.github.myraBot.diskord.common.entities.interaction.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.interaction.components.items.button.ButtonStyle
 
 object Button {
 
-    fun primary(id: String, data: ButtonData.() -> Unit = {}): ButtonData = ButtonData(style = ButtonStyle.PRIMARY, id = id).apply(data)
-    fun secondary(id: String, data: ButtonData.() -> Unit = {}): ButtonData = ButtonData(style = ButtonStyle.SECONDARY, id = id).apply(data)
-    fun success(id: String, data: ButtonData.() -> Unit = {}): ButtonData = ButtonData(style = ButtonStyle.SUCCESS, id = id).apply(data)
-    fun danger(id: String, data: ButtonData.() -> Unit = {}): ButtonData = ButtonData(style = ButtonStyle.DANGER, id = id).apply(data)
-    fun link(url: String, data: ButtonData.() -> Unit = {}): ButtonData = ButtonData(style = ButtonStyle.DANGER, url = url).apply(data)
+    fun primary(id: String, data: Button.() -> Unit = {}): Button = Button(style = ButtonStyle.PRIMARY, id = id)
+        .apply(data)
+    fun secondary(id: String, data: Button.() -> Unit = {}): Button = Button(style = ButtonStyle.SECONDARY, id = id)
+        .apply(data)
+    fun success(id: String, data: Button.() -> Unit = {}): Button = Button(style = ButtonStyle.SUCCESS, id = id)
+        .apply(data)
+    fun danger(id: String, data: Button.() -> Unit = {}): Button = Button(style = ButtonStyle.DANGER, id = id)
+        .apply(data)
+    fun link(url: String, data: Button.() -> Unit = {}): Button = Button(style = ButtonStyle.DANGER, url = url)
+        .apply(data)
 
 }

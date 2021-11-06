@@ -1,19 +1,18 @@
 package com.github.myraBot.diskord.rest.behaviors
 
-import com.github.myraBot.diskord.common.entities.Member
-import com.github.myraBot.diskord.common.entityData.GuildData
+import com.github.myraBot.diskord.common.entities.guild.MemberData
+import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.rest.Endpoints
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
-    val guildData: GuildData
+    val guild: Guild
 
-    suspend fun getMember(id: String): Member {
-        val memberData = Endpoints.getGuildMember.execute {
+    suspend fun getMember(id: String): MemberData {
+        return Endpoints.getGuildMember.execute {
             arg("guild.id", this@GuildBehavior.id)
             arg("user.id", id)
         }
-        return Member(guildData.id, memberData)
     }
 
-    suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.execute().id)
+    suspend fun getBotMember(): MemberData = getMember(Endpoints.getBotApplication.execute().id)
 }

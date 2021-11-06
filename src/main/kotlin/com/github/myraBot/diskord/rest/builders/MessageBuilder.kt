@@ -1,10 +1,10 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.myraBot.diskord.common.entityData.embed.Embed
-import com.github.myraBot.diskord.common.entityData.components.items.ActionRowData
-import com.github.myraBot.diskord.common.entityData.components.items.button.ButtonData
-import com.github.myraBot.diskord.common.entityData.components.Component
-import com.github.myraBot.diskord.common.entityData.components.asComponent
+import com.github.myraBot.diskord.common.entities.message.embed.Embed
+import com.github.myraBot.diskord.common.entities.interaction.components.items.ActionRowData
+import com.github.myraBot.diskord.common.entities.interaction.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.interaction.components.Component
+import com.github.myraBot.diskord.common.entities.interaction.components.asComponent
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,7 +28,7 @@ data class MessageBuilder(
      *
      * @param button The button to add as a component.
      */
-    fun addButton(button: ButtonData) {
+    fun addButton(button: Button) {
         if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
         else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
 

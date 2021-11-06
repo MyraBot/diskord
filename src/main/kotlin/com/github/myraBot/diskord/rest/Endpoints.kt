@@ -1,22 +1,21 @@
 package com.github.myraBot.diskord.rest
 
-import com.github.m5rian.discord.objects.entities.UserData
-import com.github.myraBot.diskord.common.entityData.ApplicationData
-import com.github.myraBot.diskord.common.entityData.MemberData
-import com.github.myraBot.diskord.common.entityData.channel.ChannelData
-import com.github.myraBot.diskord.common.entityData.message.MessageData
+import com.github.myraBot.diskord.common.entities.guild.MemberData
+import com.github.myraBot.diskord.common.entities.User
+import com.github.myraBot.diskord.common.entities.Application
+import com.github.myraBot.diskord.common.entities.Channel
+import com.github.myraBot.diskord.common.entities.message.Message
 import io.ktor.http.*
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.json.JsonObject
 
 
 object Endpoints {
     const val baseUrl = "https://discord.com/api/v8"
 
-    val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", MessageData.serializer())
-    val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer())
-    val getUser = Route(HttpMethod.Get, "/users/{user.id}", UserData.serializer())
+    val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
+    val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", Channel.serializer())
+    val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer())
     val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer())
-    val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", ApplicationData.serializer())
+    val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
 }

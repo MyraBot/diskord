@@ -11,6 +11,6 @@ object Diskord {
     val listeners: MutableList<EventListener> = mutableListOf()
     lateinit var id: String
 
-    suspend fun getBotUser(): User = User(Endpoints.getUser.execute { arg("user.id", this@Diskord.id) })
-    suspend fun getUser(id: String): User = User(Endpoints.getUser.execute { arg("user.id", id) })
+    suspend fun getBotUser(): User = Endpoints.getUser.execute { arg("user.id", this@Diskord.id) }
+    suspend fun getUser(id: String): User = Endpoints.getUser.execute { arg("user.id", id) }
 }
