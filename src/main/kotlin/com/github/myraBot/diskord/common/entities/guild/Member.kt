@@ -46,6 +46,11 @@ data class Member(
                 .apply { this["user"] = jsonUser })
                 .let { JSON.decodeFromJsonElement(it) }
         }
+
+        fun withUserInMember(member: MemberData): Member {
+            val json = JSON.encodeToJsonElement(member).jsonObject
+            return JSON.decodeFromJsonElement(json)
+        }
     }
 
     val id: String = user.id
