@@ -17,4 +17,5 @@ class User(
         @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
 ) {
     val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", id); arg("user_avatar", avatarHash) }
+    val asTag: String = "$username#$discriminator"
 }
