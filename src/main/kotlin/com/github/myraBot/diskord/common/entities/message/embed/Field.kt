@@ -9,5 +9,5 @@ import kotlinx.serialization.Serializable
 data class Field(
         var name: String,
         var value: String,
-        var inline: Boolean = true
+        var inline: Boolean = false
 )

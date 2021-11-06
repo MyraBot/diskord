@@ -21,7 +21,7 @@ data class Embed(
         var author: Author? = null,
         val fields: MutableList<Field> = mutableListOf()
 ) {
-    fun addField(data: Field.() -> Unit) {
+    suspend fun addField(data: suspend Field.() -> Unit) {
         val field = Field("", "").also { data.invoke(it) }
         fields.add(field)
     }
