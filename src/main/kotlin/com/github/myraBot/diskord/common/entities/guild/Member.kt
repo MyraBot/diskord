@@ -5,10 +5,7 @@ import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.*
 import java.time.Instant
 
 @Serializable
@@ -27,6 +24,7 @@ data class MemberData(
 
 @Serializable
 data class Member(
+        val guildId: String,
         val user: User,
         val nick: String? = null,
         val avatar: String? = null,
@@ -39,17 +37,24 @@ data class Member(
         val permissions: String? = null
 ) {
     companion object {
-        fun withUser(member: MemberData, user: User): Member {
+        fun withUser(member: MemberData, guildId: String, user: User): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             val jsonUser = JSON.encodeToJsonElement(user).jsonObject
             return JsonObject(jsonMember.toMutableMap()
-                .apply { this["user"] = jsonUser })
+                .apply {
+                    this["user"] = jsonUser
+                    this["guildId"] = JsonPrimitive(guildId)
+                })
                 .let { JSON.decodeFromJsonElement(it) }
         }
 
-        fun withUserInMember(member: MemberData): Member {
-            val json = JSON.encodeToJsonElement(member).jsonObject
-            return JSON.decodeFromJsonElement(json)
+        fun withUserInMember(member: MemberData, guildId: String): Member {
+            val jsonMember = JSON.encodeToJsonElement(member).jsonObject
+            return JsonObject(jsonMember.toMutableMap()
+                .apply {
+                    this["guildId"] = JsonPrimitive(guildId)
+                })
+                .let { JSON.decodeFromJsonElement(it) }
         }
     }
 

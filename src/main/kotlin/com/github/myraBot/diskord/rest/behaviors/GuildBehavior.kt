@@ -11,7 +11,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
             arg("guild.id", this@GuildBehavior.id)
             arg("user.id", id)
         }
-        return Member.withUserInMember(memberData)
+        return Member.withUserInMember(memberData, this.id)
     }
 
     suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.execute().id)
