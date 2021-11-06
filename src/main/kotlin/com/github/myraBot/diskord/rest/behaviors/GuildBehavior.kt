@@ -5,8 +5,6 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.rest.Endpoints
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
-    val guild: Guild
-
     suspend fun getMember(id: String): MemberData {
         return Endpoints.getGuildMember.execute {
             arg("guild.id", this@GuildBehavior.id)
