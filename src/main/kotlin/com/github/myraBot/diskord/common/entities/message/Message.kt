@@ -44,7 +44,6 @@ data class Message(
     val member: Member get() = Member.withUser(memberData!!, guildId!!, user)
     val isWebhook: Boolean = webhookId == null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
-    val guild: Guild? get() = guildId?.let { Guild(it) }
     val channel: MessageChannel = MessageChannel(channelId)
 }
 
