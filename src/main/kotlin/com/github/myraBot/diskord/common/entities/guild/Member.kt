@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.common.entities.guild
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -60,4 +61,5 @@ data class Member(
 
     val id: String = user.id
     val name: String get() = nick ?: user.username
+    val asMention: String = Mention.user(id)
 }
