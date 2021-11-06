@@ -15,9 +15,8 @@ data class MessageBuilder(
         var embeds: MutableList<Embed> = mutableListOf(),
         @SerialName("components") val actionRows: MutableList<Component> = mutableListOf()
 ) {
-    fun addEmbed(embed: Embed.() -> Unit) {
-        Embed().apply(embed)
-    }
+    fun addEmbed(embed: Embed.() -> Unit) = embeds.add(Embed().apply(embed))
+    fun addEmbed(embed: Embed) = embeds.add(embed)
 
     /**
      * Adds a button as a message component. If an action row already exists,
