@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.interaction.components.Component
+import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import com.github.myraBot.diskord.common.entityData.message.MessageFlag
 import com.github.myraBot.diskord.common.entityData.message.MessageFlags
 import com.github.myraBot.diskord.common.entityData.message.MessageType
@@ -35,6 +36,7 @@ data class Message(
         @SerialName("mention_roles") val mentionedRoles: List<String>,
         @SerialName("mention_channels") val mentionedChannels: List<Channel> = emptyList(),
         val attachments: List<Attachment>,
+        val embeds: List<Embed>,
         val pinned: Boolean,
         @SerialName("webhook_id") internal val webhookId: String? = null,
         val type: MessageType,
