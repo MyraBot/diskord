@@ -9,8 +9,8 @@ import kotlinx.serialization.encodeToString
 
 interface ChannelBehavior : Entity {
 
-    suspend fun send(message: MessageBuilder.() -> Unit): Message {
-        val json = JSON.encodeToString(MessageBuilder().apply(message))
+    suspend fun send(message: suspend MessageBuilder.() -> Unit): Message {
+        val json = JSON.encodeToString(MessageBuilder().also { message.invoke(it) })
         return Endpoints.createMessage.execute(json) { arg("channel.id", id) }
     }
 
