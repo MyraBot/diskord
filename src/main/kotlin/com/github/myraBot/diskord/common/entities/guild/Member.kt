@@ -38,22 +38,22 @@ data class Member(
         val permissions: String? = null
 ) {
     companion object {
-        fun withUser(member: MemberData, guildId: String, user: User): Member {
+        fun withUser(member: MemberData, guild: SimpleGuild, user: User): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             val jsonUser = JSON.encodeToJsonElement(user).jsonObject
             return JsonObject(jsonMember.toMutableMap()
                 .apply {
                     this["user"] = jsonUser
-                    this["guildId"] = JsonPrimitive(guildId)
+                    this["guildId"] = JsonPrimitive(guild.id)
                 })
                 .let { JSON.decodeFromJsonElement(it) }
         }
 
-        fun withUserInMember(member: MemberData, guildId: String): Member {
+        fun withUserInMember(member: MemberData, guild: SimpleGuild): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             return JsonObject(jsonMember.toMutableMap()
                 .apply {
-                    this["guildId"] = JsonPrimitive(guildId)
+                    this["guildId"] = JsonPrimitive(guild.id)
                 })
                 .let { JSON.decodeFromJsonElement(it) }
         }
@@ -62,4 +62,5 @@ data class Member(
     val id: String = user.id
     val name: String get() = nick ?: user.username
     val asMention: String = Mention.user(id)
+    val guild: SimpleGuild = SimpleGuild(this.guildId)
 }

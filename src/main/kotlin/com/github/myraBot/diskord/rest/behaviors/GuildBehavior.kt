@@ -1,8 +1,7 @@
 package com.github.myraBot.diskord.rest.behaviors
 
-import com.github.myraBot.diskord.common.entities.guild.MemberData
-import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
+import com.github.myraBot.diskord.common.entities.guild.SimpleGuild
 import com.github.myraBot.diskord.rest.Endpoints
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
@@ -11,7 +10,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
             arg("guild.id", this@GuildBehavior.id)
             arg("user.id", id)
         }
-        return Member.withUserInMember(memberData, this.id)
+        return Member.withUserInMember(memberData, SimpleGuild(this.id))
     }
 
     suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.execute().id)

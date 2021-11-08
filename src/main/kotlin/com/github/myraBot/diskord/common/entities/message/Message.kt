@@ -3,9 +3,9 @@ package com.github.myraBot.diskord.common.entities.message
 import com.github.myraBot.diskord.common.entities.Channel
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.channel.MessageChannel
-import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
+import com.github.myraBot.diskord.common.entities.guild.SimpleGuild
 import com.github.myraBot.diskord.common.entities.interaction.components.Component
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import com.github.myraBot.diskord.common.entityData.message.MessageFlag
@@ -24,7 +24,7 @@ import java.time.Instant
 data class Message(
         val id: String,
         @SerialName("channel_id") val channelId: String,
-        @SerialName("guild_id") val guildId: String? = null,
+        @SerialName("guild_id") private val guildId: String? = null,
         @SerialName("author") val user: User,
         @SerialName("member") val memberData: MemberData? = null,
         val content: String,
@@ -43,7 +43,8 @@ data class Message(
         val flags: MessageFlags = MessageFlags(0),
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
-    val member: Member get() = Member.withUser(memberData!!, guildId!!, user)
+    val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
+    val member: Member get() = Member.withUser(memberData!!, guild!!, user)
     val isWebhook: Boolean = webhookId == null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val channel: MessageChannel = MessageChannel(channelId)

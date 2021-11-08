@@ -11,6 +11,6 @@ data class MessageCreateEvent(
     val isSystem = message.isSystem
     val user = message.user
     val channel = message.channel
-    val guildId = message.guildId
+    val guild = message.guild
     val member = message.member
 }
