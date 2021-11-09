@@ -16,7 +16,7 @@ data class Embed(
         @Serializable(with = InstantSerializer::class) val timestamp: Instant? = null,
         @SerialName("colour") @Serializable(with = ColourSerializer::class) var colour: Color? = null,
         var footer: Footer? = null,
-        var image: String? = null,
+        var image: Image? = null,
         var thumbnail: Thumbnail? = null,
         var author: Author? = null,
         val fields: MutableList<Field> = mutableListOf()
