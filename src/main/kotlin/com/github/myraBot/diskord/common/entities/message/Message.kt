@@ -11,6 +11,7 @@ import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import com.github.myraBot.diskord.common.entityData.message.MessageFlag
 import com.github.myraBot.diskord.common.entityData.message.MessageFlags
 import com.github.myraBot.diskord.common.entityData.message.MessageType
+import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
@@ -43,6 +44,7 @@ data class Message(
         val flags: MessageFlags = MessageFlags(0),
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
+    val link: String = JumpUrlEndpoints.get(guildId!!, channelId, id)
     val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
     val member: Member get() = Member.withUser(memberData!!, guild!!, user)
     val isWebhook: Boolean = webhookId == null
