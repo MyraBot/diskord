@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.guild
 
+import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.rest.behaviors.GuildBehavior
 import kotlinx.serialization.Serializable
 
@@ -9,5 +10,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Guild(
         override val id: String,
-        val name: String
+        val name: String,
+        val emojis: List<Emoji>
 ) : GuildBehavior
