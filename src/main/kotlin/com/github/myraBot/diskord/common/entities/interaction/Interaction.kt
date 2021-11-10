@@ -2,7 +2,6 @@ package com.github.myraBot.diskord.common.entities.interaction
 
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.User
-import com.github.myraBot.diskord.common.entities.interaction.interactionTypes.InteractionComponentData
 import com.github.myraBot.diskord.common.entities.message.Message
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

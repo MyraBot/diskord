@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.interaction.interactionTypes
+package com.github.myraBot.diskord.common.entities.interaction
 
 import com.github.myraBot.diskord.rest.builders.ComponentType
 import kotlinx.serialization.SerialName

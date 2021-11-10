@@ -1,6 +1,5 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
-import com.github.myraBot.diskord.common.entities.interaction.ButtonInteractionData
 import com.github.myraBot.diskord.common.entities.interaction.Interaction
 import com.github.myraBot.diskord.common.entities.interaction.InteractionType
 import com.github.myraBot.diskord.gateway.listeners.Event
@@ -14,7 +13,7 @@ class InteractionCreateEvent(
         if (data.type == InteractionType.MESSAGE_COMPONENT) {
             val type = data.interactionData?.componentType
             when {
-                type == ComponentType.BUTTON -> ButtonClickEvent(ButtonInteractionData(data)).call()
+                type == ComponentType.BUTTON -> ButtonClickEvent(data).call()
             }
         }
 
