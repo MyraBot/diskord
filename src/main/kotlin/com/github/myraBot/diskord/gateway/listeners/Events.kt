@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.gateway.listeners
 import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
 import com.github.myraBot.diskord.Diskord
+import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
@@ -23,7 +24,7 @@ object Events {
 
         val data = income.d!!
         when (income.t) {
-            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data)
+            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also { Websocket.session = it.sessionId }
             "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
             "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
             else -> JSON.decodeFromJsonElement<UnknownEvent>(data)

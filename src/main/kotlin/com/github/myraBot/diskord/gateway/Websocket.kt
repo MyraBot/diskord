@@ -12,6 +12,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
  */
 object Websocket {
+    lateinit var session: String
     private val coroutineScope = CoroutineScope(ForkJoinPool().asCoroutineDispatcher())
     private var s: Int = 0
 
@@ -38,45 +40,57 @@ object Websocket {
         val json = JSON.decodeFromString<JsonObject>(response)
 
         val url = json["url"]!!.jsonPrimitive.content + "?v=9&encoding=json"
-        openWebsocketConnection(url)
+        openWebsocketConnection(url, false)
     }
 
     /**
      * [Documentation](https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway)
-     *
      * Runs the websocket loop.
+     *
+     * @param url The websocket url to connect to.
+     * @param resume Whether an already existing connection should resume or not
      */
-    private suspend fun openWebsocketConnection(url: String) {
-        CLIENT.webSocket(url, {}, {
-            info(this::class) { "Opened websocket connection" }
-            while (true) {
-                val data = incoming.receive() as? Frame.Text
-                trace(this::class) { data?.readText() }
-                val income = JSON.decodeFromString<OptCode>(data!!.readText())
-                when (income.op) {
-                    // 	An event was dispatched
-                    0 -> {
-                        Events.resolve(income)
-                        s = income.s ?: s
-                    }
-                    // 	Fired periodically by the client to keep the connection alive
-                    1 -> {
-                        debug(this::class) { "Received Heartbeat attack!" }
-                        sendHeartbeat(this)
-                    }
-                    // 	Sent immediately after connecting
-                    10 -> {
-                        startHeartbeat(this, income)
-                        identify(this)
-                        info(this::class) { "Successfully connected to Discord" }
-                    }
-                    // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
-                    11 -> {
-                        trace(this::class) { "Heartbeat acknowledged!" }
-                    }
+    private suspend fun openWebsocketConnection(url: String, resume: Boolean) {
+        try {
+            CLIENT.webSocket(url, {}, {
+                info(this::class) { "Opened websocket connection" }
+                while (true) {
+                    val data = incoming.receive() as? Frame.Text
+                    trace(this::class) { data?.readText() }
+                    val income = JSON.decodeFromString<OptCode>(data!!.readText())
+                    handleIncome(this, income, resume)
                 }
+            })
+        } catch (e: ClosedReceiveChannelException) {
+            info(this::class) { "Lost connection..." }
+            openWebsocketConnection(url, true)
+        }
+    }
+
+    private suspend fun handleIncome(websocket: DefaultClientWebSocketSession, income: OptCode, resume: Boolean) {
+        when (income.op) {
+            // 	An event was dispatched
+            0 -> {
+                Events.resolve(income)
+                s = income.s ?: s
             }
-        })
+            // 	Fired periodically by the client to keep the connection alive
+            1 -> {
+                debug(this::class) { "Received Heartbeat attack!" }
+                sendHeartbeat(websocket)
+            }
+            // 	Sent immediately after connecting
+            10 -> {
+                startHeartbeat(websocket, income)
+                if (resume) resume(websocket)
+                else identify(websocket)
+                info(this::class) { "Successfully connected to Discord" }
+            }
+            // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
+            11 -> {
+                trace(this::class) { "Heartbeat acknowledged!" }
+            }
+        }
     }
 
     /**
@@ -108,7 +122,7 @@ object Websocket {
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#identifying)
      *
-     * Identifies the bot to the websocket server.
+     * Identifies the bot to the websocket server, gets send after receiving the ready event.
      * With this the bot loads its required intents.
      *
      * @param websocket
@@ -118,6 +132,22 @@ object Websocket {
         val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(Diskord.intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
+    }
+
+    /**
+     * [Documentation](https://discord.com/developers/docs/topics/gateway#resuming)
+     * Resumes an old websocket connection.
+     *
+     * @param websocket The web
+     */
+    private suspend fun resume(websocket: DefaultClientWebSocketSession) {
+        info(this::class) { "Reconnecting to Discord" }
+        val json = JSON.encodeToJsonElement(GatewayResume(
+            token = Diskord.token,
+            sessionId = session,
+            seq = s
+        )).jsonObject
+        websocket.send(OptCode(null, null, 6, json).toJson())
     }
 
 }
