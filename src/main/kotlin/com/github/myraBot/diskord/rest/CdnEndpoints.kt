@@ -1,6 +1,5 @@
-package com.github.myraBot.diskord.common.entities
+package com.github.myraBot.diskord.rest
 
-import com.github.myraBot.diskord.rest.RouteArguments
 import com.github.myraBot.diskord.utilities.FileFormats
 
 /**

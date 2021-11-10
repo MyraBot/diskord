@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities
 
+import com.github.myraBot.diskord.rest.CdnEndpoints
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
