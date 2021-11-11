@@ -12,5 +12,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Footer(
         var text: String,
-        @SerialName("icon_url") val icon: String?,
+        @SerialName("icon_url") val icon: String? = null,
 )
