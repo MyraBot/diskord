@@ -24,4 +24,5 @@ object Endpoints {
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer())
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
     val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer()))
+    val addReaction = Route(HttpMethod.Put, "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me", Unit.serializer())
 }

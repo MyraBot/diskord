@@ -23,8 +23,8 @@ import java.time.Instant
  */
 @Serializable
 data class Message(
-        val id: String,
-        @SerialName("channel_id") val channelId: String,
+        override val id: String,
+        @SerialName("channel_id") override val channelId: String,
         @SerialName("guild_id") private val guildId: String? = null,
         @SerialName("author") val user: User,
         @SerialName("member") val memberData: MemberData? = null,
