@@ -9,7 +9,7 @@ import java.awt.Color
 data class Role(
         val id: String,
         val name: String,
-        @Serializable(with = ColourSerializer::class) val color: Color,
+        @SerialName("color") @Serializable(with = ColourSerializer::class) val colour: Color,
         @SerialName("hoist") val isShownSeparate: Boolean,
         val icon: String? = null,
         @SerialName("unicode_emoji") val unicodeEmoji: String? = null,
