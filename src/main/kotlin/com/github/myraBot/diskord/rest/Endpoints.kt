@@ -20,4 +20,5 @@ object Endpoints {
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer())
+    val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
 }
