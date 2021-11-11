@@ -2,10 +2,12 @@ package com.github.myraBot.diskord.rest
 
 import com.github.myraBot.diskord.common.entities.Application
 import com.github.myraBot.diskord.common.entities.Channel
+import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.Message
+import com.github.myraBot.diskord.utilities.ListSerializer
 import io.ktor.http.*
 import kotlinx.serialization.builtins.serializer
 
@@ -21,4 +23,5 @@ object Endpoints {
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer())
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
+    val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer()))
 }
