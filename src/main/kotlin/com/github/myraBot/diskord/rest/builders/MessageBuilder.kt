@@ -33,4 +33,6 @@ data class MessageBuilder(
 
         this.actionRows.last().components.add(button.asComponent())
     }
+
+    fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
 }
