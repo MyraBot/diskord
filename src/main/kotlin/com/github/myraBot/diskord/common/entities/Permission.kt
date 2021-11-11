@@ -1,14 +1,12 @@
 package com.github.myraBot.diskord.common.entities
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-@Serializable(with = Permission.Serializer::class)
 enum class Permission(val value: Long) {
     CREATE_INSTANT_INVITE(0x0000000001L),
     KICK_MEMBERS(0x0000000002L),
@@ -50,10 +48,12 @@ enum class Permission(val value: Long) {
     SEND_MESSAGES_IN_THREADS(0x4000000000L),
     START_EMBEDDED_ACTIVITIES(0x8000000000L);
 
-    internal object Serializer : KSerializer<Permission> {
+    internal object Serializer : KSerializer<List<Permission>> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Permission", PrimitiveKind.STRING)
-        override fun serialize(encoder: Encoder, value: Permission) = encoder.encodeString(value.value.toString())
-        override fun deserialize(decoder: Decoder): Permission = values().first { it.value == decoder.decodeString().toLong() }
+        override fun serialize(encoder: Encoder, value: List<Permission>) = encoder.encodeString(value.sum().toString())
+        override fun deserialize(decoder: Decoder): List<Permission> = decoder.decodeString().toLong().let {
+            values().filter { permission -> it and permission.value == permission.value }
+        }
     }
 }
 
