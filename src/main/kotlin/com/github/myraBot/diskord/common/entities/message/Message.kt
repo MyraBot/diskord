@@ -44,7 +44,7 @@ data class Message(
         val flags: MessageFlags = MessageFlags(0),
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
-    val link: String = JumpUrlEndpoints.get(guildId!!, channelId, id)
+    val link: String get() = JumpUrlEndpoints.get(guildId!!, channelId, id)
     val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
     val member: Member get() = Member.withUser(memberData!!, guild!!, user)
     val isWebhook: Boolean = webhookId == null
