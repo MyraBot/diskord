@@ -22,4 +22,6 @@ interface MessageBehavior : GetTextChannelBehavior {
         }
     }
 
+    suspend fun edit(message: (Message) -> Message): Message = edit(message)
+
 }
