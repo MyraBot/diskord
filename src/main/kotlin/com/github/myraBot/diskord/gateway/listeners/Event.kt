@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.rest.behaviors.DefaultBehavior
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.valueParameters
 
 abstract class Event : DefaultBehavior {
 
@@ -14,7 +15,10 @@ abstract class Event : DefaultBehavior {
         Diskord.listeners.forEach { listener ->
             listener.functions
                 .filter { it.findAnnotation<ListenTo>()?.event == this::class }
-                .forEach { it.callSuspend(listener, this) }
+                .forEach {
+                    if (it.valueParameters.isEmpty()) it.callSuspend(listener)
+                    else it.callSuspend(listener, this)
+                }
         }
     }
 

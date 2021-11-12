@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktor_version: String by project
-val kotlin_version: String by project
+val kotlinx_version: String by project
 val logging_version: String by project
 
 plugins {
@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.myraBot"
-version = "0.50-DEVELOPMENT"
+version = "0.56"
 val id = "Diskord"
 
 repositories {
