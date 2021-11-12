@@ -60,7 +60,9 @@ object Events {
         listener::class.declaredFunctions
             .filter { it.hasAnnotation<ListenTo>() }
             .filter {
-                val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter false
+                // Get the first parameter of the function, if the function has no parameter add it still to the listeners,
+                // to execute also listeners with no parameters.
+                val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter true
                 Event::class.isSuperclassOf(klass as KClass<*>)
             }.let {
                 listener.functions.addAll(it) // Load all functions in the listener
