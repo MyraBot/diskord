@@ -3,11 +3,13 @@ package com.github.myraBot.diskord.gateway.listeners
 import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
 import com.github.myraBot.diskord.Diskord
+import com.github.myraBot.diskord.common.cache.GuildCache
+import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.gateway.Websocket
-import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
@@ -24,7 +26,10 @@ object Events {
 
         val data = income.d!!
         when (income.t) {
-            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also { Websocket.session = it.sessionId }
+            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
+                Websocket.session = it.sessionId
+                GuildCache.ids = it.guilds.map(UnavailableGuild::id).toMutableList()
+            }
             "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
             "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
             else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
