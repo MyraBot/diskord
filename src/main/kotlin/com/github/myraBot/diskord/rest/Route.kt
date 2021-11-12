@@ -83,7 +83,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
             method = httpMethod
             header("Authorization", "Bot ${Diskord.token}")
             json?.let {
-                ContentType.Application.Json
+                contentType(ContentType.Application.Json)
                 body = it
             }
         }
