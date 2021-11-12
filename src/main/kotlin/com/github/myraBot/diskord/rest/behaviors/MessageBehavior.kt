@@ -4,7 +4,6 @@ import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.encodeToString
-import java.net.URL
 import java.net.URLEncoder
 
 interface MessageBehavior : GetTextChannelBehavior, Entity {
@@ -20,7 +19,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      */
     suspend fun edit(message: Message): Message {
         val json = JSON.encodeToString(message)
-        return Endpoints.editMessage.execute(json) {
+        return Endpoints.editMessage.executeNonNull(json) {
             arg("channel.id", message.channelId)
             arg("message.id", message.id)
         }
@@ -32,7 +31,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         Endpoints.addReaction.execute {
             arg("channel.id", channelId)
             arg("message.id", id)
-            arg("emoji", URLEncoder.encode(emoji,"utf-8"))
+            arg("emoji", URLEncoder.encode(emoji, "utf-8"))
         }
     }
 

@@ -13,4 +13,5 @@ val JSON = Json {
 
 val CLIENT = HttpClient(CIO) {
     install(WebSockets)
+    expectSuccess = false // Disables throwing exceptions
 }

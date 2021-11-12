@@ -6,7 +6,7 @@ import com.github.myraBot.diskord.rest.Endpoints
 
 interface DefaultBehavior {
 
-    suspend fun getApplication(): Application = Endpoints.getBotApplication.execute()
+    suspend fun getApplication(): Application = Endpoints.getBotApplication.executeNonNull()
     val diskord: Diskord get() = Diskord
 
 }

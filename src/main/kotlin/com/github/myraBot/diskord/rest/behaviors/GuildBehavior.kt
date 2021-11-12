@@ -7,16 +7,14 @@ import com.github.myraBot.diskord.rest.Endpoints
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
-    suspend fun getMember(id: String): Member {
+    suspend fun getMember(id: String): Member? {
         val memberData = Endpoints.getGuildMember.execute {
             arg("guild.id", this@GuildBehavior.id)
             arg("user.id", id)
         }
-        return Member.withUserInMember(memberData, SimpleGuild(this.id))
+        return memberData?.let { Member.withUserInMember(it, SimpleGuild(this.id)) }
     }
 
-    suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.execute().id)
-
-    suspend fun getRoles(): List<Role> = Endpoints.getRoles.execute { arg("guild.id", id) }
-
+    suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.executeNonNull().id)!!
+    suspend fun getRoles(): List<Role> = Endpoints.getRoles.executeNonNull { arg("guild.id", id) }
 }

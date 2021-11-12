@@ -12,12 +12,26 @@ import kotlinx.serialization.builtins.serializer
 
 class Route<R>(private val httpMethod: HttpMethod, private val path: String, private val serializer: KSerializer<R>) {
 
-    suspend fun execute(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): R {
-        val res = executeHttpRequest(json, argBuilder).readText()
+    suspend fun execute(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}): R? {
+        val res = executeHttpRequest(json, argBuilder)
+        val json = res.readText()
         trace(this::class) { res }
 
+        if (res.status != HttpStatusCode.OK) return null
         if (serializer == Unit.serializer()) return Unit as R
-        return JSON.decodeFromString(serializer, res)
+        return JSON.decodeFromString(serializer, json)
+    }
+
+    suspend fun executeNonNull(json: String? = null, argBuilder: RouteArguments.() -> Unit = {}) : R  {
+        val res = executeHttpRequest(json, argBuilder)
+        val json = res.readText()
+        trace(this::class) { res }
+
+        if (res.status != HttpStatusCode.OK) {
+            throw Exception(json)
+        }
+        if (serializer == Unit.serializer()) return Unit as R
+        return JSON.decodeFromString(serializer, json)
     }
 
     /**

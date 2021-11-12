@@ -11,7 +11,7 @@ interface ChannelBehavior : Entity {
 
     suspend fun send(message: suspend MessageBuilder.() -> Unit): Message {
         val json = JSON.encodeToString(MessageBuilder().also { message.invoke(it) })
-        return Endpoints.createMessage.execute(json) { arg("channel.id", id) }
+        return Endpoints.createMessage.executeNonNull(json) { arg("channel.id", id) }
     }
 
 }
