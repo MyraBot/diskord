@@ -60,7 +60,7 @@ object Events {
         listener::class.declaredFunctions
             .filter { it.hasAnnotation<ListenTo>() }
             .filter {
-                val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: false
+                val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter false
                 Event::class.isSuperclassOf(klass as KClass<*>)
             }.let {
                 listener.functions.addAll(it) // Load all functions in the listener
