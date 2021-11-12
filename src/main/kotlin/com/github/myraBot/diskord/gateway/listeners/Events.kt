@@ -4,7 +4,7 @@ import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.gateway.Websocket
-import com.github.myraBot.diskord.gateway.listeners.impl.MessageCreateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
