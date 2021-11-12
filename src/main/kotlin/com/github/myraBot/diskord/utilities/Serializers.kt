@@ -29,7 +29,7 @@ object InstantSerializer : KSerializer<Instant> {
 
 object ColourSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
-    override fun serialize(encoder: Encoder, value: Color) = encoder.encodeInt(value.rgb)
+    override fun serialize(encoder: Encoder, value: Color) = encoder.encodeInt(value.blue + value.green * 256 + value.red * 65536)
     override fun deserialize(decoder: Decoder): Color = Color.decode(decoder.decodeInt().toString())
 }
 
