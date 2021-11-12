@@ -47,7 +47,7 @@ data class Message(
     val link: String get() = JumpUrlEndpoints.get(guildId!!, channelId, id)
     val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
     val member: Member get() = Member.withUser(memberData!!, guild!!, user)
-    val isWebhook: Boolean = webhookId == null
+    val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val channel: MessageChannel = MessageChannel(channelId)
 }
