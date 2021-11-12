@@ -17,4 +17,5 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
 
     suspend fun getBotMember(): Member = getMember(Endpoints.getBotApplication.executeNonNull().id)!!
     suspend fun getRoles(): List<Role> = Endpoints.getRoles.executeNonNull { arg("guild.id", id) }
+    suspend fun getRole(id: String): Role? = getRoles().firstOrNull { it.id == id }
 }

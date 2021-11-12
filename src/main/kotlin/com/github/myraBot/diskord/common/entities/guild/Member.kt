@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.common.entities.guild
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.rest.behaviors.Entity
+import com.github.myraBot.diskord.rest.behaviors.MemberBehavior
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.JSON
 import com.github.myraBot.diskord.utilities.Mention
@@ -28,7 +29,7 @@ data class MemberData(
 
 @Serializable
 data class Member(
-        val guildId: String,
+        override val guildId: String,
         val user: User,
         val nick: String? = null,
         val avatar: String? = null,
@@ -39,7 +40,7 @@ data class Member(
         val mute: Boolean,
         val pending: Boolean = false,
         val permissions: String? = null
-) : Entity {
+) : MemberBehavior {
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val asMention: String = Mention.user(id)
