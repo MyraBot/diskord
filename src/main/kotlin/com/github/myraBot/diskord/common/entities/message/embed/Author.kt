@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.message.embed
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,5 +14,5 @@ import kotlinx.serialization.Serializable
 data class Author(
         var name: String,
         var url: String? = null,
-        var icon: String? = null
+        @SerialName("icon_url") var icon: String? = null
 )
