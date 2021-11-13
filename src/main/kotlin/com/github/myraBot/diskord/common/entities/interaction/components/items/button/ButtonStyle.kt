@@ -24,6 +24,8 @@ enum class ButtonStyle(val value: Int) {
     internal object Serializer : KSerializer<ButtonStyle> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ButtonStyle", PrimitiveKind.INT)
         override fun serialize(encoder: Encoder, value: ButtonStyle) = encoder.encodeInt(value.value)
-        override fun deserialize(decoder: Decoder): ButtonStyle = values().first { it.value == decoder.decodeInt() }
+        override fun deserialize(decoder: Decoder): ButtonStyle = decoder.decodeInt().let {
+            values().first { style -> style.value == it }
+        }
     }
 }
