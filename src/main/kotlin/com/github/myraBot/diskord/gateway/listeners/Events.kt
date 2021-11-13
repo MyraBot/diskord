@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.gateway.listeners
 
 import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
+import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.cache.GuildCache
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
@@ -22,7 +23,7 @@ import kotlin.reflect.full.valueParameters
 object Events {
 
     suspend fun resolve(income: OptCode) {
-        println(income.toJson())
+        trace(this::class) { "Incoming websocket message: ${income.toJson()}" }
 
         val data = income.d!!
         when (income.t) {

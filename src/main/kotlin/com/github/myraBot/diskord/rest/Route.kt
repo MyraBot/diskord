@@ -1,11 +1,13 @@
 package com.github.myraBot.diskord.rest
 
+import com.github.m5rian.discord.debug
 import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.utilities.CLIENT
 import com.github.myraBot.diskord.utilities.FileFormats
 import com.github.myraBot.diskord.utilities.JSON
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -24,7 +26,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns a nullable response as [R].
      */
     suspend fun execute(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R? {
-        val res = executeHttpRequest(json, RouteArguments().apply(argBuilder), files)
+        val res = requestRouter(json, RouteArguments().apply(argBuilder), files)
         val json = res.readText()
         trace(this::class) { res }
 
@@ -43,15 +45,22 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns a response as [R]. If the response is null, throws an exception.
      */
     suspend fun executeNonNull(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R {
-        val res = executeHttpRequest(json, RouteArguments().apply(argBuilder), files)
-        val json = res.readText()
-        trace(this::class) { res }
+        val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
+        val response = request.readText()
+        trace(this::class) { request }
 
-        if (res.status != HttpStatusCode.OK) {
-            throw Exception(json)
+        if (request.status != HttpStatusCode.OK) {
+            debug(this::class) {
+                """
+                An error occurred while executing a rest action
+                Provided JSON = ${json ?: "no json provided"}
+                Discord response = $response
+            """.trimIndent()
+            }
+            throw Exception()
         }
         if (serializer == Unit.serializer()) return Unit as R
-        return JSON.decodeFromString(serializer, json)
+        return JSON.decodeFromString(serializer, response)
     }
 
     /**
@@ -63,7 +72,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @param files Optional files.
      * @return Return a [HttpResponse] of the executed request.
      */
-    private suspend fun executeHttpRequest(json: String? = null, args: RouteArguments, files: List<File> = emptyList()): HttpResponse {
+    private suspend fun requestRouter(json: String? = null, args: RouteArguments, files: List<File> = emptyList()): HttpResponse {
         var route = Endpoints.baseUrl + path
         args.entries.forEach { route = route.replace("{${it.first}}", it.second.toString()) }
 
@@ -79,13 +88,17 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns the response as a [HttpResponse].
      */
     private suspend fun request(route: String, json: String?): HttpResponse {
-        return CLIENT.request(route) {
-            method = httpMethod
-            header("Authorization", "Bot ${Diskord.token}")
-            json?.let {
-                contentType(ContentType.Application.Json)
-                body = it
+        return try {
+            CLIENT.request(route) {
+                method = httpMethod
+                header("Authorization", "Bot ${Diskord.token}")
+                json?.let {
+                    contentType(ContentType.Application.Json)
+                    body = it
+                }
             }
+        } catch (timeout: HttpRequestTimeoutException) {
+            request(route, json)
         }
     }
 
