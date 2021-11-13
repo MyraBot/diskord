@@ -26,13 +26,13 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns a nullable response as [R].
      */
     suspend fun execute(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R? {
-        val res = requestRouter(json, RouteArguments().apply(argBuilder), files)
-        val json = res.readText()
-        trace(this::class) { res }
+        val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
+        val response = request.readText()
+        trace(this::class) { "Rest response = $request" }
 
-        if (res.status != HttpStatusCode.OK) return null
+        if (request.status != HttpStatusCode.OK) return null
         if (serializer == Unit.serializer()) return Unit as R
-        return JSON.decodeFromString(serializer, json)
+        return JSON.decodeFromString(serializer, response)
     }
 
     /**
@@ -47,7 +47,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
     suspend fun executeNonNull(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R {
         val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
         val response = request.readText()
-        trace(this::class) { request }
+        trace(this::class) { "Rest response = $response" }
 
         if (request.status != HttpStatusCode.OK) {
             debug(this::class) {
