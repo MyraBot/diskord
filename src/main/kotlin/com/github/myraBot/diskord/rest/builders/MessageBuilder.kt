@@ -15,7 +15,7 @@ data class MessageBuilder(
         var embeds: MutableList<Embed> = mutableListOf(),
         @SerialName("components") val actionRows: MutableList<Component> = mutableListOf()
 ) {
-    fun addEmbed(embed: Embed.() -> Unit) = embeds.add(Embed().apply(embed))
+    suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
     fun addEmbed(embed: Embed) = embeds.add(embed)
 
     /**
