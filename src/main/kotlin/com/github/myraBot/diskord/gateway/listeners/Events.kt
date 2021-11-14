@@ -4,11 +4,17 @@ import com.github.m5rian.discord.OptCode
 import com.github.m5rian.discord.info
 import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.Diskord
-import com.github.myraBot.diskord.common.cache.GuildCache
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildCreateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildDeleteEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.MemberUpdateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelCreateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDeleteEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.utilities.JSON
@@ -33,6 +39,12 @@ object Events {
             }
             "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
             "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
+            "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
+            "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
+            "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
+            "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(data))
+            "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(data))
+            "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
             else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
         }.call()
     }
