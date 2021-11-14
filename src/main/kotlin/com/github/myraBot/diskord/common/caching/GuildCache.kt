@@ -10,7 +10,6 @@ object GuildCache : Cache<String, Guild>() {
     var ids: MutableList<String> = mutableListOf()
 
     override fun retrieve(key: String): Guild? {
-        println("Retrieving following guild: $key")
         return runBlocking {
             Endpoints.getGuild.execute { arg("guild.id", key) }
         }

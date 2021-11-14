@@ -22,7 +22,6 @@ object ChannelCache : Cache<String, Channel>() {
     }
 
     override fun retrieve(key: String): Channel? {
-        println("Retrieving following channel: $key")
         return runBlocking {
             Endpoints.getChannel.execute { arg("channel.id", key) }
         }
