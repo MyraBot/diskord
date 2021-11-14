@@ -2,7 +2,6 @@ package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
-import com.github.myraBot.diskord.rest.behaviors.Entity
 import com.github.myraBot.diskord.rest.behaviors.MemberBehavior
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.JSON
@@ -29,7 +28,7 @@ data class MemberData(
 
 @Serializable
 data class Member(
-        override val guildId: String,
+        @JsonNames("guildId", "guild_id") @SerialName("guild_id") override val guildId: String,
         val user: User,
         val nick: String? = null,
         val avatar: String? = null,
@@ -49,6 +48,7 @@ data class Member(
         .reversed()
         .first { it.colour != Color.decode("0") }
         .colour
+
     val guild: SimpleGuild = SimpleGuild(this.guildId)
 
     companion object {
