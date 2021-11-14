@@ -3,29 +3,27 @@ package com.github.myraBot.diskord.gateway
 import com.github.m5rian.discord.*
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.gateway.listeners.Events
-import com.github.myraBot.diskord.rest.Endpoints
-import com.github.myraBot.diskord.utilities.CLIENT
+import com.github.myraBot.diskord.utilities.GATEWAY_CLIENT
+import com.github.myraBot.diskord.utilities.REST_CLIENT
 import com.github.myraBot.diskord.utilities.JSON
 import io.ktor.client.features.websocket.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.cio.websocket.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import java.util.concurrent.Executors
-import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
+ *
+ * The Gateway websocket to listen to discord events.
  */
 object Websocket {
+    private const val url = "wss://gateway.discord.gg/?v=9&encoding=json"
     lateinit var session: String
-    private val coroutineScope = CoroutineScope(ForkJoinPool().asCoroutineDispatcher())
+    private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
     private var s: Int = 0
 
     /**
@@ -34,12 +32,6 @@ object Websocket {
      * Calls [openWebsocketConnection] to connect to the websocket first time.
      */
     suspend fun connect() {
-        val response = CLIENT.get<HttpResponse>("${Endpoints.baseUrl}/gateway/bot") {
-            header("Authorization", "Bot ${Diskord.token}")
-        }.readText()
-        val json = JSON.decodeFromString<JsonObject>(response)
-
-        val url = json["url"]!!.jsonPrimitive.content + "?v=9&encoding=json"
         openWebsocketConnection(url, false)
     }
 
@@ -52,7 +44,7 @@ object Websocket {
      */
     private suspend fun openWebsocketConnection(url: String, resume: Boolean) {
         try {
-            CLIENT.webSocket(url, {}, {
+            GATEWAY_CLIENT.webSocket(url, {}, {
                 info(this::class) { "Opened websocket connection" }
                 while (true) {
                     val data = incoming.receive() as? Frame.Text

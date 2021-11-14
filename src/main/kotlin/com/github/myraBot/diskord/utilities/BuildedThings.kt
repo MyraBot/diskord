@@ -1,9 +1,11 @@
 package com.github.myraBot.diskord.utilities
 
+import com.github.myraBot.diskord.Diskord
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
+import io.ktor.client.request.*
 import kotlinx.serialization.json.Json
 
 val JSON = Json {
@@ -12,8 +14,14 @@ val JSON = Json {
     explicitNulls = false
 }
 
-val CLIENT = HttpClient(CIO) {
+val GATEWAY_CLIENT = HttpClient(CIO) {
     install(WebSockets)
-    install(HttpTimeout)
+}
+
+val REST_CLIENT = HttpClient(CIO) {
+    install(HttpTimeout) {
+        requestTimeoutMillis = 10000
+    }
     expectSuccess = false // Disables throwing exceptions
+    defaultRequest { header("Authorization", "Bot ${Diskord.token}") }
 }

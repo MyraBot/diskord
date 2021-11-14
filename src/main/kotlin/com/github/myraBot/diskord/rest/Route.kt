@@ -2,9 +2,8 @@ package com.github.myraBot.diskord.rest
 
 import com.github.m5rian.discord.debug
 import com.github.m5rian.discord.trace
-import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.entities.File
-import com.github.myraBot.diskord.utilities.CLIENT
+import com.github.myraBot.diskord.utilities.REST_CLIENT
 import com.github.myraBot.diskord.utilities.FileFormats
 import com.github.myraBot.diskord.utilities.JSON
 import io.ktor.client.features.*
@@ -89,9 +88,8 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      */
     private suspend fun request(route: String, json: String?): HttpResponse {
         return try {
-            CLIENT.request(route) {
+            REST_CLIENT.request(route) {
                 method = httpMethod
-                header("Authorization", "Bot ${Diskord.token}")
                 json?.let {
                     contentType(ContentType.Application.Json)
                     body = it
@@ -113,20 +111,24 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns the response as a [HttpResponse].
      */
     private suspend fun dataRequest(route: String, json: String, files: List<File>): HttpResponse {
-        return CLIENT.submitFormWithBinaryData(
-            url = route,
-            formData = formData {
-                append("payload_json", json)
-                files.forEachIndexed { n, file ->
+        return try {
+            REST_CLIENT.submitFormWithBinaryData(
+                url = route,
+                formData = formData {
+                    append("payload_json", json)
+                    files.forEachIndexed { n, file ->
 
-                    append("files[$n]", file.bytes, Headers.build {
-                        append(HttpHeaders.ContentDisposition, "filename=\"${file.name}.${file.type.extension}\"")
-                        append(HttpHeaders.ContentType, getContentType(file))
-                    })
+                        append("files[$n]", file.bytes, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "filename=\"${file.name}.${file.type.extension}\"")
+                            append(HttpHeaders.ContentType, getContentType(file))
+                        })
 
+                    }
                 }
-            }
-        ) { header("Authorization", "Bot ${Diskord.token}") }
+            )
+        } catch (timeout: HttpRequestTimeoutException) {
+            request(route, json)
+        }
     }
 
     private fun getContentType(file: File): ContentType {
