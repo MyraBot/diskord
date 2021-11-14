@@ -6,6 +6,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
+import io.ktor.network.sockets.*
 import kotlinx.serialization.json.Json
 
 val JSON = Json {
@@ -20,7 +21,8 @@ val GATEWAY_CLIENT = HttpClient(CIO) {
 
 val REST_CLIENT = HttpClient(CIO) {
     install(HttpTimeout) {
-        requestTimeoutMillis = 10000
+        connectTimeoutMillis = 5000
+        requestTimeoutMillis = 5000
     }
     expectSuccess = false // Disables throwing exceptions
     defaultRequest { header("Authorization", "Bot ${Diskord.token}") }
