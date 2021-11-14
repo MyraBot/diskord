@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.myraBot"
-version = "0.61"
+version = "0.64"
 val id = "Diskord"
 
 repositories {
