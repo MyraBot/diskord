@@ -25,7 +25,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    suspend fun edit(messageBuilder: (MessageBuilder) -> MessageBuilder): Message = edit(messageBuilder.invoke(message.asBuilder()))
+    suspend fun edit(messageBuilder: MessageBuilder.() -> Unit): Message = edit(message.asBuilder().apply(messageBuilder))
 
     suspend fun addReaction(emoji: String) {
         Endpoints.addReaction.execute {
