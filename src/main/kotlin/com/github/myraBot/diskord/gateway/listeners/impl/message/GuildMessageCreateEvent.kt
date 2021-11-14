@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.message
 
 import com.github.myraBot.diskord.common.entities.message.Message
+import com.github.myraBot.diskord.common.entities.message.member
 import com.github.myraBot.diskord.gateway.listeners.Event
 
 data class GuildMessageCreateEvent (
