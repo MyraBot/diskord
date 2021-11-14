@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 
 object Diskord {
     lateinit var token: String
-    lateinit var intents: MutableList<GatewayIntent>
+    lateinit var intents: MutableSet<GatewayIntent>
     val listeners: MutableList<EventListener> = mutableListOf()
     lateinit var id: String
 

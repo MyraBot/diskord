@@ -27,7 +27,7 @@ enum class GatewayIntent(val index: Int) {
     DIRECT_MESSAGE_TYPING(14);
 
     companion object {
-        fun getID(intents: List<GatewayIntent>): Int {
+        fun getID(intents: Set<GatewayIntent>): Int {
            return intents.sumOf { (2).toDouble().pow(it.index.toDouble()) }.toInt()
         }
     }
