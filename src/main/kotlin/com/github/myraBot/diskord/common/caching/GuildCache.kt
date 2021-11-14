@@ -16,7 +16,6 @@ object GuildCache : Cache<String, Guild>() {
     }
 
     override fun update(value: Guild) {
-        println("Updating channel $value")
         map[value.id] = value
     }
 }

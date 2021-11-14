@@ -37,7 +37,6 @@ object ChannelCache : Cache<String, Channel>() {
     fun onChannelDelete(event: ChannelDeleteEvent) = update(event.channel)
 
     override fun update(value: Channel) {
-        println("Updating channel $value")
         map[value.id] = value
     }
 
