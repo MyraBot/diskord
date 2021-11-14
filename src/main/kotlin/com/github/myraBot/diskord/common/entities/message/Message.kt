@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.message
 
+import com.github.myraBot.diskord.common.caching.ChannelCache
 import com.github.myraBot.diskord.common.entities.Channel
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.channel.MessageChannel
@@ -44,7 +45,7 @@ data class Message(
         val flags: MessageFlags = MessageFlags(0),
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
-    val link: String get() = JumpUrlEndpoints.get(guildId!!, channelId, id)
+    val link: String get() = JumpUrlEndpoints.get(ChannelCache[channelId]!!.guildId!!, channelId, id)
     val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
     val member: Member get() = Member.withUser(memberData!!, guild!!, user)
     val isWebhook: Boolean = webhookId != null
