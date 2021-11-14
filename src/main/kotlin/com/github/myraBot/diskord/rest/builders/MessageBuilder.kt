@@ -13,7 +13,7 @@ data class MessageBuilder(
         var content: String? = null,
         var tts: Boolean? = null,
         var embeds: MutableList<Embed> = mutableListOf(),
-        @SerialName("components") val actionRows: MutableList<Component> = mutableListOf()
+        @SerialName("components") var actionRows: MutableList<Component> = mutableListOf()
 ) {
     suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
     fun addEmbed(embed: Embed) = embeds.add(embed)

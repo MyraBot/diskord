@@ -16,6 +16,7 @@ import com.github.myraBot.diskord.common.entityData.message.MessageFlags
 import com.github.myraBot.diskord.common.entityData.message.MessageType
 import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
+import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,7 +28,7 @@ import java.time.Instant
 @Serializable
 data class Message(
         override val id: String,
-        @SerialName("channel_id") override val channelId: String,
+        @SerialName("channel_id") val channelId: String,
         @SerialName("guild_id") internal val guildId: String? = null,
         @SerialName("author") val user: User,
         @SerialName("member") internal val memberData: MemberData? = null,
@@ -47,11 +48,20 @@ data class Message(
         val flags: MessageFlags = MessageFlags(0),
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
+    override val message: Message = this
     val link: String get() = JumpUrlEndpoints.get(ChannelCache[channelId]!!.guildId!!, channelId, id)
     val guild: Guild? get() = guildId?.let { GuildCache[it] } ?: channel.guild
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(channelId)!!
+
+    fun asBuilder(): MessageBuilder =
+        MessageBuilder().apply {
+            content = this@Message.content
+            tts = this@Message.tts
+            embeds = this@Message.embeds
+            actionRows = this@Message.components
+        }
 }
 
 val Message.member: Member?
