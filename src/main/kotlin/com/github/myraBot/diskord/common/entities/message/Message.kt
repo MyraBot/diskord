@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.common.entities.message
 
 import com.github.myraBot.diskord.common.caching.ChannelCache
 import com.github.myraBot.diskord.common.caching.GuildCache
+import com.github.myraBot.diskord.common.caching.MemberCache
 import com.github.myraBot.diskord.common.entities.Channel
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
@@ -27,9 +28,9 @@ import java.time.Instant
 data class Message(
         override val id: String,
         @SerialName("channel_id") override val channelId: String,
-        @SerialName("guild_id") private val guildId: String? = null,
+        @SerialName("guild_id") internal val guildId: String? = null,
         @SerialName("author") val user: User,
-        @SerialName("member") val memberData: MemberData? = null,
+        @SerialName("member") internal val memberData: MemberData? = null,
         val content: String,
         @Serializable(with = InstantSerializer::class) val timestamp: Instant,
         @Serializable(with = InstantSerializer::class) val edited: Instant?,
@@ -47,17 +48,19 @@ data class Message(
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
     val link: String get() = JumpUrlEndpoints.get(ChannelCache[channelId]!!.guildId!!, channelId, id)
-    val guild: Guild get() = guildId?.let { GuildCache[it] } ?: channel.guild
-    val member: Member get() = Member.withUser(memberData!!, guild, user)
+    val guild: Guild? get() = guildId?.let { GuildCache[it] } ?: channel.guild
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(channelId)!!
 }
 
-
-
-
-
-
-
-
+val Message.member: Member?
+    get() = guildId?.let { g ->
+        memberData?.let { m ->
+            Member.withUser(m, g, user)
+        } ?: MemberCache[g, user.id]
+    } ?: channel.guild?.let { g ->
+        memberData?.let { m ->
+            Member.withUser(m, g.id, user)
+        } ?: MemberCache[g.id, user.id]
+    }

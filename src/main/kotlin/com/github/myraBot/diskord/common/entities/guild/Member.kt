@@ -36,15 +36,15 @@ data class Member(
         @SerialName("roles") val roleIds: Array<String>,
         @SerialName("joined_at") @Serializable(with = InstantSerializer::class) val joinedAt: Instant,
         @SerialName("premium_since") @Serializable(with = InstantSerializer::class) val premiumSince: Instant? = null,
-        val deaf: Boolean,
-        val mute: Boolean,
+        val deaf: Boolean? = null,
+        val mute: Boolean? = null,
         val pending: Boolean = false,
         val permissions: String? = null
 ) : MemberBehavior {
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val asMention: String = Mention.user(id)
-    val guild: Guild = GuildCache[guildId]!!
+    val guild: Guild get() = GuildCache[guildId]!!
     suspend fun getRoles(): List<Role> = guild.getRoles().filter { roleIds.contains(it.id) }
     suspend fun getColour(): Color = getRoles()
         .reversed()
@@ -52,22 +52,22 @@ data class Member(
         .colour
 
     companion object {
-        fun withUser(member: MemberData, guild: Guild, user: User): Member {
+        fun withUser(member: MemberData, guildId: String, user: User): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             val jsonUser = JSON.encodeToJsonElement(user).jsonObject
             return JsonObject(jsonMember.toMutableMap()
                 .apply {
                     this["user"] = jsonUser
-                    this["guildId"] = JsonPrimitive(guild.id)
+                    this["guildId"] = JsonPrimitive(guildId)
                 })
                 .let { JSON.decodeFromJsonElement(it) }
         }
 
-        fun withUserInMember(member: MemberData, guild: Guild): Member {
+        fun withUserInMember(member: MemberData, guildId: String): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             return JsonObject(jsonMember.toMutableMap()
                 .apply {
-                    this["guildId"] = JsonPrimitive(guild.id)
+                    this["guildId"] = JsonPrimitive(guildId)
                 })
                 .let { JSON.decodeFromJsonElement(it) }
         }
