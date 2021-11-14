@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.guild
 
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.rest.behaviors.MemberBehavior
@@ -43,16 +44,15 @@ data class Member(
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val asMention: String = Mention.user(id)
+    val guild: Guild = GuildCache[guildId]!!
     suspend fun getRoles(): List<Role> = guild.getRoles().filter { roleIds.contains(it.id) }
     suspend fun getColour(): Color = getRoles()
         .reversed()
         .first { it.colour != Color.decode("0") }
         .colour
 
-    val guild: SimpleGuild = SimpleGuild(this.guildId)
-
     companion object {
-        fun withUser(member: MemberData, guild: SimpleGuild, user: User): Member {
+        fun withUser(member: MemberData, guild: Guild, user: User): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             val jsonUser = JSON.encodeToJsonElement(user).jsonObject
             return JsonObject(jsonMember.toMutableMap()
@@ -63,7 +63,7 @@ data class Member(
                 .let { JSON.decodeFromJsonElement(it) }
         }
 
-        fun withUserInMember(member: MemberData, guild: SimpleGuild): Member {
+        fun withUserInMember(member: MemberData, guild: Guild): Member {
             val jsonMember = JSON.encodeToJsonElement(member).jsonObject
             return JsonObject(jsonMember.toMutableMap()
                 .apply {

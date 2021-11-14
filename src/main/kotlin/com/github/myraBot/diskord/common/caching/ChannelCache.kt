@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.common.caching
 
 import com.github.myraBot.diskord.common.entities.Channel
+import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.gateway.listeners.ListenTo
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDeleteEvent
@@ -10,6 +11,15 @@ import kotlinx.coroutines.runBlocking
 
 
 object ChannelCache : Cache<String, Channel>() {
+
+    inline fun <reified T> getAs(id: String): T? {
+        val channel = ChannelCache[id] ?: return null
+        return when (T::class) {
+            Channel::class -> channel
+            TextChannel::class -> TextChannel(channel)
+            else -> throw IllegalStateException()
+        } as T
+    }
 
     override fun retrieve(key: String): Channel? {
         println("Retrieving following channel: $key")
@@ -31,4 +41,5 @@ object ChannelCache : Cache<String, Channel>() {
         println("Updating channel $value")
         map[value.id] = value
     }
+
 }

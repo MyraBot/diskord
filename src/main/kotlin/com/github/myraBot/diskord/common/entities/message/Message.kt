@@ -1,12 +1,13 @@
 package com.github.myraBot.diskord.common.entities.message
 
 import com.github.myraBot.diskord.common.caching.ChannelCache
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.Channel
 import com.github.myraBot.diskord.common.entities.User
-import com.github.myraBot.diskord.common.entities.channel.MessageChannel
+import com.github.myraBot.diskord.common.entities.channel.TextChannel
+import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
-import com.github.myraBot.diskord.common.entities.guild.SimpleGuild
 import com.github.myraBot.diskord.common.entities.interaction.components.Component
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import com.github.myraBot.diskord.common.entityData.message.MessageFlag
@@ -46,11 +47,11 @@ data class Message(
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
     val link: String get() = JumpUrlEndpoints.get(ChannelCache[channelId]!!.guildId!!, channelId, id)
-    val guild: SimpleGuild? = guildId?.let { SimpleGuild(it) }
-    val member: Member get() = Member.withUser(memberData!!, guild!!, user)
+    val guild: Guild get() = guildId?.let { GuildCache[it] } ?: channel.guild
+    val member: Member get() = Member.withUser(memberData!!, guild, user)
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
-    val channel: MessageChannel = MessageChannel(channelId)
+    val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(channelId)!!
 }
 
 
