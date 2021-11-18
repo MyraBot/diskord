@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonElement
 
 /**
  * [Documentation](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data-structure)
@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonPrimitive
 data class SlashCommandDataOption(
         val name: String,
         val type: SlashCommandOptionType,
-        val value: JsonPrimitive? = null,
+        val value: JsonElement? = null,
         val options: List<SlashCommandDataOption> = emptyList(),
         val focused: Boolean? = null
 )
