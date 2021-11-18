@@ -19,6 +19,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      */
     suspend fun edit(messageBuilder: MessageBuilder): Message {
         val json = JSON.encodeToString(messageBuilder)
+        println(json)
         return Endpoints.editMessage.executeNonNull(json) {
             arg("channel.id", message.channelId)
             arg("message.id", message.id)

@@ -1,7 +1,8 @@
-package com.github.myraBot.diskord.common.entities.interaction.components.items.button
+package com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button
 
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.rest.builders.ComponentType
+import kotlinx.serialization.SerialName
 
 /**
  * [Documentation](https://discord.com/developers/docs/interactions/message-components#button-object)
@@ -19,7 +20,7 @@ data class Button(
         var style: ButtonStyle,
         var label: String? = null,
         var emoji: Emoji? = null,
-        var id: String? = null,
+        @SerialName("custom_id") var id: String? = null,
         var url: String? = null,
         var disabled: Boolean = false
 )

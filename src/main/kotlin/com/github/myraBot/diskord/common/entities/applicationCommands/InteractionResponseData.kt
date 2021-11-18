@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.interaction
+package com.github.myraBot.diskord.common.entities.applicationCommands
 
 import kotlinx.serialization.Serializable
 
@@ -11,5 +11,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class InteractionResponseData(
         val type: InteractionCallbackType,
-        val data: InteractionResponseData? = null
+        val data: InteractionCallbackData? = null
 )

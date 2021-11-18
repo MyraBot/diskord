@@ -8,6 +8,11 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * [Documentation](https://discord.com/developers/docs/interactions/message-components#component-object-component-types)
+ *
+ * @property type
+ */
 @Serializable(with = ComponentType.Serializer::class)
 enum class ComponentType(val type: Int) {
     ACTION_ROW(1),

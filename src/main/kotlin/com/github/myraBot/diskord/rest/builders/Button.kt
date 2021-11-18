@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.myraBot.diskord.common.entities.interaction.components.items.button.Button
-import com.github.myraBot.diskord.common.entities.interaction.components.items.button.ButtonStyle
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 
 object Button {
     suspend fun primary(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.PRIMARY, id = id).also { data.invoke(it) }

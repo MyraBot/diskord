@@ -1,10 +1,10 @@
-package com.github.myraBot.diskord.common.entities.interaction.components
+package com.github.myraBot.diskord.common.entities.applicationCommands.components
 
 import com.github.myraBot.diskord.common.entities.Emoji
-import com.github.myraBot.diskord.common.entities.interaction.components.items.ActionRowData
-import com.github.myraBot.diskord.common.entities.interaction.components.items.button.Button
-import com.github.myraBot.diskord.common.entities.interaction.components.items.button.ButtonStyle
-import com.github.myraBot.diskord.common.entities.interaction.components.items.selectMenu.SelectOption
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
 import com.github.myraBot.diskord.rest.builders.ComponentType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

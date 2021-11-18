@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.interaction
+package com.github.myraBot.diskord.common.entities.applicationCommands
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
-import com.github.myraBot.diskord.common.entities.interaction.Interaction
-import com.github.myraBot.diskord.common.entities.interaction.InteractionType
+import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
+import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionType
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.builders.ComponentType
 
@@ -10,10 +10,12 @@ class InteractionCreateEvent(
 ) : Event() {
 
     override suspend fun call() {
-        if (data.type == InteractionType.MESSAGE_COMPONENT) {
-            val type = data.interactionData?.componentType
-            when {
-                type == ComponentType.BUTTON -> ButtonClickEvent(data).call()
+        when (data.type) {
+            InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).also { println(it.command.name); it.call() }
+            InteractionType.MESSAGE_COMPONENT -> {
+                when (data.interactionData?.componentType) {
+                    ComponentType.BUTTON -> ButtonClickEvent(data).call()
+                }
             }
         }
 

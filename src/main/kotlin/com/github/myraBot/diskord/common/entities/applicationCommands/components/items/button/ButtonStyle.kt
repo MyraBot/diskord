@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.interaction.components.items.button
+package com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

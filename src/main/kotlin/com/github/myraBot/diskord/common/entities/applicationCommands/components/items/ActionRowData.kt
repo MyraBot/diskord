@@ -1,6 +1,6 @@
-package com.github.myraBot.diskord.common.entities.interaction.components.items
+package com.github.myraBot.diskord.common.entities.applicationCommands.components.items
 
-import com.github.myraBot.diskord.common.entities.interaction.components.Component
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.rest.builders.ComponentType
 import kotlinx.serialization.Serializable
 

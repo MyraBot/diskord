@@ -9,7 +9,7 @@ import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
-import com.github.myraBot.diskord.common.entities.interaction.components.Component
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import com.github.myraBot.diskord.common.entityData.message.MessageFlag
 import com.github.myraBot.diskord.common.entityData.message.MessageFlags

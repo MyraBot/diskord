@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.common.entities.interaction.components.items.selectMenu
+package com.github.myraBot.diskord.common.entities.applicationCommands.components.items.selectMenu
 
 import com.github.myraBot.diskord.common.entities.Emoji
 import kotlinx.serialization.Serializable
