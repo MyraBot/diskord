@@ -11,7 +11,7 @@ class InteractionCreateEvent(
 
     override suspend fun call() {
         when (data.type) {
-            InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).also { println(it.command.name); it.call() }
+            InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).also { it.call() }
             InteractionType.MESSAGE_COMPONENT -> {
                 when (data.interactionData?.componentType) {
                     ComponentType.BUTTON -> ButtonClickEvent(data).call()
