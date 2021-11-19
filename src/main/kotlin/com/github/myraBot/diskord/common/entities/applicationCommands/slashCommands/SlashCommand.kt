@@ -13,5 +13,8 @@ import kotlinx.serialization.Serializable
 data class SlashCommand(
         override val id: String,
         val name: String,
-        val options: List<SlashCommandDataOption>
-) : Entity
+        val options: List<SlashCommandDataOption> = emptyList(),
+        val resolved: ResolvedData = ResolvedData(hashMapOf(), hashMapOf(), hashMapOf(), hashMapOf(), hashMapOf()),
+) : Entity {
+
+}
