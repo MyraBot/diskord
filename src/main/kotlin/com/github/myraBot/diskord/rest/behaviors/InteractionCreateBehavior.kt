@@ -34,6 +34,6 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(message: MessageBuilder.() -> Unit) = acknowledge(MessageBuilder().apply(message))
+    suspend fun acknowledge(message: suspend MessageBuilder.() -> Unit) = acknowledge(MessageBuilder().apply { message.invoke(this) })
 
 }
