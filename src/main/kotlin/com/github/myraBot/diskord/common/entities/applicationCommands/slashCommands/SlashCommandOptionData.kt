@@ -7,10 +7,10 @@ import kotlinx.serialization.json.JsonElement
  * [Documentation](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data-structure)
  */
 @Serializable
-data class SlashCommandDataOption(
+data class SlashCommandOptionData(
         val name: String,
         val type: SlashCommandOptionType,
         val value: JsonElement? = null,
-        val options: List<SlashCommandDataOption> = emptyList(),
+        val options: List<SlashCommandOptionData> = emptyList(),
         val focused: Boolean? = null
 )
