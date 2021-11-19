@@ -29,8 +29,8 @@ data class SlashCommandEvent(
     val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(interaction.channelId!!)!!
 
     inline fun <reified T> getOption(name: String): T? {
-        val option = command.options.first { it.name == name && it.type == SlashCommandOptionType.fromClass<T>() }
-        return option.value?.let {
+        val option = command.options.firstOrNull { it.name == name && it.type == SlashCommandOptionType.fromClass<T>() }
+        return option?.value?.let {
             when (T::class) {
                 String::class -> option.value.jsonPrimitive.content as T
                 Int::class -> option.value.jsonPrimitive.int as T
