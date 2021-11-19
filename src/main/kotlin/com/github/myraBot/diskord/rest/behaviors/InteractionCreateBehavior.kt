@@ -1,8 +1,8 @@
 package com.github.myraBot.diskord.rest.behaviors
 
-import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackType
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackData
+import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackType
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionResponseData
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
@@ -21,10 +21,10 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(message: MessageBuilder.() -> Unit) {
+    suspend fun acknowledge(message: MessageBuilder) {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            InteractionCallbackData.fromMessageBuilder(MessageBuilder().apply(message))
+            InteractionCallbackData.fromMessageBuilder(message)
         )
         val json = JSON.encodeToString(responseData)
 
@@ -33,5 +33,7 @@ interface InteractionCreateBehavior {
             arg("interaction.token", interaction.token)
         }
     }
+
+    suspend fun acknowledge(message: MessageBuilder.() -> Unit) = acknowledge(MessageBuilder().apply(message))
 
 }
