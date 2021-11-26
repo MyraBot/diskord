@@ -29,24 +29,29 @@ import kotlin.reflect.full.valueParameters
 object Events {
 
     suspend fun resolve(income: OptCode) {
-        trace(this::class) { "Incoming websocket message: ${income.toJson()}" }
+        try {
+            trace(this::class) { "Incoming websocket message: ${income.toJson()}" }
 
-        val data = income.d!!
-        when (income.t) {
-            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
-                Websocket.session = it.sessionId
-                GuildCache.ids = it.guilds.map(UnavailableGuild::id).toMutableList()
-            }
-            "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
-            "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
-            "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
-            "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
-            "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
-            "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(data))
-            "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(data))
-            "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
-            else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
-        }.call()
+            val data = income.d!!
+            when (income.t) {
+                "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
+                    Websocket.session = it.sessionId
+                    GuildCache.ids = it.guilds.map(UnavailableGuild::id).toMutableList()
+                }
+                "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
+                "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
+                "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
+                "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
+                "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
+                else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
+            }.call()
+        }catch (e: Exception) {
+            info(this::class) { "An error occured on the following event: ${income.t}\n${income.d}}" }
+            e.printStackTrace()
+        }
     }
 
     fun register(packageName: String, listeners: MutableList<EventListener>) {
