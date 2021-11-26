@@ -48,7 +48,7 @@ object Websocket {
                 info(this::class) { "Opened websocket connection" }
                 while (true) {
                     val data = incoming.receive() as? Frame.Text
-                    trace(this::class) { data?.readText() }
+                    trace(this::class) { "Incoming websocket message: ${ data?.readText()}" }
                     val income = JSON.decodeFromString<OptCode>(data!!.readText())
                     handleIncome(this, income, resume)
                 }

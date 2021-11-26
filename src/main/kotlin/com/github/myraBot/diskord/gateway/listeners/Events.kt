@@ -30,8 +30,6 @@ object Events {
 
     suspend fun resolve(income: OptCode) {
         try {
-            trace(this::class) { "Incoming websocket message: ${income.toJson()}" }
-
             val data = income.d!!
             when (income.t) {
                 "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {

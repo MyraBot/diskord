@@ -1,11 +1,11 @@
 package com.github.myraBot.diskord.rest
 
-import com.github.m5rian.discord.debug
+import com.github.m5rian.discord.info
 import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.common.entities.File
-import com.github.myraBot.diskord.utilities.REST_CLIENT
 import com.github.myraBot.diskord.utilities.FileFormats
 import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.utilities.REST_CLIENT
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -49,7 +49,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
         trace(this::class) { "Rest response = $response" }
 
         if (request.status != HttpStatusCode.OK) {
-            debug(this::class) {
+            info(this::class) {
                 """
                 An error occurred while executing a rest action
                 Provided JSON = ${json ?: "no json provided"}
