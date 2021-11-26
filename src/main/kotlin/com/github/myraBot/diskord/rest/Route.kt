@@ -27,7 +27,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
     suspend fun execute(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R? {
         val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
         val response = request.readText()
-        trace(this::class) { "Rest response = $request" }
+        trace(this::class) { "Rest response = $response" }
 
         if (request.status != HttpStatusCode.OK) return null
         if (serializer == Unit.serializer()) return Unit as R
