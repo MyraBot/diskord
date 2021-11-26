@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
+import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.caching.ChannelCache
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.Channel
@@ -12,7 +13,9 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.slashComma
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
+import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.gateway.listeners.Event
+import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import com.github.myraBot.diskord.utilities.JSON
 import kotlinx.serialization.Serializable
@@ -43,6 +46,13 @@ data class SlashCommandEvent(
                 Long::class -> option.value.jsonPrimitive.long as T
                 else -> throw Exception("Couldn't parse ${option.type} to a class")
             }
+        }
+    }
+
+    suspend fun getInteractionResponse(): Message? {
+        return Endpoints.getOriginalInteractionResponse.execute {
+            arg("application.id", Diskord.id)
+            arg("interaction.token", interaction.token)
         }
     }
 
