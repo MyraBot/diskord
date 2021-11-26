@@ -44,22 +44,23 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @return Returns a response as [R]. If the response is null, throws an exception.
      */
     suspend fun executeNonNull(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R {
-        val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
-        val response = request.readText()
-        trace(this::class) { "Rest response = $response" }
+        val response = requestRouter(json, RouteArguments().apply(argBuilder), files)
+        val resText = response.readText()
+        trace(this::class) { "Rest response = $resText" }
 
-        if (request.status != HttpStatusCode.OK) {
+        if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NoContent) {
             info(this::class) {
                 """
-                An error occurred while executing a rest action
+                An error occurred while executing a rest action "$path"
                 Provided JSON = ${json ?: "no json provided"}
-                Discord response = $response
+                Response = $response
+                Discord response = $resText
             """.trimIndent()
             }
             throw Exception()
         }
         if (serializer == Unit.serializer()) return Unit as R
-        return JSON.decodeFromString(serializer, response)
+        return JSON.decodeFromString(serializer, resText)
     }
 
     /**
