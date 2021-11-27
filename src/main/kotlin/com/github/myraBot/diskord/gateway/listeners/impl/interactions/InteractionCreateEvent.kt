@@ -10,13 +10,21 @@ class InteractionCreateEvent(
 ) : Event() {
 
     override suspend fun call() {
+        println("DISPATCHED INTERACTION CREATE EVENT")
         when (data.type) {
-            InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).also { it.call() }
+            InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).call().also { println("DISAPTCHED A SLASH COMMAND EVENT") }
             InteractionType.MESSAGE_COMPONENT -> {
-                when (data.interactionData?.componentType) {
-                    ComponentType.BUTTON -> ButtonClickEvent(data).call()
+                println("INTERACTION IS A MESSAGE COMPONENT")
+                println(data.interactionComponentData?.componentType)
+                when (data.interactionComponentData?.componentType) {
+                    ComponentType.BUTTON -> println("EXECUTING A BUTTON EVENT!").also { ButtonClickEvent(data).call() }
+                    ComponentType.ACTION_ROW -> TODO()
+                    ComponentType.SELECT_MENU -> TODO()
+                    null -> TODO()
                 }
             }
+            InteractionType.PING -> TODO()
+            InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> TODO()
         }
 
         super.call()

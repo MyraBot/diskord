@@ -19,6 +19,6 @@ data class ButtonClickEvent(
         get() = message.components
             .asSequence()
             .flatMap { it.components }
-            .first { it.id == interaction.interactionData?.customId }
+            .first { it.id == interaction.interactionComponentData?.customId }
             .let { return it.asButton() }
 }

@@ -26,5 +26,5 @@ data class Interaction(
         val version: Int,
         val message: Message? = null
 ) {
-    val interactionData: InteractionData? get() = interactionDataJson?.let { JSON.decodeFromJsonElement(it) }
+    val interactionComponentData: InteractionComponentData? get() = interactionDataJson?.let { JSON.decodeFromJsonElement(it) }
 }
