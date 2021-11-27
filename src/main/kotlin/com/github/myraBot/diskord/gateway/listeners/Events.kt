@@ -1,8 +1,6 @@
 package com.github.myraBot.diskord.gateway.listeners
 
 import com.github.m5rian.discord.OptCode
-import com.github.m5rian.discord.info
-import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
@@ -18,6 +16,8 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUp
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.utilities.logging.error
+import com.github.myraBot.diskord.utilities.logging.info
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
 import kotlin.reflect.KClass
@@ -46,8 +46,9 @@ object Events {
                 "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
                 else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
             }.call()
-        }catch (e: Exception) {
-            info(this::class) { "An error occured on the following event: ${income.t}\n${income.d}}" }
+        } catch (e: Exception) {
+            error(this::class) { "An error occurred on the following event: ${income.t}:" }
+            error(this::class) { "Incoming message = ${income.d}" }
             e.printStackTrace()
         }
     }

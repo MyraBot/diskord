@@ -1,11 +1,12 @@
 package com.github.myraBot.diskord.rest
 
-import com.github.m5rian.discord.info
-import com.github.m5rian.discord.trace
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.utilities.FileFormats
 import com.github.myraBot.diskord.utilities.JSON
 import com.github.myraBot.diskord.utilities.REST_CLIENT
+import com.github.myraBot.diskord.utilities.logging.error
+import com.github.myraBot.diskord.utilities.logging.info
+import com.github.myraBot.diskord.utilities.logging.trace
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -49,14 +50,8 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
         trace(this::class) { "Rest response = $resText" }
 
         if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NoContent) {
-            info(this::class) {
-                """
-                An error occurred while executing a rest action "$path"
-                Provided JSON = ${json ?: "no json provided"}
-                Response = $response
-                Discord response = $resText
-            """.trimIndent()
-            }
+            error(this::class) { "An error occurred while executing a rest action \"$path\":" }
+            error(this::class) { "Response: $resText" }
             throw Exception()
         }
         if (serializer == Unit.serializer()) return Unit as R

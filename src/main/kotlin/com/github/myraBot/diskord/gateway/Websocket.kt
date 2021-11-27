@@ -4,8 +4,10 @@ import com.github.m5rian.discord.*
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.utilities.GATEWAY_CLIENT
-import com.github.myraBot.diskord.utilities.REST_CLIENT
 import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.utilities.logging.debug
+import com.github.myraBot.diskord.utilities.logging.info
+import com.github.myraBot.diskord.utilities.logging.trace
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
@@ -120,7 +122,7 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        trace(this::class) { "Connecting with intents of ${Diskord.intents} (${GatewayIntent.getID(Diskord.intents)})" }
+        info(this::class) { "Connecting with intents of ${Diskord.intents} (${GatewayIntent.getID(Diskord.intents)})" }
         val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(Diskord.intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
