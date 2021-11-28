@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.rest.behaviors
 
 import com.github.myraBot.diskord.Diskord
+import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackData
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackType
@@ -23,20 +24,20 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(message: MessageBuilder) {
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: MessageBuilder) {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             InteractionCallbackData.fromMessageBuilder(message)
         )
         val json = JSON.encodeToString(responseData)
 
-        Endpoints.acknowledgeInteraction.execute(json) {
+        Endpoints.acknowledgeInteraction.execute(json, files.toList()) {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }
     }
 
-    suspend fun acknowledge(message: suspend MessageBuilder.() -> Unit) = acknowledge(MessageBuilder().apply { message.invoke(this) })
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit) = acknowledge(files = files, message = MessageBuilder().apply { message.invoke(this) })
 
     suspend fun getInteractionResponse(): Message? {
         return Endpoints.getOriginalInteractionResponse.execute {
