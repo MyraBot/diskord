@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.asComponent
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,6 +18,7 @@ data class MessageBuilder(
 ) {
     suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
     fun addEmbed(embed: Embed) = embeds.add(embed)
+
 
     /**
      * Adds a button as a message component. If an action row already exists,
@@ -35,4 +37,21 @@ data class MessageBuilder(
     }
 
     fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
+
+
+    fun addSelectMenu(selectMenu: SelectMenuBuilder.() -> Unit) {
+        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
+        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+
+        this.actionRows.last().components.add(SelectMenuBuilder().apply(selectMenu).asSelectMenu().asComponent())
+    }
+
+    fun addSelectMenu(selectMenu: SelectMenu) {
+        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
+        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+
+        this.actionRows.last().components.add(selectMenu.asComponent())
+    }
+
+    fun addSelectMenus(vararg selectMenus: SelectMenu) = selectMenus.forEach { addSelectMenu(it) }
 }

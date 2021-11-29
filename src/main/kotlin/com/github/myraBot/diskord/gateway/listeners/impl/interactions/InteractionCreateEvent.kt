@@ -14,9 +14,9 @@ class InteractionCreateEvent(
             InteractionType.APPLICATION_COMMAND -> SlashCommandEvent(data).call()
             InteractionType.MESSAGE_COMPONENT -> {
                 when (data.interactionComponentData?.componentType) {
-                    ComponentType.BUTTON -> ButtonClickEvent(data).call()
                     ComponentType.ACTION_ROW -> TODO()
-                    ComponentType.SELECT_MENU -> TODO()
+                    ComponentType.BUTTON -> ButtonClickEvent(data).call()
+                    ComponentType.SELECT_MENU -> SelectMenuEvent(data).call()
                     null -> TODO()
                 }
             }

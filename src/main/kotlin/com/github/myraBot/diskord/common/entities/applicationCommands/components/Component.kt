@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
 import com.github.myraBot.diskord.rest.builders.ComponentType
 import kotlinx.serialization.SerialName
@@ -49,6 +50,19 @@ data class Component(
             disabled = disabled
         )
     }
+
+    fun asSelectMenu(): SelectMenu {
+        return SelectMenu(
+            type = type,
+            id = id!!,
+            options = options!!,
+            placeholder = placeholder,
+            minValues = minValues!!,
+            maxValues = maxValues!!,
+            disabled = disabled
+        )
+    }
+
 }
 
 fun ActionRowData.asComponent(): Component {
@@ -66,5 +80,17 @@ fun Button.asComponent(): Component {
         label = this.label,
         emoji = this.emoji,
         url = this.url
+    )
+}
+
+fun SelectMenu.asComponent(): Component {
+    return Component(
+        type = this.type,
+        id = this.id,
+        options = this.options,
+        placeholder = this.placeholder,
+        maxValues = this.maxValues,
+        minValues = this.minValues,
+        disabled = this.disabled
     )
 }
