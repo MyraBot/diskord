@@ -4,12 +4,14 @@ import com.github.m5rian.discord.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.gateway.listeners.Events
+import com.github.myraBot.diskord.rest.builders.ArgumentBuilder
 
 object DiskordBuilder {
     var token: String = ""
     private val listeners: MutableList<EventListener> = mutableListOf()
     var listenerPackage: String = ""
     private val intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
+    var textTransform: suspend (String, ArgumentBuilder) -> String = { string, _ -> string }
 
     fun addListeners(vararg listeners: EventListener) {
         this.listeners.addAll(listeners)

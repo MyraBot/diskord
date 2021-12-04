@@ -27,7 +27,7 @@ interface InteractionCreateBehavior {
     suspend fun acknowledge(vararg files: File = emptyArray(), message: MessageBuilder) {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            InteractionCallbackData.fromMessageBuilder(message)
+            InteractionCallbackData.fromMessageBuilder(message.transform())
         )
         val json = JSON.encodeToString(responseData)
 
