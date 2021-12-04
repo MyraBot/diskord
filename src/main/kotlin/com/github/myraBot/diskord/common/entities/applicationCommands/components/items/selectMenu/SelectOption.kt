@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SelectOption(
-        val label: String,
-        val value: String,
-        val description: String? = null,
-        val emoji: Emoji? = null,
-        val default: Boolean? = null
+        var label: String,
+        var value: String,
+        var description: String? = null,
+        var emoji: Emoji? = null,
+        var default: Boolean? = null
 )
