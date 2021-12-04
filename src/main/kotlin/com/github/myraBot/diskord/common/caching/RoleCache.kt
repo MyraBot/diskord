@@ -7,9 +7,13 @@ import kotlinx.coroutines.runBlocking
 object RoleCache : DoubleKeyCache<String, String, Role>() {
 
     override fun retrieve(firstKey: String, secondKey: String): Role? {
-        return runBlocking {
-            Endpoints.getRoles.execute { arg("guild.id", firstKey) }
-        }?.first { it.id == secondKey }
+        return map.getOrElse(Key(firstKey, secondKey)) {
+            runBlocking {
+                val roles = Endpoints.getRoles.execute { arg("guild.id", firstKey) }
+                roles?.forEach { map[Key(firstKey, it.id)] = it }
+                map[Key(firstKey, secondKey)]
+            }
+        }
     }
 
     override fun update(firstKey: String, secondKey: String, value: Role) {
