@@ -39,11 +39,14 @@ data class MessageBuilder(
     fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
 
 
-    fun addSelectMenu(selectMenu: SelectMenuBuilder.() -> Unit) {
+    suspend fun addSelectMenu(selectMenu: suspend SelectMenuBuilder.() -> Unit) {
         if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
         else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
 
-        this.actionRows.last().components.add(SelectMenuBuilder().apply(selectMenu).asSelectMenu().asComponent())
+        this.actionRows.last().components.add(SelectMenuBuilder()
+            .apply { selectMenu.invoke(this) }
+            .asSelectMenu()
+            .asComponent())
     }
 
     fun addSelectMenu(selectMenu: SelectMenu) {
