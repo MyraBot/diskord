@@ -73,6 +73,12 @@ data class MessageBuilder(
         embeds.forEach { embed ->
             embed.description?.let { embed.description = func.invoke(it, args) }
         }
+        actionRows.forEach { actionRow ->
+            actionRow.components.forEach { component ->
+                component.label?.let { component.label = func.invoke(it, args) }
+                component.placeholder?.let { component.placeholder = func.invoke(it, args) }
+            }
+        }
 
         return this
     }
