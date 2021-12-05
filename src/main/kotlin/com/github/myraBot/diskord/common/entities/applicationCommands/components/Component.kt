@@ -23,7 +23,7 @@ data class Component(
         var emoji: Emoji? = null,
         var url: String? = null,
         val options: List<SelectOption>? = null,
-        val placeholder: String? = null,
+        var placeholder: String? = null,
         @SerialName("min_values") val minValues: Int? = null,
         @SerialName("max_values") val maxValues: Int? = null,
         val components: MutableList<Component> = mutableListOf()
