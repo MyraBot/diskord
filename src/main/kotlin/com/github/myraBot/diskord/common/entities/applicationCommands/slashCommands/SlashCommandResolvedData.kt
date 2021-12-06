@@ -32,7 +32,7 @@ data class Resolved(
     val messages: HashMap<String, Message> = data.messages
 
     fun getUser(id: String): User? = data.users[id]
-    fun getMember(id: String): Member? = data.members[id]?.let { Member.withUserInMember(it, guildId) }
+    fun getMember(id: String): Member? = data.members[id]?.let { Member.withUser(it, guildId, getUser(id)!!) }
     fun getRole(id: String): Role? = data.roles[id]
     fun getChannel(id: String): Channel? = data.channels[id]
     fun getMessage(id: String): Message? = data.messages[id]
