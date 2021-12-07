@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.common.entities
 
 import com.github.myraBot.diskord.utilities.ColourSerializer
+import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.awt.Color
@@ -17,4 +18,6 @@ data class Role(
         @Serializable(with = Permission.Serializer::class) val permissions: List<Permission>,
         @SerialName("managed") val fromAnIntegration: Boolean,
         val mentionable: Boolean
-)
+) {
+    val mention: String get() = Mention.role(this.id)
+}
