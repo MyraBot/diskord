@@ -34,7 +34,7 @@ data class Channel(
         internal object Serializer : KSerializer<Type> {
             override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelType", PrimitiveKind.INT)
             override fun serialize(encoder: Encoder, value: Type) = encoder.encodeInt(value.id)
-            override fun deserialize(decoder: Decoder): Type = values().first { it.id == decoder.decodeInt() }
+            override fun deserialize(decoder: Decoder): Type = decoder.decodeInt().let { type -> values().first { it.id == type } }
         }
     }
 }
