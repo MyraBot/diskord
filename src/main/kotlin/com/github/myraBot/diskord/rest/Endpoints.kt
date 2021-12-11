@@ -17,6 +17,7 @@ object Endpoints {
 
     val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
     val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", Channel.serializer())
+    val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(Channel.serializer()))
     val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer())
     val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer())
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
