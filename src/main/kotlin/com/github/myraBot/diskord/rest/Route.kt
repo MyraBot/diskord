@@ -69,7 +69,7 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      */
     private suspend fun requestRouter(json: String? = null, args: RouteArguments, files: List<File> = emptyList()): HttpResponse {
         var route = Endpoints.baseUrl + path
-        args.entries.forEach { route = route.replace("{${it.first}}", it.second.toString()) }
+        args.entries.forEach { route = route.replace("{${it.first}}", it.second) }
 
         return if (files.isEmpty()) request(route, json) // Request doesn't contain files
         else dataRequest(route, json!!, files) // Request needs to send files

@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.rest
 
 class RouteArguments {
-    val entries = mutableListOf<Pair<String, Any>>()
-    fun arg(key: String, value: String) = entries.add(Pair(key, value))
+    val entries = mutableListOf<Pair<String, String>>()
+    fun arg(key: String, value: Any) = entries.add(Pair(key, value.toString()))
 }
