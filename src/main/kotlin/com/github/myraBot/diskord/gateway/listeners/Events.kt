@@ -3,13 +3,12 @@ package com.github.myraBot.diskord.gateway.listeners
 import com.github.m5rian.discord.OptCode
 import com.github.myraBot.diskord.Diskord
 import com.github.myraBot.diskord.common.caching.GuildCache
+import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
-import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildCreateEvent
-import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildDeleteEvent
-import com.github.myraBot.diskord.gateway.listeners.impl.guild.MemberUpdateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.*
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDeleteEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUpdateEvent
@@ -18,7 +17,10 @@ import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEv
 import com.github.myraBot.diskord.utilities.JSON
 import com.github.myraBot.diskord.utilities.logging.error
 import com.github.myraBot.diskord.utilities.logging.info
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.reflections.Reflections
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredFunctions
@@ -30,7 +32,7 @@ object Events {
 
     suspend fun resolve(income: OptCode) {
         try {
-            val data = income.d!!
+            val data: JsonElement = income.d!!
             when (income.t) {
                 "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
                     Websocket.session = it.sessionId
@@ -41,6 +43,12 @@ object Events {
                 "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_MEMBER_ADD" -> MemberJoinEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_MEMBER_REMOVE" -> run {
+                    val user: User = JSON.decodeFromJsonElement(data.jsonObject["user"]!!)
+                    val guildId: String = data.jsonObject["guild_id"]!!.jsonPrimitive.content
+                    MemberRemoveEvent(user, guildId)
+                }
                 "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(data))
                 "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(data))
                 "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
