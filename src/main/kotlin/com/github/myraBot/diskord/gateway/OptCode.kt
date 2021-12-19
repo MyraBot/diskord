@@ -43,3 +43,14 @@ data class Properties(
         @SerialName("\$browser") val browser: String = "chrome",
         @SerialName("\$device") val device: String = "chrome"
 )
+
+/**
+ * [Documentation](https://discord.com/developers/docs/topics/gateway#resume-resume-structure)
+ * Gets send when the websocket connection needs to be resumed.
+ */
+@Serializable
+data class GatewayResume(
+        val token: String,
+        @SerialName("session_id") val sessionId: String,
+        val seq: Int
+)
