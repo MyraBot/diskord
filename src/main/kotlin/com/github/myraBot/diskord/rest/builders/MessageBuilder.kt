@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
+import com.github.myraBot.diskord.common.entities.message.embed.Footer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -76,6 +77,7 @@ data class MessageBuilder(
                 it.name = func.invoke(it.name, args)
                 it.value = func.invoke(it.value, args)
             }
+            embed.footer?.let { embed.footer = Footer(func.invoke(it.text, args), it.icon) }
         }
         actionRows.forEach { actionRow ->
             actionRow.components.forEach { component ->
