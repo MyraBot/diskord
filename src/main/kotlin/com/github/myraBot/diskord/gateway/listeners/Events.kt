@@ -12,6 +12,7 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.*
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDeleteEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUpdateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.utilities.JSON
@@ -52,6 +53,7 @@ object Events {
                 "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(data))
                 "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(data))
                 "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(data))
+                "VOICE_STATE_UPDATE" -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(data))
                 else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
             }.call()
         } catch (e: Exception) {
