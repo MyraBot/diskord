@@ -9,7 +9,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    compileOnly(project(":common"))
+    compileOnly(project(":rest"))
 }
 
 tasks.withType<KotlinCompile> {

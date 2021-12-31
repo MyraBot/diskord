@@ -9,7 +9,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    compileOnly(project(":rest"))
+    compileOnly(project(":gateway"))
 }
 
 tasks.withType<KotlinCompile> {
