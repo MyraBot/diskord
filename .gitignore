@@ -1,4 +1,4 @@
 .gradle
 .idea
 build
-src/test
+rest/src/test
