@@ -1,6 +1,5 @@
 package com.github.myraBot.diskord.common
 
-import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.flow
 
 object Diskord {
     lateinit var token: String
-    lateinit var intents: MutableSet<GatewayIntent>
     val listeners: MutableList<EventListener> = mutableListOf()
     lateinit var id: String
 

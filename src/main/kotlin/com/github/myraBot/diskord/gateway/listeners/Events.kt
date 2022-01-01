@@ -1,10 +1,11 @@
 package com.github.myraBot.diskord.gateway.listeners
 
-import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
+import com.github.myraBot.diskord.gateway.Cache
+import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
@@ -16,8 +17,8 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateU
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import com.github.myraBot.diskord.utilities.JSON
-import com.github.myraBot.diskord.utilities.logging.info
 import com.github.myraBot.diskord.utilities.logging.error
+import com.github.myraBot.diskord.utilities.logging.info
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -63,24 +64,22 @@ object Events {
         }
     }
 
-    fun register(packageName: String, listeners: MutableList<EventListener>) {
+    fun register(cache: MutableSet<Cache>, listeners: MutableList<EventListener>, packageName: String) {
         info(this::class) { "Registering discord event listeners" }
 
-        // Load custom registered listeners
-        listeners.forEach { listener -> loadListener(listener) }.also {
+        cache.forEach { loadListener(it.cache) } // Load cache listeners
+        listeners.forEach { loadListener(it) } // Load custom registered listeners
+        if (packageName.isNotBlank()) findListeners(packageName) // Load listeners by reflection
 
-            // Load listeners by reflection
-            if (packageName.isNotBlank()) {
-                Reflections(packageName).getSubTypesOf(EventListener::class.java)
-                    .map { it.kotlin.objectInstance }
-                    .forEach { listener ->
-                        if (listener == null) throw IllegalStateException("Make sure all listeners are objects!")
-                        loadListener(listener)
-                    }
+    }
+
+    private fun findListeners(packageName: String) {
+        Reflections(packageName).getSubTypesOf(EventListener::class.java)
+            .map { it.kotlin.objectInstance }
+            .forEach { listener ->
+                if (listener == null) throw IllegalStateException("Make sure all listeners are objects!")
+                loadListener(listener)
             }
-
-        }
-
     }
 
     private fun loadListener(listener: EventListener) {
@@ -96,5 +95,6 @@ object Events {
                 Diskord.listeners.add(listener) // Add listener with functions to the registered listeners
             }
     }
+
 
 }

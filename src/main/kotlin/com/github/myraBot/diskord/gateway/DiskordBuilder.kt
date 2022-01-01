@@ -7,17 +7,23 @@ import com.github.myraBot.diskord.rest.builders.ArgumentBuilder
 
 object DiskordBuilder {
     var token: String = ""
-    private val listeners: MutableList<EventListener> = mutableListOf()
     var listenerPackage: String = ""
+    private val listeners: MutableList<EventListener> = mutableListOf()
     private var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
+    val cache: MutableSet<Cache> = mutableSetOf()
     var textTransform: suspend (String, ArgumentBuilder) -> String = { string, _ -> string }
 
     fun addListeners(vararg listeners: EventListener) {
-        DiskordBuilder.listeners.addAll(listeners)
+        this.listeners.addAll(listeners)
     }
 
     fun intents(vararg intents: GatewayIntent) {
-        DiskordBuilder.intents.addAll(intents)
+        this.intents.addAll(intents)
+    }
+
+    fun cache(vararg cache: Cache) {
+        this.cache.addAll(cache)
+        this.intents.addAll(this.cache.flatMap { it.intents })
     }
 
     /**
@@ -26,15 +32,10 @@ object DiskordBuilder {
      *
      * @return Returns the [Diskord] object. Just for laziness.
      */
-    suspend fun start(): Diskord {
-        Events.register(listenerPackage, listeners)
-
-        return Diskord.apply {
-            this.token = DiskordBuilder.token
-            this.intents = DiskordBuilder.intents
-
-            Websocket.connect() // Connect to actual websocket
-        }
+    suspend fun start() {
+        Events.register(cache, listeners, listenerPackage)
+        Diskord.apply { this.token = this@DiskordBuilder.token }
+        Websocket.apply { this.intents = this@DiskordBuilder.intents }.connect() // Connect to actual websocket
     }
 
 }

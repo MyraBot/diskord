@@ -25,9 +25,10 @@ import java.util.concurrent.TimeUnit
  * The Gateway websocket to listen to discord events.
  */
 object Websocket {
-    private const val url = "wss://gateway.discord.gg/?v=9&encoding=json"
-    lateinit var session: String
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
+    private const val url = "wss://gateway.discord.gg/?v=9&encoding=json"
+    var intents: MutableSet<GatewayIntent> = mutableSetOf()
+    lateinit var session: String
     private var s: Int = 0
 
     /**
@@ -124,8 +125,8 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        info(this::class) { "Connecting with intents of ${Diskord.intents} (${GatewayIntent.getID(Diskord.intents)})" }
-        val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(Diskord.intents), Properties())
+        info(this::class) { "Connecting with intents of $intents (${GatewayIntent.getID(intents)})" }
+        val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
     }
