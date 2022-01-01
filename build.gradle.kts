@@ -5,41 +5,33 @@ val kotlinx_version: String by project
 val logging_version: String by project
 
 plugins {
-    base
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.serialization") version "1.5.30"
     `maven-publish`
 }
 
 val id = "Diskord"
+group = "com.github.myraBot"
+version = "0.78"
 
-allprojects {
-    group = "com.github.myraBot"
-    version = "1.0"
+repositories { mavenCentral() }
 
-    repositories { mavenCentral() }
-}
+dependencies {
+    implementation("io.ktor:ktor-websockets:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Serializer
 
-subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
+    // Reflections
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    compileOnly("org.reflections:reflections:0.9.11")
 
-    dependencies {
-        implementation("io.ktor:ktor-websockets:$ktor_version")
-        implementation("io.ktor:ktor-server-netty:$ktor_version")
-        implementation("io.ktor:ktor-client-core:$ktor_version")
-        implementation("io.ktor:ktor-client-cio:$ktor_version")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Serializer
+    compileOnly("ch.qos.logback:logback-classic:$logging_version")
 
-        // Reflections
-        compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-        compileOnly("org.reflections:reflections:0.9.11")
-
-        compileOnly("ch.qos.logback:logback-classic:$logging_version")
-
-        testImplementation("ch.qos.logback:logback-classic:$logging_version")
-        testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-        testImplementation("org.reflections:reflections:0.9.11")
-    }
+    testImplementation("ch.qos.logback:logback-classic:$logging_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    testImplementation("org.reflections:reflections:0.9.11")
 }
 
 // Publishing
