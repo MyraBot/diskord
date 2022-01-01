@@ -19,5 +19,5 @@ data class Guild(
         @SerialName("owner_id") val ownerId: String,
         val roles: List<Role>,
         val emojis: List<Emoji>,
-        @SerialName("voice_states") val voiceStates: List<VoiceState>
+        @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList()
 ) : GuildBehavior
