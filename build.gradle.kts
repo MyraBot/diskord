@@ -12,7 +12,7 @@ plugins {
 
 val id = "Diskord"
 group = "com.github.myraBot"
-version = "0.78"
+version = "0.79"
 
 repositories { mavenCentral() }
 
@@ -21,17 +21,17 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Serializer
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2") // Serializer
 
     // Reflections
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-    compileOnly("org.reflections:reflections:0.9.11")
+    compileOnly("org.reflections:reflections:0.10.2")
 
     compileOnly("ch.qos.logback:logback-classic:$logging_version")
 
     testImplementation("ch.qos.logback:logback-classic:$logging_version")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-    testImplementation("org.reflections:reflections:0.9.11")
+    testImplementation("org.reflections:reflections:0.10.2")
 }
 
 // Publishing
