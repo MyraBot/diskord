@@ -8,6 +8,7 @@ enum class Cache(val cache: EventListener, val intents: MutableSet<GatewayIntent
     GUILD(GuildCache),
     MEMBER(MemberCache, mutableSetOf(GatewayIntent.GUILD_MEMBERS)),
     CHANNEL(ChannelCache),
-    ROLE(RoleCache)
+    ROLE(RoleCache),
+    VOICE_STATE(VoiceStateCache, mutableSetOf(GatewayIntent.GUILD_VOICE_STATES))
 
 }
