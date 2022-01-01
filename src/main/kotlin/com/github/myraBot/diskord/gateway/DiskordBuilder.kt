@@ -30,8 +30,8 @@ object DiskordBuilder {
         Events.register(listenerPackage, listeners)
 
         return Diskord.apply {
-            DiskordBuilder.token = DiskordBuilder.token
-            DiskordBuilder.intents = DiskordBuilder.intents
+            this.token = DiskordBuilder.token
+            this.intents = DiskordBuilder.intents
 
             Websocket.connect() // Connect to actual websocket
         }
