@@ -17,17 +17,20 @@ object VoiceStateCache : Cache<String, MutableList<VoiceState>>() {
     }
 
     private fun updateVoiceState(voiceState: VoiceState) {
+        // Add voice state
         voiceState.channelId?.let {
-            println("Adding ${voiceState.userId}")
             this.map.getOrPut(it) { mutableListOf(voiceState) }.add(voiceState)
-        } ?: this.map.forEach { entry ->
-            println("Removing ${voiceState.userId}")
-            this.map[entry.key] = entry.value.filter { it.userId != voiceState.userId }.toMutableList()
+        } ?:
+        // Remove voice state
+        this.map.forEach { entry ->
+            this.map[entry.key] = entry.value.filter { it.userId != voiceState.userId }.toMutableList().also {
+                if (it.isEmpty()) this.map.remove(entry.key) // If nobody is connected to the channel, remove channel from cache entirely
+            }
         }
     }
 
     @ListenTo(GuildCreateEvent::class)
-    fun onGuildCreate(event: GuildCreateEvent) = update(event.guild.voiceStates.toMutableList()).also { println("yes") }
+    fun onGuildCreate(event: GuildCreateEvent) = update(event.guild.voiceStates.toMutableList())
 
     @ListenTo(VoiceStateUpdateEvent::class)
     fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = update(mutableListOf(event.voiceState))
