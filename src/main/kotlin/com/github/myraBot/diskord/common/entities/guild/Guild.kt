@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Role
+import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.behaviors.GuildBehavior
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,5 +18,6 @@ data class Guild(
         val splash: String?,
         @SerialName("owner_id") val ownerId: String,
         val roles: List<Role>,
-        val emojis: List<Emoji>
+        val emojis: List<Emoji>,
+        @SerialName("voice_states") val voiceStates: List<VoiceState>
 ) : GuildBehavior

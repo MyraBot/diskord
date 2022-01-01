@@ -18,7 +18,7 @@ import java.time.Instant
  * @property voiceState Information about the current voice state of the member.
  */
 data class VoiceStateUpdateEvent(
-        @SerialName("voice_state") private val voiceState: VoiceState
+        @SerialName("voice_state") val voiceState: VoiceState
 ) : Event() {
     val member: Member? get() = voiceState.member?.let { Member.withUserInMember(it, voiceState.guildId!!) }
     val guild: Guild? get() = voiceState.guildId?.let { Diskord.getGuild(it) }
