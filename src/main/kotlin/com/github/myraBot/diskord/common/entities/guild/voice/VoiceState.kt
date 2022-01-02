@@ -44,4 +44,7 @@ data class VoiceState(
 ) {
     @Transient
     val member: Member? = memberData?.let { Member.withUserInMember(it, guildId!!) }
+
+    @Transient
+    val channel: VoiceChannel? = channelId?.let { Diskord.getChannel<VoiceChannel>(it) }
 }
