@@ -1,9 +1,14 @@
 package com.github.myraBot.diskord.common.entities.guild.voice
 
+import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
+import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
+import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.time.Instant
 
 /**
@@ -27,7 +32,7 @@ data class VoiceState(
         @SerialName("guild_id") val guildId: String? = null,
         @SerialName("channel_id") val channelId: String? = null,
         @SerialName("user_id") val userId: String,
-        val member: MemberData? = null,
+        @SerialName("member") private val memberData: MemberData? = null,
         @SerialName("session_id") val sessionId: String,
         val deaf: Boolean,
         val mute: Boolean,
@@ -36,4 +41,7 @@ data class VoiceState(
         @SerialName("self_stream") val selfStream: Boolean? = null,
         @SerialName("self_video") val selfVideo: Boolean,
         @Serializable(with = InstantSerializer::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null
-)
+) {
+    @Transient
+    val member: Member? = memberData?.let { Member.withUserInMember(it, guildId!!) }
+}

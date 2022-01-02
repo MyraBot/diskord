@@ -20,7 +20,7 @@ import java.time.Instant
 data class VoiceStateUpdateEvent(
         @SerialName("voice_state") val voiceState: VoiceState
 ) : Event() {
-    val member: Member? get() = voiceState.member?.let { Member.withUserInMember(it, voiceState.guildId!!) }
+    val member: Member? get() = voiceState.member
     val guild: Guild? get() = voiceState.guildId?.let { Diskord.getGuild(it) }
     val channel: VoiceChannel? get() = voiceState.channelId?.let { guild?.getChannel<VoiceChannel>(it) }
 
