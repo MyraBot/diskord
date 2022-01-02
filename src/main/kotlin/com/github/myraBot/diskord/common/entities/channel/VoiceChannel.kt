@@ -10,5 +10,6 @@ data class VoiceChannel(
         val members: List<VoiceState>
 ) {
     val id: String = data.id
+    val name: String = data.name
     val guild: Guild? get() = data.guildId?.let { GuildCache[it] }
 }
