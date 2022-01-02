@@ -5,11 +5,12 @@ import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
 
-object Diskord {
+object Diskord : GetTextChannelBehavior {
     lateinit var token: String
     val listeners: MutableList<EventListener> = mutableListOf()
     lateinit var id: String
