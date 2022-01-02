@@ -1,35 +1,35 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.guild.voice
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
+import com.github.myraBot.diskord.common.caching.VoiceStateCache
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.listeners.Event
-import com.github.myraBot.diskord.rest.behaviors.getChannel
 import kotlinx.serialization.SerialName
-import java.time.Instant
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#voice-state-update)
  *
  * Sent when someone joins/leaves/moves voice channels.
  *
- * @property voiceState Information about the current voice state of the member.
+ * @property newVoiceState Information about the current voice state of the member.
  */
 data class VoiceStateUpdateEvent(
-        @SerialName("voice_state") val voiceState: VoiceState
+        @SerialName("voice_state") val newVoiceState: VoiceState
 ) : Event() {
-    val member: Member? get() = voiceState.member
-    val guild: Guild? get() = voiceState.guildId?.let { Diskord.getGuild(it) }
-    val channel: VoiceChannel? get() = voiceState.channelId?.let { guild?.getChannel<VoiceChannel>(it) }
 
-    val deaf: Boolean = voiceState.deaf
-    val mute: Boolean = voiceState.mute
-    val selfDeaf: Boolean = voiceState.selfDeaf
-    val selfMute: Boolean = voiceState.selfMute
-    val selfStream: Boolean? = voiceState.selfStream
-    val selfVideo: Boolean = voiceState.selfVideo
+    override suspend fun call() {
+        if (oldVoiceState == null && newVoiceState.channel != null) VoiceLeaveEvent(newVoiceState).call()
+        else if (oldVoiceState?.channel != null && newVoiceState.channelId == null) VoiceJoinEvent(newVoiceState).call()
+        else if (oldVoiceState?.channelId != null && newVoiceState.channelId != null) VoiceMoveEvent(oldVoiceState, newVoiceState).call()
 
-    val requestToSpeak: Instant? = voiceState.requestToSpeak
+        if (oldVoiceState?.isDeaf == false && newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).call()
+        if (oldVoiceState?.isDeaf == true && !newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).call()
+    }
+
+    val member: Member? get() = newVoiceState.member
+    val guild: Guild? get() = newVoiceState.guildId?.let { Diskord.getGuild(it) }
+    val oldVoiceState: VoiceState? = VoiceStateCache.map.values.flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
+
 }

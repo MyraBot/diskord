@@ -33,6 +33,6 @@ object VoiceStateCache : Cache<String, MutableList<VoiceState>>() {
     fun onGuildCreate(event: GuildCreateEvent) = update(event.guild.voiceStates.toMutableList())
 
     @ListenTo(VoiceStateUpdateEvent::class)
-    fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = update(mutableListOf(event.voiceState))
+    fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = update(mutableListOf(event.newVoiceState))
 
 }
