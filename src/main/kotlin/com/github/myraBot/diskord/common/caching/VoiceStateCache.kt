@@ -16,6 +16,10 @@ object VoiceStateCache : Cache<String, MutableList<VoiceState>>() {
         value.forEach { updateVoiceState(it) }
     }
 
+    fun getMember(guildId: String, userId: String): VoiceState? = this.map
+        .flatMap { it.value }
+        .firstOrNull { it.guildId == guildId && it.userId == userId }
+
     private fun updateVoiceState(voiceState: VoiceState) {
         // Add voice state
         voiceState.channelId?.let { channelId ->
@@ -40,7 +44,7 @@ object VoiceStateCache : Cache<String, MutableList<VoiceState>>() {
     }
 
     @ListenTo(GuildCreateEvent::class)
-    fun onGuildCreate(event: GuildCreateEvent) =update(event.guild.voiceStates.toMutableList())
+    fun onGuildCreate(event: GuildCreateEvent) = update(event.guild.voiceStates.toMutableList())
 
 
     @ListenTo(VoiceStateUpdateEvent::class)
