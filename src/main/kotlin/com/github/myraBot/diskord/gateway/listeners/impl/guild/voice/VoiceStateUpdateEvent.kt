@@ -20,8 +20,8 @@ data class VoiceStateUpdateEvent(
 ) : Event() {
 
     override suspend fun call() {
-        if (oldVoiceState == null && newVoiceState.channel != null) VoiceLeaveEvent(newVoiceState).call()
-        else if (oldVoiceState?.channel != null && newVoiceState.channelId == null) VoiceJoinEvent(newVoiceState).call()
+        if (oldVoiceState == null && newVoiceState.channel != null) VoiceJoinEvent(newVoiceState).call()
+        else if (oldVoiceState?.channel != null && newVoiceState.channelId == null) VoiceLeaveEvent(newVoiceState,oldVoiceState).call()
         else if (oldVoiceState != null && oldVoiceState.channelId != newVoiceState.channelId) VoiceMoveEvent(oldVoiceState, newVoiceState).call()
 
         if (oldVoiceState?.isMuted == false && newVoiceState.isMuted) VoiceMuteEvent(newVoiceState).call()
