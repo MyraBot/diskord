@@ -4,7 +4,6 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
-import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
@@ -24,11 +23,6 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.reflections.Reflections
-import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.isSuperclassOf
-import kotlin.reflect.full.valueParameters
 
 object Events {
 
@@ -64,37 +58,32 @@ object Events {
         }
     }
 
-    fun register(cache: MutableSet<Cache>, listeners: MutableList<EventListener>, packageName: String) {
+    /**
+     * Loads all event listeners.
+     *
+     * @param listeners A list to register listeners manuel.
+     * @param packageName A package name to search for listeners.
+     */
+    fun register(listeners: MutableList<EventListener>, packageName: String) {
         info(this::class) { "Registering discord event listeners" }
 
-        cache.forEach { loadListener(it.cache) } // Load cache listeners
-        listeners.forEach { loadListener(it) } // Load custom registered listeners
+        Diskord.cache.forEach { it.cache.loadAsCache() } // Load listeners required for the cache
+        listeners.forEach { it.loadAsListener() } // Load custom registered listeners
         if (packageName.isNotBlank()) findListeners(packageName) // Load listeners by reflection
-
     }
 
+    /**
+     * Finds and loads all listeners in a specific package.
+     *
+     * @param packageName The package name to search for listeners.
+     */
     private fun findListeners(packageName: String) {
         Reflections(packageName).getSubTypesOf(EventListener::class.java)
             .map { it.kotlin.objectInstance }
             .forEach { listener ->
                 if (listener == null) throw IllegalStateException("Make sure all listeners are objects!")
-                loadListener(listener)
+                listener.loadAsListener()
             }
     }
-
-    private fun loadListener(listener: EventListener) {
-        listener::class.declaredFunctions
-            .filter { it.hasAnnotation<ListenTo>() }
-            .filter {
-                // Get the first parameter of the function, if the function has no parameter add it still to the listeners,
-                // to execute also listeners with no parameters.
-                val klass = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter true
-                Event::class.isSuperclassOf(klass as KClass<*>)
-            }.let {
-                listener.functions.addAll(it) // Load all functions in the listener
-                Diskord.listeners.add(listener) // Add listener with functions to the registered listeners
-            }
-    }
-
 
 }

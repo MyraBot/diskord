@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.common
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
+import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.flow
 object Diskord : GetTextChannelBehavior {
     lateinit var token: String
     val listeners: MutableList<EventListener> = mutableListOf()
+    var cache: MutableSet<Cache> = mutableSetOf()
     lateinit var id: String
 
     suspend fun getBotUser(): User = Endpoints.getUser.executeNonNull { arg("user.id", id) }

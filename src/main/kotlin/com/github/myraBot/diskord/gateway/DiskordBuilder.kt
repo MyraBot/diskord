@@ -10,7 +10,7 @@ object DiskordBuilder {
     var listenerPackage: String = ""
     private val listeners: MutableList<EventListener> = mutableListOf()
     private var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
-    val cache: MutableSet<Cache> = mutableSetOf()
+    private val cache: MutableSet<Cache> = mutableSetOf()
     var textTransform: suspend (String, ArgumentBuilder) -> String = { string, _ -> string }
 
     fun addListeners(vararg listeners: EventListener) {
@@ -33,8 +33,11 @@ object DiskordBuilder {
      * @return Returns the [Diskord] object. Just for laziness.
      */
     suspend fun start() {
-        Events.register(cache, listeners, listenerPackage)
-        Diskord.apply { this.token = this@DiskordBuilder.token }
+        Diskord.apply {
+            this.token = this@DiskordBuilder.token
+            this.cache = this@DiskordBuilder.cache
+        }
+        Events.register(listeners, listenerPackage) // Events need to be registered after applying the cache to the Diskord object, so only required listeners get registered
         Websocket.apply { this.intents = this@DiskordBuilder.intents }.connect() // Connect to actual websocket
     }
 
