@@ -18,19 +18,30 @@ object VoiceStateCache : Cache<String, MutableList<VoiceState>>() {
 
     private fun updateVoiceState(voiceState: VoiceState) {
         // Add voice state
-        voiceState.channelId?.let {
-            this.map.getOrPut(it) { mutableListOf(voiceState) }.add(voiceState)
+        voiceState.channelId?.let { channelId ->
+            map.values.forEach { voiceStates ->
+                voiceStates.removeIf { it.userId == voiceState.userId } // Remove old voice states ➜ important if user got moved to a different channel
+            }
+
+            val list = this.map.getOrPut(channelId) { mutableListOf() } // Create new map entry if the current channel doesn't exist in the map yet
+            list.add(voiceState) // Add new voice state
         } ?:
         // Remove voice state
-        this.map.forEach { entry ->
-            this.map[entry.key] = entry.value.filter { it.userId != voiceState.userId }.toMutableList().also {
-                if (it.isEmpty()) this.map.remove(entry.key) // If nobody is connected to the channel, remove channel from cache entirely
+        run {
+            val map = mutableMapOf<String, MutableList<VoiceState>>()
+            this.map.forEach { entry ->
+                map[entry.key] = entry.value.filter { it.userId != voiceState.userId }.toMutableList()
             }
+            this.map.clear()
+            this.map.putAll(map)
         }
+
+        this.map.entries.removeIf { it.value.isEmpty() } // If nobody is connected to the channel, remove channel from cache entirely
     }
 
     @ListenTo(GuildCreateEvent::class)
-    fun onGuildCreate(event: GuildCreateEvent) = update(event.guild.voiceStates.toMutableList())
+    fun onGuildCreate(event: GuildCreateEvent) =update(event.guild.voiceStates.toMutableList())
+
 
     @ListenTo(VoiceStateUpdateEvent::class)
     fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = update(mutableListOf(event.newVoiceState))
