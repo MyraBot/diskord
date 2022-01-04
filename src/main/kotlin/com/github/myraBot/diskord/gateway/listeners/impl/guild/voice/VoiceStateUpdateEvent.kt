@@ -26,6 +26,8 @@ data class VoiceStateUpdateEvent(
 
         if (oldVoiceState?.isDeaf == false && newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).call()
         if (oldVoiceState?.isDeaf == true && !newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).call()
+
+        super.call()
     }
 
     val member: Member? get() = newVoiceState.member
