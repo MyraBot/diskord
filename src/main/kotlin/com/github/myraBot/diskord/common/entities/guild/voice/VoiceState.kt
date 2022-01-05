@@ -47,9 +47,9 @@ data class VoiceState(
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
     @Transient
-    val member: Member? = guildId?.let { _guildId ->
-        memberData?.let { Member.withUserInMember(it, _guildId) }
-            ?: runBlocking { Diskord.getGuild(_guildId)?.getMember(userId) }
+    val member: Member? = guildId?.let { it ->
+        memberData?.let { m -> Member.withUserInMember(m, it) }
+            ?: runBlocking { Diskord.getGuild(it)?.getMember(userId) }
     }
 
     @Transient
