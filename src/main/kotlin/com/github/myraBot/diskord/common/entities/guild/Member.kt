@@ -1,8 +1,10 @@
 package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.caching.GuildCache
+import com.github.myraBot.diskord.common.caching.VoiceStateCache
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
+import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.behaviors.MemberBehavior
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.JSON
@@ -50,6 +52,8 @@ data class Member(
         .reversed()
         .first { it.colour != Color.decode("0") }
         .colour
+
+    val voiceState: VoiceState? get() = VoiceStateCache.getMember(this.guildId, this.id)
 
     companion object {
         fun withUser(member: MemberData, guildId: String, user: User): Member {
