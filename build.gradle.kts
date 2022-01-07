@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktor_version: String by project
 val kotlinx_version: String by project
 val logging_version: String by project
+val kotlinx_serialization_version: String by project
 
 plugins {
     kotlin("jvm") version "1.5.31"
@@ -21,7 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2") // Serializer
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version") // Serializer
 
     // Reflections
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
