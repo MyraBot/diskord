@@ -3,9 +3,9 @@ package com.github.myraBot.diskord.common.entities.message
 import com.github.myraBot.diskord.common.caching.ChannelCache
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.MemberCache
-import com.github.myraBot.diskord.common.entities.Channel
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
@@ -39,7 +39,7 @@ data class Message(
         @SerialName("mention_everyone") val mentionsEveryone: Boolean = false,
         @SerialName("mentions") val mentionedUsers: List<User>,
         @SerialName("mention_roles") val mentionedRoles: List<String>,
-        @SerialName("mention_channels") val mentionedChannels: List<Channel> = emptyList(),
+        @SerialName("mention_channels") val mentionedChannels: List<ChannelData> = emptyList(),
         val attachments: List<Attachment>,
         var embeds: MutableList<Embed>,
         val pinned: Boolean,
@@ -49,8 +49,8 @@ data class Message(
         val components: MutableList<Component> = mutableListOf()
 ) : MessageBehavior {
     override val message: Message = this
-    val link: String get() = JumpUrlEndpoints.get(ChannelCache[channelId]!!.guildId!!, channelId, id)
-    val guild: Guild? get() = guildId?.let { GuildCache[it] } ?: channel.guild
+    val link: String get() = JumpUrlEndpoints.get(guildId!!, channelId, id)
+    val guild: Guild get() = guildId?.let { GuildCache[it] } ?: channel.guild
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(channelId)!!
@@ -69,7 +69,7 @@ val Message.member: Member?
         memberData?.let { m ->
             Member.withUser(m, g, user)
         } ?: MemberCache[g, user.id]
-    } ?: channel.guild?.let { g ->
+    } ?: channel.guild.let { g ->
         memberData?.let { m ->
             Member.withUser(m, g.id, user)
         } ?: MemberCache[g.id, user.id]

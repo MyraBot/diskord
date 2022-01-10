@@ -9,7 +9,6 @@ import com.github.myraBot.diskord.utilities.InstantSerializer
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import java.time.Instant
 
 /**
@@ -30,7 +29,7 @@ import java.time.Instant
  */
 @Serializable
 data class VoiceState(
-        @SerialName("guild_id") val guildId: String? = null,
+        @SerialName("guild_id") internal var guildId: String? = null,
         @SerialName("channel_id") val channelId: String? = null,
         @SerialName("user_id") val userId: String,
         @SerialName("member") private val memberData: MemberData? = null,
@@ -46,12 +45,11 @@ data class VoiceState(
     val isMuted: Boolean = isSelfMute || isGuildMuted
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
-    @Transient
-    val member: Member? = guildId?.let { it ->
-        memberData?.let { m -> Member.withUserInMember(m, it) }
-            ?: runBlocking { Diskord.getGuild(it)?.getMember(userId) }
-    }
+    val member: Member?
+        get() = guildId?.let { it ->
+            memberData?.let { m -> Member.withUserInMember(m, it) }
+                ?: runBlocking { Diskord.getGuild(it)?.getMember(userId) }
+        }
 
-    @Transient
-    val channel: VoiceChannel? = channelId?.let { Diskord.getChannel<VoiceChannel>(it) }
+    val channel: VoiceChannel? get() = channelId?.let { Diskord.getChannel<VoiceChannel>(it) }
 }

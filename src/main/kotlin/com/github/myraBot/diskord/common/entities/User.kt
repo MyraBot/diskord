@@ -1,6 +1,8 @@
 package com.github.myraBot.diskord.common.entities
 
+import com.github.myraBot.diskord.common.entities.channel.DmChannel
 import com.github.myraBot.diskord.rest.CdnEndpoints
+import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,4 +23,5 @@ class User(
     val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", id); arg("user_avatar", avatarHash ?: (discriminator.toInt() % 5).toString()) }
     val asTag: String get() = "$username#$discriminator"
     val mention: String get() = Mention.user(id)
+    suspend fun openDms() = Endpoints.createDm.executeNonNull("{\"recipient_id\": \"$id\"}").let { DmChannel(it) }
 }

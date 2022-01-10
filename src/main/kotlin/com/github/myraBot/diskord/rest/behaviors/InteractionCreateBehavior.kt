@@ -31,9 +31,14 @@ interface InteractionCreateBehavior {
         )
         val json = JSON.encodeToString(responseData)
 
-        Endpoints.acknowledgeInteraction.execute(json, files.toList()) {
-            arg("interaction.id", interaction.id)
-            arg("interaction.token", interaction.token)
+        try {
+            Endpoints.acknowledgeInteraction.execute(json, files.toList()) {
+                arg("interaction.id", interaction.id)
+                arg("interaction.token", interaction.token)
+            }
+        }catch (e: Exception) {
+            println("exception")
+            e.printStackTrace()
         }
     }
 

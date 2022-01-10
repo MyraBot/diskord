@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands
 
-import com.github.myraBot.diskord.common.entities.Channel
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import kotlinx.serialization.KSerializer
@@ -26,7 +26,7 @@ enum class SlashCommandOptionType(val value: Int, val clazz: KClass<*> = Unit::c
     INTEGER(4, Int::class),
     BOOLEAN(5, Boolean::class),
     USER(6, User::class),
-    CHANNEL(7, Channel::class),
+    CHANNEL(7, ChannelData::class),
     ROLE(8, Role::class),
     MENTIONABLE(9),
     NUMBER(10, Long::class);

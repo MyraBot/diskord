@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
 import com.github.myraBot.diskord.common.caching.ChannelCache
 import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.entities.Channel
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
@@ -26,7 +26,7 @@ data class SlashCommandEvent(
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId!!)
     val member: Member get() = Member.withUserInMember(interaction.member!!, interaction.guildId!!)
     val guild: Guild get() = GuildCache[interaction.guildId!!]!!
-    val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(interaction.channelId!!)!!
+    val channel: TextChannel get() =  ChannelCache.getAs<TextChannel>(interaction.channelId!!)!!
 
     inline fun <reified T> getOption(name: String): T? {
         // TODO It's unsafe to only check for name.
@@ -41,7 +41,7 @@ data class SlashCommandEvent(
                 Boolean::class -> option.value.jsonPrimitive.boolean as T
                 User::class -> resolved.getUser(option.value.jsonPrimitive.content) as T
                 Member::class -> resolved.getMember(option.value.jsonPrimitive.content) as T
-                Channel::class -> resolved.getChannel(option.value.jsonPrimitive.content) as T
+                ChannelData::class -> resolved.getChannel(option.value.jsonPrimitive.content) as T
                 Role::class -> resolved.getRole(option.value.jsonPrimitive.content) as T
                 Unit::class -> TODO() // TODO type -> Mentionable
                 Long::class -> option.value.jsonPrimitive.long as T

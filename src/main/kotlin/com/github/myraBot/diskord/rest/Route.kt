@@ -4,8 +4,8 @@ import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.utilities.FileFormats
 import com.github.myraBot.diskord.utilities.JSON
 import com.github.myraBot.diskord.utilities.REST_CLIENT
-import com.github.myraBot.diskord.utilities.logging.trace
 import com.github.myraBot.diskord.utilities.logging.error
+import com.github.myraBot.diskord.utilities.logging.trace
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -24,12 +24,15 @@ class Route<R>(private val httpMethod: HttpMethod, private val path: String, pri
      * @param argBuilder Path arguments.
      * @return Returns a nullable response as [R].
      */
+    @Throws(Exception::class)
     suspend fun execute(json: String? = null, files: List<File> = emptyList(), argBuilder: RouteArguments.() -> Unit = {}): R? {
         val request = requestRouter(json, RouteArguments().apply(argBuilder), files)
         val response = request.readText()
         trace(this::class) { "Rest response = $response" }
 
-        if (request.status != HttpStatusCode.OK) return null
+        if (!(request.status == HttpStatusCode.OK || request.status == HttpStatusCode.NoContent)) {
+            throw Exception("${request.status} - $response")
+        }
         if (serializer == Unit.serializer()) return Unit as R
         return JSON.decodeFromString(serializer, response)
     }

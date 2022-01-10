@@ -20,4 +20,14 @@ data class Guild(
         val roles: List<Role>,
         val emojis: List<Emoji>,
         @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList()
-) : GuildBehavior
+) : GuildBehavior {
+
+    init {
+        // Manually set the guild id of each voice state to the current guild id
+        // as Discord doesn't provide the guild id in voice states of a GUILD_CREATE event
+        voiceStates.forEach { it.guildId = id }
+    }
+
+}
+
+
