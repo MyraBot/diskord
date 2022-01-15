@@ -55,14 +55,14 @@ data class Message(
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
-    val guild: Promise<Guild> get() = guildId?.let { Diskord.getGuild(it) } ?: channel.then { it!!.getGuild() }
-    val channel: Promise<TextChannel> get() = Diskord.getChannel(channelId)
+    fun getGuild(): Promise<Guild> = guildId?.let { Diskord.getGuild(it) } ?: getChannel().then { it!!.getGuild() }
+    fun getChannel(): Promise<TextChannel> = Diskord.getChannel(channelId)
     val member: Promise<Member>
         get() {
             return if (guildId != null && memberData != null) {
                 Promise.of(Member.withUser(memberData, guildId, user))
             } else {
-                val guild = channel.then { it!!.getGuild() }
+                val guild = getChannel().then { it!!.getGuild() }
                 return if (memberData != null) {
                     guild.then { Promise.of(Member.withUser(memberData, it!!.id, user)) }
                 } else {
