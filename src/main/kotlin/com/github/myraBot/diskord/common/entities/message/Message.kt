@@ -5,7 +5,6 @@ import com.github.myraBot.diskord.common.DoubleKey
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.channel.ChannelData
-import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
@@ -55,19 +54,28 @@ data class Message(
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
-    fun getGuild(): Promise<Guild> = guildId?.let { Diskord.getGuild(it) } ?: getChannel().then { it!!.getGuild() }
-    fun getChannel(): Promise<TextChannel> = Diskord.getChannel(channelId)
+    //fun getGuild(): Promise<Guild> = guildId?.let { Diskord.getGuild(it) } ?: getChannel().then { it!!.getGuild() }
+    fun getGuild(): Promise<Guild> = guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
+    fun getChannel(): Promise<ChannelData> = Diskord.getChannel(channelId)
+    inline fun <reified T> getChannelAs(): Promise<T> = Diskord.getChannel<T>(channelId)
     val member: Promise<Member>
         get() {
             return if (guildId != null && memberData != null) {
                 Promise.of(Member.withUser(memberData, guildId, user))
             } else {
+                return if (memberData != null) Promise.of(Member.withUser(memberData, guildId!!, user))
+                else Promise.of(null)
+
+
+                /*
                 val guild = getChannel().then { it!!.getGuild() }
                 return if (memberData != null) {
                     guild.then { Promise.of(Member.withUser(memberData, it!!.id, user)) }
                 } else {
                     guild.then { memberCache[DoubleKey(user.id, it!!.id)] }
                 }
+
+                 */
             }
         }
 

@@ -14,7 +14,7 @@ data class GuildMessageCreateEvent(
     val isWebhook = message.isWebhook
     val isSystem = message.isSystem
     val user = message.user
-    val channel: TextChannel get() = runBlocking { message.getChannel().awaitNonNull() }
+    val channel: TextChannel get() = runBlocking { message.getChannelAs<TextChannel>().awaitNonNull() }
     val guild: Guild get() = runBlocking { message.getGuild().awaitNonNull() }
     val member: Member get() = runBlocking { message.member.awaitNonNull() }
 }

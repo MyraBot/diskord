@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.rest.behaviors
 
 import com.github.myraBot.diskord.common.channelCache
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.DmChannel
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
@@ -11,6 +12,7 @@ interface GetTextChannelBehavior
 inline fun <reified T> GetTextChannelBehavior.getChannel(id: String): Promise<T> = channelCache[id].map {
     it?.let { channel ->
         when (T::class) {
+            ChannelData::class -> channel as T
             DmChannel::class -> DmChannel(channel) as T
             TextChannel::class -> TextChannel(channel) as T
             VoiceChannel::class -> VoiceChannel(channel) as T
