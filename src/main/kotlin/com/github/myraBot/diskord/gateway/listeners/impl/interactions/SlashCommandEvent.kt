@@ -27,8 +27,8 @@ data class SlashCommandEvent(
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.interactionDataJson!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId!!)
     val member: Member get() = Member.withUserInMember(interaction.member!!, interaction.guildId!!)
-    val getGuild: Promise<Guild> = guildCache[interaction.guildId!!]
-    fun getChannel(): Promise<TextChannel> = Diskord.getChannel(interaction.channelId!!)
+    val guild: Promise<Guild> get() = guildCache[interaction.guildId!!]
+    val channel: Promise<TextChannel> get() = Diskord.getChannel(interaction.channelId!!)
 
     inline fun <reified T> getOption(name: String): T? {
         // TODO It's unsafe to only check for name.
