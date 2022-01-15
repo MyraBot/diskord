@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.common.entities.applicationCommands
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject

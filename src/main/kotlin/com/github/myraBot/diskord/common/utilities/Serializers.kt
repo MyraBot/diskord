@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.utilities
 
+import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

@@ -5,8 +5,8 @@ import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.rest.behaviors.getChannel
+import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
@@ -40,16 +40,18 @@ data class VoiceState(
         @SerialName("self_mute") val isSelfMute: Boolean,
         @SerialName("self_stream") val isStreaming: Boolean? = null,
         @SerialName("self_video") val hasVideo: Boolean,
-        @Serializable(with = InstantSerializer::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null
+        @Serializable(with = InstantSerializer::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null,
 ) {
     val isMuted: Boolean = isSelfMute || isGuildMuted
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
-    val member: Member?
-        get() = guildId?.let { it ->
-            memberData?.let { m -> Member.withUserInMember(m, it) }
-                ?: runBlocking { Diskord.getGuild(it)?.getMember(userId) }
+    val member: Promise<Member>
+        get() {
+            return guildId?.let { it ->
+                if (memberData != null) Promise.of(Member.withUserInMember(memberData, it))
+                else Diskord.getGuild(it).thenNonNull { it!!.getMember(userId) }
+            } ?: Promise.of(null)
         }
 
-    val channel: VoiceChannel? get() = channelId?.let { Diskord.getChannel<VoiceChannel>(it) }
+    val channel: Promise<VoiceChannel> get() = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
 }

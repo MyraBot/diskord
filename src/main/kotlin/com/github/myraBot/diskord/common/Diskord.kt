@@ -1,31 +1,22 @@
 package com.github.myraBot.diskord.common
 
-import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.flow
+import com.github.myraBot.diskord.rest.request.Promise
 
 object Diskord : GetTextChannelBehavior {
     lateinit var token: String
     val listeners: MutableList<EventListener> = mutableListOf()
     var cache: MutableSet<Cache> = mutableSetOf()
     lateinit var id: String
+    val guildIds: MutableList<String> = mutableListOf()
 
-    suspend fun getBotUser(): User = Endpoints.getUser.executeNonNull { arg("user.id", id) }
-    suspend fun getUser(id: String): User? = Endpoints.getUser.execute { arg("user.id", id) }
+    fun getBotUser(): Promise<User> = userCache[this.id]
+    fun getUser(id: String): Promise<User> = userCache[id]
 
-    fun getGuilds(): Flow<Guild> = flow {
-        GuildCache.ids
-            .asSequence()
-            .mapNotNull { getGuild(it) }
-            .forEach { emit(it) }
-    }.buffer()
-
-    fun getGuild(id: String): Guild? = GuildCache[id]
+    fun getGuilds(): List<Guild> = guildCache.collect()
+    fun getGuild(id: String): Promise<Guild> = guildCache[id]
 }

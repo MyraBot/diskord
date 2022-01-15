@@ -1,13 +1,14 @@
 package com.github.myraBot.diskord.common.entities.guild
 
-import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.caching.VoiceStateCache
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
-import com.github.myraBot.diskord.rest.behaviors.MemberBehavior
+import com.github.myraBot.diskord.common.guildCache
+import com.github.myraBot.diskord.common.voiceCache
+import com.github.myraBot.diskord.rest.behaviors.guild.MemberBehavior
+import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
-import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -26,7 +27,7 @@ data class MemberData(
         val deaf: Boolean? = null,
         val mute: Boolean? = null,
         val pending: Boolean = false,
-        val permissions: String? = null
+        val permissions: String? = null,
 )
 
 @Serializable
@@ -41,19 +42,20 @@ data class Member(
         val deaf: Boolean? = null,
         val mute: Boolean? = null,
         val pending: Boolean = false,
-        val permissions: String? = null
+        val permissions: String? = null,
 ) : MemberBehavior {
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
-    val guild: Guild get() = GuildCache[guildId]!!
-    suspend fun getRoles(): List<Role> = guild.getRoles().filter { roleIds.contains(it.id) }
-    suspend fun getColour(): Color = getRoles()
-        .reversed()
-        .first { it.colour != Color.decode("0") }
-        .colour
+    fun getGuild(): Promise<Guild> = guildCache[guildId]
+    fun getRoles(): Promise<List<Role>> = getGuild().map { guild -> guild?.roles?.filter { roleIds.contains(it.id) } }
+    fun getColour(): Promise<Color> = getRoles().map { roles ->
+        roles?.reversed()
+            ?.first { it.colour != Color.decode("0") }
+            ?.colour
+    }
 
-    val voiceState: VoiceState? get() = VoiceStateCache.getMember(this.guildId, this.id)
+    val voiceState: VoiceState? get() = voiceCache.collect().flatten().find { it.userId == id }
 
     companion object {
         fun withUser(member: MemberData, guildId: String, user: User): Member {

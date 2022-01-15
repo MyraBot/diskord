@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.rest.builders
 
+import com.github.myraBot.diskord.common.Arguments
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.asComponent
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
@@ -21,7 +22,7 @@ data class MessageBuilder(
         @SerialName("components") var actionRows: MutableList<Component> = mutableListOf()
 ) {
     @Transient
-    var variables: suspend ArgumentBuilder.() -> Unit = {}
+    var variables: suspend Arguments.() -> Unit = {}
 
     suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
     fun addEmbed(embed: Embed) = embeds.add(embed)
@@ -69,7 +70,7 @@ data class MessageBuilder(
      */
     suspend fun transform(): MessageBuilder {
         val func = DiskordBuilder.textTransform
-        val args = ArgumentBuilder().apply { variables.invoke(this) }
+        val args = Arguments().apply { variables.invoke(this) }
 
         content?.let { content = func.invoke(it, args) }
         embeds.forEach { embed ->

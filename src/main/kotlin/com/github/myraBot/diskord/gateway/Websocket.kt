@@ -1,12 +1,12 @@
 package com.github.myraBot.diskord.gateway
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
+import com.github.myraBot.diskord.common.utilities.logging.debug
+import com.github.myraBot.diskord.common.utilities.logging.info
+import com.github.myraBot.diskord.common.utilities.logging.trace
 import com.github.myraBot.diskord.gateway.listeners.Events
-import com.github.myraBot.diskord.utilities.GATEWAY_CLIENT
-import com.github.myraBot.diskord.utilities.JSON
-import com.github.myraBot.diskord.utilities.logging.debug
-import com.github.myraBot.diskord.utilities.logging.info
-import com.github.myraBot.diskord.utilities.logging.trace
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineName

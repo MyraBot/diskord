@@ -1,14 +1,14 @@
 package com.github.myraBot.diskord.gateway
 
-import com.github.myraBot.diskord.common.caching.*
+import com.github.myraBot.diskord.common.*
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 
 enum class Cache(val cache: EventListener, val intents: MutableSet<GatewayIntent> = mutableSetOf()) {
 
-    GUILD(GuildCache),
-    MEMBER(MemberCache, mutableSetOf(GatewayIntent.GUILD_MEMBERS)),
-    CHANNEL(ChannelCache),
-    ROLE(RoleCache),
-    VOICE_STATE(VoiceStateCache, mutableSetOf(GatewayIntent.GUILD_VOICE_STATES))
+    GUILD(guildCache),
+    MEMBER(memberCache, mutableSetOf(GatewayIntent.GUILD_MEMBERS)),
+    CHANNEL(channelCache),
+    ROLE(roleCache),
+    VOICE_STATE(voiceCache, mutableSetOf(GatewayIntent.GUILD_VOICE_STATES))
 
 }

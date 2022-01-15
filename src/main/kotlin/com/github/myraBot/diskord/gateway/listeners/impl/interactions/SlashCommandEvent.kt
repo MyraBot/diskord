@@ -1,32 +1,34 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
-import com.github.myraBot.diskord.common.caching.ChannelCache
-import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.entities.channel.ChannelData
+import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.Resolved
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionData
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
+import com.github.myraBot.diskord.common.guildCache
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
-import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.rest.behaviors.getChannel
+import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
 @Serializable
 data class SlashCommandEvent(
-        override val interaction: Interaction
+        override val interaction: Interaction,
 ) : Event(), InteractionCreateBehavior {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.interactionDataJson!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId!!)
     val member: Member get() = Member.withUserInMember(interaction.member!!, interaction.guildId!!)
-    val guild: Guild get() = GuildCache[interaction.guildId!!]!!
-    val channel: TextChannel get() =  ChannelCache.getAs<TextChannel>(interaction.channelId!!)!!
+    val getGuild: Promise<Guild> = guildCache[interaction.guildId!!]
+    fun getChannel(): Promise<TextChannel> = Diskord.getChannel(interaction.channelId!!)
 
     inline fun <reified T> getOption(name: String): T? {
         // TODO It's unsafe to only check for name.

@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.utilities
+package com.github.myraBot.diskord.common.utilities
 
 import com.github.myraBot.diskord.common.Diskord
 import io.ktor.client.*
@@ -7,12 +7,6 @@ import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import kotlinx.serialization.json.Json
-
-val JSON = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-    explicitNulls = false
-}
 
 val GATEWAY_CLIENT = HttpClient(CIO) {
     install(WebSockets)

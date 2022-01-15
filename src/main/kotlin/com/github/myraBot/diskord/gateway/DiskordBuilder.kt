@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.gateway
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.gateway.listeners.Events
-import com.github.myraBot.diskord.rest.builders.ArgumentBuilder
+import com.github.myraBot.diskord.common.Arguments
 
 object DiskordBuilder {
     var token: String = ""
@@ -11,7 +11,7 @@ object DiskordBuilder {
     private val listeners: MutableList<EventListener> = mutableListOf()
     private var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
     private val cache: MutableSet<Cache> = mutableSetOf()
-    var textTransform: suspend (String, ArgumentBuilder) -> String = { string, _ -> string }
+    var textTransform: suspend (String, Arguments) -> String = { string, _ -> string }
 
     fun addListeners(vararg listeners: EventListener) {
         this.listeners.addAll(listeners)

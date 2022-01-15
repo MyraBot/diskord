@@ -1,9 +1,10 @@
 package com.github.myraBot.diskord.gateway.listeners
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
+import com.github.myraBot.diskord.common.utilities.logging.error
+import com.github.myraBot.diskord.common.utilities.logging.info
 import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
@@ -15,9 +16,7 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUp
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
-import com.github.myraBot.diskord.utilities.JSON
-import com.github.myraBot.diskord.utilities.logging.error
-import com.github.myraBot.diskord.utilities.logging.info
+import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -32,7 +31,7 @@ object Events {
             when (income.t) {
                 "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
                     Websocket.session = it.sessionId
-                    GuildCache.ids = it.guilds.map(UnavailableGuild::id).toMutableList()
+                    Diskord.guildIds.addAll(it.guilds.map(UnavailableGuild::id))
                 }
                 "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
                 "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
@@ -64,7 +63,7 @@ object Events {
      * @param listeners A list to register listeners manuel.
      * @param packageName A package name to search for listeners.
      */
-    fun register(listeners: MutableList<EventListener>, packageName: String) {
+    suspend fun register(listeners: MutableList<EventListener>, packageName: String) {
         info(this::class) { "Registering discord event listeners" }
 
         Diskord.cache.forEach { it.cache.loadAsCache() } // Load listeners required for the cache

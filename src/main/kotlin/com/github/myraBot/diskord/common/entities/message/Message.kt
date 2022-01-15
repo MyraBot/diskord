@@ -1,8 +1,7 @@
 package com.github.myraBot.diskord.common.entities.message
 
-import com.github.myraBot.diskord.common.caching.ChannelCache
-import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.caching.MemberCache
+import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.DoubleKey
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.channel.ChannelData
@@ -11,9 +10,12 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
+import com.github.myraBot.diskord.common.memberCache
 import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
+import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
+import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import diskord.common.entityData.message.MessageFlag
 import diskord.common.entityData.message.MessageFlags
@@ -46,14 +48,28 @@ data class Message(
         @SerialName("webhook_id") internal val webhookId: String? = null,
         val type: MessageType,
         val flags: MessageFlags = MessageFlags(0),
-        val components: MutableList<Component> = mutableListOf()
+        val components: MutableList<Component> = mutableListOf(),
 ) : MessageBehavior {
     override val message: Message = this
     val link: String get() = JumpUrlEndpoints.get(guildId!!, channelId, id)
-    val guild: Guild get() = guildId?.let { GuildCache[it] } ?: channel.guild
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
-    val channel: TextChannel get() = ChannelCache.getAs<TextChannel>(channelId)!!
+
+    val guild: Promise<Guild> get() = guildId?.let { Diskord.getGuild(it) } ?: channel.then { it!!.getGuild() }
+    val channel: Promise<TextChannel> get() = Diskord.getChannel(channelId)
+    val member: Promise<Member>
+        get() {
+            return if (guildId != null && memberData != null) {
+                Promise.of(Member.withUser(memberData, guildId, user))
+            } else {
+                val guild = channel.then { it!!.getGuild() }
+                return if (memberData != null) {
+                    guild.then { Promise.of(Member.withUser(memberData, it!!.id, user)) }
+                } else {
+                    guild.then { memberCache[DoubleKey(user.id, it!!.id)] }
+                }
+            }
+        }
 
     fun asBuilder(): MessageBuilder =
         MessageBuilder().apply {
@@ -63,14 +79,3 @@ data class Message(
             actionRows = this@Message.components
         }
 }
-
-val Message.member: Member?
-    get() = guildId?.let { g ->
-        memberData?.let { m ->
-            Member.withUser(m, g, user)
-        } ?: MemberCache[g, user.id]
-    } ?: channel.guild.let { g ->
-        memberData?.let { m ->
-            Member.withUser(m, g.id, user)
-        } ?: MemberCache[g.id, user.id]
-    }

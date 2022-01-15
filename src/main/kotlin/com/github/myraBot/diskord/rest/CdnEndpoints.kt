@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.rest
 
+import com.github.myraBot.diskord.common.Arguments
 import com.github.myraBot.diskord.utilities.FileFormats
 
 /**
@@ -27,10 +28,10 @@ object CdnEndpoints {
 }
 
 data class CdnRoute(val path: String, val formats: List<FileFormats>, val animatedPrefix: Boolean = false) {
-    fun apply(argBuilder: RouteArguments.() -> Unit): String {
-        val args = RouteArguments().apply(argBuilder).entries
+    fun apply(argBuilder: Arguments.() -> Unit): String {
+        val args = Arguments().apply(argBuilder).entries
         var route = CdnEndpoints.baseUrl + path
-        args.forEach { route = route.replace("{${it.first}}", it.second.toString()) }
+        args.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
         return route
     }
 }

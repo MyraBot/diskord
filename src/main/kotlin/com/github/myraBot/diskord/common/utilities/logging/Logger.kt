@@ -1,20 +1,20 @@
-package com.github.myraBot.diskord.utilities.logging
+package com.github.myraBot.diskord.common.utilities.logging
 
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 
-fun info(klass: KClass<*>, message: (Unit) -> Any?) {
+suspend fun info(klass: KClass<*>, message: suspend (Unit) -> Any?) {
     LoggerFactory.getLogger(klass.java).info(message.invoke(Unit).toString())
 }
 
-fun error(klass: KClass<*>, message: (Unit) -> Any?) {
+suspend fun error(klass: KClass<*>, message: suspend (Unit) -> Any?) {
     LoggerFactory.getLogger(klass.java).error(message.invoke(Unit).toString())
 }
 
-fun debug(klass: KClass<*>, message: (Unit) -> Any?) {
+suspend fun debug(klass: KClass<*>, message: suspend (Unit) -> Any?) {
     LoggerFactory.getLogger(klass.java).debug(message.invoke(Unit).toString())
 }
 
-fun trace(klass: KClass<*>, message: (Unit) -> Any?) {
+suspend fun trace(klass: KClass<*>, message: suspend (Unit) -> Any?) {
     LoggerFactory.getLogger(klass.java).trace(message.invoke(Unit).toString())
 }

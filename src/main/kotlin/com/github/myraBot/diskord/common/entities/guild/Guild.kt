@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.common.entities.guild
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
-import com.github.myraBot.diskord.rest.behaviors.GuildBehavior
+import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

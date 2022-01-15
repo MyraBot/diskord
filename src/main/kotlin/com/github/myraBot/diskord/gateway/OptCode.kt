@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.gateway
 
-import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

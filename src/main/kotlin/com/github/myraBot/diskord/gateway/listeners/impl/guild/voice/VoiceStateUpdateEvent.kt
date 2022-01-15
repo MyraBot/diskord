@@ -1,11 +1,12 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.guild.voice
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.caching.VoiceStateCache
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
+import com.github.myraBot.diskord.common.voiceCache
 import com.github.myraBot.diskord.gateway.listeners.Event
+import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.serialization.SerialName
 
 /**
@@ -16,12 +17,12 @@ import kotlinx.serialization.SerialName
  * @property newVoiceState Information about the current voice state of the member.
  */
 data class VoiceStateUpdateEvent(
-        @SerialName("voice_state") val newVoiceState: VoiceState
+        @SerialName("voice_state") val newVoiceState: VoiceState,
 ) : Event() {
 
     override suspend fun call() {
-        if (oldVoiceState == null && newVoiceState.channel != null) VoiceJoinEvent(newVoiceState).call()
-        else if (oldVoiceState?.channel != null && newVoiceState.channelId == null) VoiceLeaveEvent(newVoiceState,oldVoiceState).call()
+        if (oldVoiceState == null && newVoiceState.channelId != null) VoiceJoinEvent(newVoiceState).call()
+        else if (oldVoiceState?.channel != null && newVoiceState.channelId == null) VoiceLeaveEvent(newVoiceState, oldVoiceState).call()
         else if (oldVoiceState != null && oldVoiceState.channelId != newVoiceState.channelId) VoiceMoveEvent(oldVoiceState, newVoiceState).call()
 
         if (oldVoiceState?.isMuted == false && newVoiceState.isMuted) VoiceMuteEvent(newVoiceState).call()
@@ -33,8 +34,8 @@ data class VoiceStateUpdateEvent(
         super.call()
     }
 
-    val member: Member? get() = newVoiceState.member
-    val guild: Guild? get() = newVoiceState.guildId?.let { Diskord.getGuild(it) }
-    val oldVoiceState: VoiceState? = VoiceStateCache.map.values.flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
+    val member: Promise<Member> get() = newVoiceState.member
+    fun getGuild(): Promise<Guild> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
+    val oldVoiceState: VoiceState? = voiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
 
 }

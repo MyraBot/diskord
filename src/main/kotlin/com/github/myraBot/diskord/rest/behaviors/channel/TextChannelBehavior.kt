@@ -5,18 +5,22 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.utilities.JSON
+import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.encodeToString
 
+@Suppress("unused")
 interface TextChannelBehavior {
 
     val data: ChannelData
 
-    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit): Message = send(files = files, message = MessageBuilder().also { message.invoke(it) })
+    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit): Promise<Message> {
+        return send(files = files, message = MessageBuilder().also { message.invoke(it) })
+    }
 
-    suspend fun send(vararg files: File = emptyArray(), message: MessageBuilder): Message {
+    suspend fun send(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Message> {
         val json = JSON.encodeToString(message.transform())
-        return Endpoints.createMessage.executeNonNull(json, files.toList()) { arg("channel.id", data.id) }
+        return Promise.of(Endpoints.createMessage, json, files.toList()) { arg("channel.id", data.id) }
     }
 
 }

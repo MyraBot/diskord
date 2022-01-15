@@ -1,7 +1,6 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.message
 
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.common.entities.message.member
 import com.github.myraBot.diskord.gateway.listeners.Event
 
 data class MessageCreateEvent(
@@ -16,7 +15,7 @@ data class MessageCreateEvent(
     val member = message.member
 
     override suspend fun call() {
-        if (guild == null) PrivateMessageCreateEvent(message).call()
+        if (guild.await() == null) PrivateMessageCreateEvent(message).call()
         else GuildMessageCreateEvent(message).call()
 
         super.call()
