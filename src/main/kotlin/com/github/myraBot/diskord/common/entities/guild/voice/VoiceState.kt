@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
@@ -54,4 +55,5 @@ data class VoiceState(
         }
 
     fun getChannel(): Promise<VoiceChannel> = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
+    val channel: VoiceChannel? get() = runBlocking { getChannel().await() }
 }
