@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.guild
 
+import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
@@ -10,6 +11,7 @@ import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.utilities.Mention
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -47,7 +49,8 @@ data class Member(
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
-    fun getGuild(): Promise<Guild> = guildCache[guildId]
+    val guild: Guild get() = runBlocking { Diskord.getGuild(guildId).awaitNonNull() }
+    fun getGuild(): Promise<Guild> = Diskord.getGuild(guildId)
     fun getRoles(): Promise<List<Role>> = getGuild().map { guild -> guild?.roles?.filter { roleIds.contains(it.id) } }
     fun getColour(): Promise<Color> = getRoles().map { roles ->
         roles?.reversed()
