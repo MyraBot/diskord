@@ -53,5 +53,5 @@ data class VoiceState(
             } ?: Promise.of(null)
         }
 
-    val channel: Promise<VoiceChannel> get() = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
+    fun getChannel(): Promise<VoiceChannel> = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
 }
