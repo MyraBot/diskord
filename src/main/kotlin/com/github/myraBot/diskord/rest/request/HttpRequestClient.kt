@@ -2,11 +2,11 @@ package com.github.myraBot.diskord.rest.request
 
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
+import com.github.myraBot.diskord.common.utilities.REST_CLIENT
 import com.github.myraBot.diskord.common.utilities.logging.error
 import com.github.myraBot.diskord.common.utilities.logging.trace
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.utilities.FileFormats
-import com.github.myraBot.diskord.common.utilities.REST_CLIENT
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -35,8 +35,13 @@ interface HttpRequestClient<R> {
             error(this::class) { "Error (Code ${response.status}) on rest action \"$route\" = ${response.readText()}" }
             throw Exception()
         }
+
         if (data.route.serializer == Unit.serializer()) return Unit as R
-        return JSON.decodeFromString(data.route.serializer, response.readText())
+        return JSON.decodeFromString(data.route.serializer, response.readText()).also {
+            data.route.cache?.run {
+                this.invoke(it, data.arguments)
+            }
+        }
     }
 
     /**

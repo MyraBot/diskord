@@ -1,6 +1,8 @@
 package com.github.myraBot.diskord.gateway.listeners
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.common.utilities.logging.error
@@ -16,7 +18,6 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUp
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
-import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -31,7 +32,7 @@ object Events {
             when (income.t) {
                 "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
                     Websocket.session = it.sessionId
-                    Diskord.guildIds.addAll(it.guilds.map(UnavailableGuild::id))
+                    GuildCache.ids.addAll(it.guilds.map(UnavailableGuild::id))
                 }
                 "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
                 "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))

@@ -10,7 +10,7 @@ import com.github.myraBot.diskord.rest.request.impl.Promise
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-val scope = CoroutineScope(Dispatchers.Default)
+val scope = CoroutineScope(Dispatchers.IO)
 
 interface Promise<T> : HttpRequestClient<T> {
     companion object {

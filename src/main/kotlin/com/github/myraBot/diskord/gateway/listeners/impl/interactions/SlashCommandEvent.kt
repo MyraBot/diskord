@@ -12,7 +12,7 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.common.guildCache
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
@@ -27,7 +27,7 @@ data class SlashCommandEvent(
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.interactionDataJson!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId!!)
     val member: Member get() = Member.withUserInMember(interaction.member!!, interaction.guildId!!)
-    val guild: Promise<Guild> get() = guildCache[interaction.guildId!!]
+    val guild: Promise<Guild> get() = GuildCache[interaction.guildId!!]
     val channel: Promise<TextChannel> get() = Diskord.getChannel(interaction.channelId!!)
 
     inline fun <reified T> getOption(name: String): T? {

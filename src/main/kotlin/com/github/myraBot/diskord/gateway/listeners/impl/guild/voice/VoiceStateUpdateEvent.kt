@@ -1,10 +1,10 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.guild.voice
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.caching.VoiceCache
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
-import com.github.myraBot.diskord.common.voiceCache
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.serialization.SerialName
@@ -36,6 +36,6 @@ data class VoiceStateUpdateEvent(
 
     val member: Promise<Member> get() = newVoiceState.member
     fun getGuild(): Promise<Guild> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
-    val oldVoiceState: VoiceState? = voiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
+    val oldVoiceState: VoiceState? = VoiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
 
 }

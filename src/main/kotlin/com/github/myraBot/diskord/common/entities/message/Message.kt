@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.message
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.DoubleKey
+import com.github.myraBot.diskord.common.caching.DoubleKey
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.channel.ChannelData
@@ -9,7 +9,7 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
-import com.github.myraBot.diskord.common.memberCache
+import com.github.myraBot.diskord.common.caching.MemberCache
 import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
@@ -72,7 +72,7 @@ data class Message(
                 return if (memberData != null) {
                     guild.then { Promise.of(Member.withUser(memberData, it!!.id, user)) }
                 } else {
-                    guild.then { memberCache[DoubleKey(user.id, it!!.id)] }
+                    guild.then { MemberCache[DoubleKey(user.id, it!!.id)] }
                 }
 
                  */

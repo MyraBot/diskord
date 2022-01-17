@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.channel
 
+import com.github.myraBot.diskord.common.caching.VoiceCache
 import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.common.voiceCache
 import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.coroutines.runBlocking
 
@@ -10,12 +10,11 @@ data class VoiceChannel(
 ) : GuildChannel {
 
     fun getMembers(): Promise<List<Member>> {
-        return voiceCache[data.id].map { states ->
+        return VoiceCache[data.id].map { states ->
             states?.map {
-                println("retrieving member")
-                println("member = ${it.userId}")
+                println("Retrieving member")
                 it.member.awaitNonNull()
-            } ?: emptyList<Member>().also { println("returning empty list") }
+            } ?: emptyList()
         }
     }
 

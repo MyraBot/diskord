@@ -1,15 +1,14 @@
 package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.caching.VoiceCache
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
-import com.github.myraBot.diskord.common.guildCache
-import com.github.myraBot.diskord.common.voiceCache
 import com.github.myraBot.diskord.rest.behaviors.guild.MemberBehavior
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
-import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
@@ -58,7 +57,7 @@ data class Member(
             ?.colour
     }
 
-    val voiceState: VoiceState? get() = voiceCache.collect().flatten().find { it.userId == id }
+    val voiceState: VoiceState? get() = VoiceCache.collect().flatten().find { it.userId == id }
 
     companion object {
         fun withUser(member: MemberData, guildId: String, user: User): Member {

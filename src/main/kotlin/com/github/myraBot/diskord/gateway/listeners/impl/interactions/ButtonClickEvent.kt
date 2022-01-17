@@ -5,7 +5,7 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.common.guildCache
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import kotlinx.coroutines.runBlocking
@@ -14,7 +14,7 @@ data class ButtonClickEvent(
         override val interaction: Interaction,
 ) : Event(), InteractionCreateBehavior {
     val message: Message = interaction.message!!
-    val guild: Guild? get() = runBlocking { guildCache[interaction.guildId!!].await() }
+    val guild: Guild? get() = runBlocking { GuildCache[interaction.guildId!!].await() }
     val member: Member? get() = interaction.member?.let { Member.withUserInMember(it, interaction.guildId!!) }
     val button: Button
         get() = message.components
