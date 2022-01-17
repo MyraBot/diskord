@@ -11,11 +11,15 @@ import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.entities.Locale
 import kotlinx.serialization.encodeToString
 
 interface InteractionCreateBehavior {
 
     val interaction: Interaction
+
+    val locale: Locale? get() = interaction.locale.value
+    val guildLocale: Locale? get() = interaction.guildLocale.value
 
     suspend fun acknowledge(): Promise<Unit> {
         val json = JSON.encodeToString(InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE))

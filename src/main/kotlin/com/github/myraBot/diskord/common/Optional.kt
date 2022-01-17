@@ -1,8 +1,6 @@
 package com.github.myraBot.diskord.common
 
-import com.github.myraBot.diskord.common.Optional.Missing
-import com.github.myraBot.diskord.common.Optional.Null
-import com.github.myraBot.diskord.common.Optional.Value
+import com.github.myraBot.diskord.common.Optional.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -56,6 +54,9 @@ open class Optional<out T> private constructor() {
     open val value: T?
         get() = throw UnsupportedOperationException("This is implemented in implementation classes")
 
+    open val forceValue: T
+        get() = throw UnsupportedOperationException("This is implemented in implementation classes")
+
     /**
      * Represents a field that was not present in the serialized entity.
      */
@@ -66,6 +67,9 @@ open class Optional<out T> private constructor() {
          */
         override val value: T?
             get() = null
+
+        override val forceValue: T
+            get() = throw NullPointerException()
 
         override fun toString(): String = "Optional.Missing"
 
@@ -93,6 +97,9 @@ open class Optional<out T> private constructor() {
         override val value: T?
             get() = null
 
+        override val forceValue: T
+            get() = throw NullPointerException()
+
         override fun toString(): String = "Optional.Null"
 
         override fun equals(other: Any?): Boolean {
@@ -114,7 +121,9 @@ open class Optional<out T> private constructor() {
      *
      * @param value the value this optional wraps.
      */
-    class Value<T : Any>(override val value: T) : Optional<T>() {
+    class Value<T : Any>(override val value: T, ) : Optional<T>() {
+        override val forceValue: T get() = this.value
+
         override fun toString(): String = "Optional.Something(content=$value)"
 
         /**
@@ -178,7 +187,10 @@ open class Optional<out T> private constructor() {
                     decoder.decodeNull()
                     Null<Nothing>()
                 }
-                else -> Optional(decoder.decodeSerializableValue(contentSerializer))
+
+                else -> {
+                    Optional(decoder.decodeSerializableValue(contentSerializer))
+                }
             }
 
             @Suppress("UNCHECKED_CAST")

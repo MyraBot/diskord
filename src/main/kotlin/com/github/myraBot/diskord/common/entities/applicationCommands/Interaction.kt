@@ -19,16 +19,16 @@ data class Interaction(
         val id: String,
         @SerialName("application_id") val applicationId: String,
         val type: InteractionType,
-        @SerialName("data") val interactionDataJson: JsonObject? = null,
-        @SerialName("guild_id") val guildId: String? = null,
-        @SerialName("channel_id") val channelId: String? = null,
-        val member: MemberData? = null,
-        val user: User? = null,
+        @SerialName("data") val interactionDataJson: Optional<JsonObject> = Optional.Missing(),
+        @SerialName("guild_id") val guildId: Optional<String> = Optional.Missing(),
+        @SerialName("channel_id") val channelId: Optional<String> = Optional.Missing(),
+        val member: Optional<MemberData> = Optional.Missing(),
+        val user: Optional<User> = Optional.Missing(),
         val token: String,
         val version: Int,
-        val message: Message? = null,
-        val locale: Optional<Locale>,
-        @SerialName("guild_locale") val guildLocale: Optional<Locale>,
+        val message: Optional<Message> = Optional.Missing(),
+        val locale: Optional<Locale> = Optional.Missing(),
+        @SerialName("guild_locale") val guildLocale: Optional<Locale> = Optional.Missing(),
 ) {
-    val interactionComponentData: InteractionComponentData? get() = interactionDataJson?.let { JSON.decodeFromJsonElement(it) }
+    val interactionComponentData: InteractionComponentData? get() = interactionDataJson.value?.let { JSON.decodeFromJsonElement(it) }
 }

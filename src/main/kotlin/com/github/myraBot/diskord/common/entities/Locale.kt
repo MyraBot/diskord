@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.common.entities
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -13,6 +14,7 @@ import kotlinx.serialization.encoding.Encoder
  * @property code IETF language tag of the locale.
  * @property languageName the fully written out name of the locale.
  */
+@Serializable(with = Locale.Serializer::class)
 enum class Locale(val code: String, val languageName: String) {
     ENGLISH_US("en-US", "English (United States)"),
     ENGLISH_GB("en-GB", "English (Great Britain)"),
@@ -45,7 +47,6 @@ enum class Locale(val code: String, val languageName: String) {
     UKRAINIAN("uk", "Ukrainian"),
     VIETNAMESE("vi", "Vietnamese");
 
-    @kotlinx.serialization.Serializer(forClass = Locale::class)
     internal object Serializer : KSerializer<Locale> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Locale", PrimitiveKind.STRING)
         override fun serialize(encoder: Encoder, value: Locale) = encoder.encodeString(value.code)

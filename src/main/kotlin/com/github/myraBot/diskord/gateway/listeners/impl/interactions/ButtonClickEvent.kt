@@ -13,9 +13,9 @@ import kotlinx.coroutines.runBlocking
 data class ButtonClickEvent(
         override val interaction: Interaction,
 ) : Event(), InteractionCreateBehavior {
-    val message: Message = interaction.message!!
-    val guild: Guild? get() = runBlocking { GuildCache[interaction.guildId!!].await() }
-    val member: Member? get() = interaction.member?.let { Member.withUserInMember(it, interaction.guildId!!) }
+    val message: Message = interaction.message.forceValue
+    val guild: Guild? get() = runBlocking { GuildCache[interaction.guildId.value!!].await() }
+    val member: Member? get() = interaction.member.value?.let { Member.withUserInMember(it, interaction.guildId.forceValue) }
     val button: Button
         get() = message.components
             .asSequence()
