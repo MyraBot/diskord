@@ -13,7 +13,7 @@ import com.github.myraBot.diskord.rest.request.Promise
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
-    fun getMember(id: String): Promise<Member> = MemberCache[DoubleKey(id, this.id)]
+    fun getMember(id: String): Promise<Member> = MemberCache[DoubleKey(this.id, id)]
     fun getBotMember(): Promise<Member> = getApplication().then { getMember(it!!.id) }
     fun getMembers(limit: Int = 1000): Promise<List<Member>> = Promise.of(Endpoints.listGuildMembers) {
         arg("guild.id", this@GuildBehavior.id)
