@@ -23,7 +23,7 @@ object Endpoints {
     val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer()))
     val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer())
     val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer()) { member, args ->
-        val m = Member.withUserInMember(member, args["guild.id"].toString())
+        val m: Member = Member.withUserInMember(member, args["guild.id"].toString())
         MemberCache.cache[DoubleKey(m.guildId, m.id)] = m
     }
     val listGuildMembers = Route(HttpMethod.Get, "/guilds/{guild.id}/members?limit={limit}&after=0", ListSerializer(MemberData.serializer())) { members, args ->
