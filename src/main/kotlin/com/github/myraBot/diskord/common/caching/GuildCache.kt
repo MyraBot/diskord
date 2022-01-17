@@ -6,9 +6,10 @@ import com.github.myraBot.diskord.gateway.listeners.ListenTo
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildCreateEvent
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.request.Promise
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 
 object GuildCache : Cache<String, Guild>(
     retrieve = { key ->
@@ -17,14 +18,12 @@ object GuildCache : Cache<String, Guild>(
 ) {
     val ids: MutableList<String> = mutableListOf()
 
-    fun getAll(): Flow<Guild> = flow {
+    fun getAll(): Flow<Guild> = channelFlow {
         val copiedIds = ids.toList()
         copiedIds.forEach { id ->
-            println(id)
-            cache[id]
-                ?.run { emit(this) }
-            ?: emit(Diskord.getGuild(id).awaitNonNull())
-
+            cache[id]?.run { send(this) } ?: coroutineScope {
+                Diskord.getGuild(id).async(this) { send(it!!) }
+            }
         }
     }.buffer()
 

@@ -10,7 +10,7 @@ import com.github.myraBot.diskord.rest.request.impl.Promise
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-val scope = CoroutineScope(Dispatchers.IO)
+private val scope = CoroutineScope(Dispatchers.IO)
 
 interface Promise<T> : HttpRequestClient<T> {
     companion object {
@@ -31,9 +31,9 @@ interface Promise<T> : HttpRequestClient<T> {
     suspend fun await(): T?
     suspend fun awaitNonNull(): T
 
-    fun async()
-    fun async(callback: suspend (T?) -> Unit)
-    fun asyncNonNull(callback: suspend (T) -> Unit)
+    fun async(coroutineScope: CoroutineScope = scope)
+    fun async(coroutineScope: CoroutineScope = scope, callback: suspend (T?) -> Unit)
+    fun asyncNonNull(coroutineScope: CoroutineScope = scope, callback: suspend (T) -> Unit)
 
     fun <O> map(transform: suspend (T?) -> O?): MapPromise<T, O> {
         return MapPromise(null, null, this, transform)

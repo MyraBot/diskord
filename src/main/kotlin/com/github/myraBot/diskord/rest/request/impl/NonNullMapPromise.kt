@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.rest.request.impl
 
 import com.github.myraBot.diskord.rest.request.HttpRequest
 import com.github.myraBot.diskord.rest.request.Promise
-import com.github.myraBot.diskord.rest.request.scope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class NonNullMapPromise<I, O>(
@@ -18,18 +18,18 @@ class NonNullMapPromise<I, O>(
 
     override suspend fun awaitNonNull(): O = await()!!
 
-    override fun async() {
-        scope.launch { promise.await() }
+    override fun async(env: CoroutineScope) {
+        env.launch { promise.await() }
     }
 
-    override fun async(callback: suspend (O?) -> Unit) {
-        scope.launch {
+    override fun async(env: CoroutineScope, callback: suspend (O?) -> Unit) {
+        env.launch {
             promise.await()?.let { transform.invoke(it) }
         }
     }
 
-    override fun asyncNonNull(callback: suspend (O) -> Unit) {
-        scope.launch {
+    override fun asyncNonNull(env: CoroutineScope, callback: suspend (O) -> Unit) {
+        env.launch {
             promise.await()!!.let { transform.invoke(it) }
         }
     }
