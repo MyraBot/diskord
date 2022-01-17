@@ -16,7 +16,7 @@ object GuildCache : Cache<String, Guild>(
         Promise.of(Endpoints.getGuild) { arg("guild.id", key) }
     }
 ) {
-    val ids: MutableList<String> = mutableListOf()
+    val ids: MutableSet<String> = mutableSetOf()
 
     fun getAll(): Flow<Guild> = channelFlow {
         val copiedIds = ids.toList()
@@ -29,7 +29,7 @@ object GuildCache : Cache<String, Guild>(
 
     @ListenTo(GuildCreateEvent::class)
     fun onGuildCreate(event: GuildCreateEvent) {
-        ids.remove(event.guild.id)
+        ids.add(event.guild.id)
         cache[event.guild.id] = event.guild
     }
 
