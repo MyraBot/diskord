@@ -1,9 +1,11 @@
 package com.github.myraBot.diskord.common.entities.applicationCommands
 
+import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -24,7 +26,9 @@ data class Interaction(
         val user: User? = null,
         val token: String,
         val version: Int,
-        val message: Message? = null
+        val message: Message? = null,
+        val locale: Optional<Locale>,
+        @SerialName("guild_locale") val guildLocale: Optional<Locale>,
 ) {
     val interactionComponentData: InteractionComponentData? get() = interactionDataJson?.let { JSON.decodeFromJsonElement(it) }
 }
