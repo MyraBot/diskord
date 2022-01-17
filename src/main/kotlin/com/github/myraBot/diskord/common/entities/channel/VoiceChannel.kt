@@ -12,7 +12,6 @@ data class VoiceChannel(
     fun getMembers(): Promise<List<Member>> {
         return VoiceCache[data.id].map { states ->
             states?.map {
-                println("Retrieving member")
                 it.member.awaitNonNull()
             } ?: emptyList()
         }
