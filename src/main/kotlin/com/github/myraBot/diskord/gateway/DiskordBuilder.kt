@@ -9,7 +9,7 @@ object DiskordBuilder {
     var token: String = ""
     var listenerPackage: String = ""
     internal val listeners: MutableList<EventListener> = mutableListOf()
-    internal var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
+    internal var intents: MutableSet<GatewayIntent> = mutableSetOf()
     internal val cache: MutableSet<Cache> = mutableSetOf()
     var transformer: MessageTransformer = DefaultTransformer
 
