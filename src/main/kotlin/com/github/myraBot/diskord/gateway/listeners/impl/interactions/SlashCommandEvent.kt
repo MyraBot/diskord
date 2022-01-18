@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
@@ -12,8 +13,6 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.gateway.listeners.Event
 import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
@@ -27,7 +26,7 @@ data class SlashCommandEvent(
 ) : Event(), InteractionCreateBehavior {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.interactionDataJson.forceValue)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId.forceValue)
-    val member: Member get() = Member.withUserInMember(interaction.member.forceValue, interaction.guildId.forceValue)
+    val member: Member? get() = interaction.member
     val guild: Promise<Guild> get() = GuildCache[interaction.guildId.forceValue]
     val channel: Promise<TextChannel> get() = Diskord.getChannel(interaction.channelId.forceValue)
 

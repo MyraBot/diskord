@@ -15,7 +15,7 @@ data class ButtonClickEvent(
 ) : Event(), InteractionCreateBehavior {
     val message: Message = interaction.message.forceValue
     val guild: Guild? get() = runBlocking { GuildCache[interaction.guildId.value!!].await() }
-    val member: Member? get() = interaction.member.value?.let { Member.withUserInMember(it, interaction.guildId.forceValue) }
+    val member: Member? get() = interaction.member
     val button: Button
         get() = message.components
             .asSequence()

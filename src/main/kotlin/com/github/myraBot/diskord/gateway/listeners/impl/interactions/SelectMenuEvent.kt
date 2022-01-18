@@ -18,7 +18,7 @@ data class SelectMenuEvent(
 ) : Event(), InteractionCreateBehavior {
     val message: Message = interaction.message.forceValue
     val guild: Guild get() = runBlocking { Diskord.getGuild(interaction.guildId.forceValue).awaitNonNull() }
-    val member: Member? get() = interaction.member.value?.let { Member.withUserInMember(it, interaction.guildId.forceValue) }
+    val member: Member? get() = interaction.member
     val selectMenu: SelectMenu
         get() = message.components
             .asSequence()
