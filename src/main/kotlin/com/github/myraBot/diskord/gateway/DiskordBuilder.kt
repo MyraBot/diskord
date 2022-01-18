@@ -2,16 +2,15 @@ package com.github.myraBot.diskord.gateway
 
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.rest.DefaultTransformer
 import com.github.myraBot.diskord.rest.MessageTransformer
 
 object DiskordBuilder {
     var token: String = ""
     var listenerPackage: String = ""
-    private val listeners: MutableList<EventListener> = mutableListOf()
-    private var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
-    private val cache: MutableSet<Cache> = mutableSetOf()
+    internal val listeners: MutableList<EventListener> = mutableListOf()
+    internal var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
+    internal val cache: MutableSet<Cache> = mutableSetOf()
     var transformer: MessageTransformer = DefaultTransformer
 
     fun addListeners(vararg listeners: EventListener) {
@@ -27,22 +26,13 @@ object DiskordBuilder {
         this.intents.addAll(this.cache.flatMap { it.intents })
     }
 
-    /**
-     * Registers all registered events from [listeners],
-     * initialises [Diskord] and starts the websocket.
-     *
-     * @return Returns the [Diskord] object. Just for laziness.
-     */
-    suspend fun start() {
+    fun build() {
         Diskord.apply {
             this.token = this@DiskordBuilder.token
             this.cache = this@DiskordBuilder.cache
             this.transformer = this@DiskordBuilder.transformer
         }
-        Events.register(listeners, listenerPackage) // Events need to be registered after applying the cache to the Diskord object, so only required listeners get registered
-        Websocket.apply { this.intents = this@DiskordBuilder.intents }.connect() // Connect to actual websocket
     }
-
 }
 
 fun discordBot(builder: DiskordBuilder.() -> Unit): DiskordBuilder {

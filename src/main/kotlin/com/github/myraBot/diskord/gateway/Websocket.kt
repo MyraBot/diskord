@@ -6,6 +6,7 @@ import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
 import com.github.myraBot.diskord.common.utilities.logging.debug
 import com.github.myraBot.diskord.common.utilities.logging.info
 import com.github.myraBot.diskord.common.utilities.logging.trace
+import com.github.myraBot.diskord.gateway.DiskordBuilder.listeners
 import com.github.myraBot.diskord.gateway.listeners.Events
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -147,4 +148,20 @@ object Websocket {
         websocket.send(OptCode(null, null, 6, json).toJson())
     }
 
+}
+
+/**
+ * Registers all registered events from [listeners],
+ * initialises [Diskord] and starts the websocket.
+ *
+ * @return Returns the [Diskord] object. Just for laziness.
+ */
+suspend fun DiskordBuilder.connect() {
+    Diskord.apply {
+        this.token = this@connect.token
+        this.cache = this@connect.cache
+        this.transformer = this@connect.transformer
+    }
+    Events.register(listeners, DiskordBuilder.listenerPackage) // Events need to be registered after applying the cache to the Diskord object, so only required listeners get registered
+    Websocket.apply { this.intents = this@connect.intents }.connect() // Connect to actual websocket
 }
