@@ -3,7 +3,8 @@ package com.github.myraBot.diskord.gateway
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.gateway.listeners.Events
-import com.github.myraBot.diskord.common.Arguments
+import com.github.myraBot.diskord.rest.DefaultTransformer
+import com.github.myraBot.diskord.rest.MessageTransformer
 
 object DiskordBuilder {
     var token: String = ""
@@ -11,7 +12,7 @@ object DiskordBuilder {
     private val listeners: MutableList<EventListener> = mutableListOf()
     private var intents: MutableSet<GatewayIntent> = mutableSetOf(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS) // Default intents are required for caching
     private val cache: MutableSet<Cache> = mutableSetOf()
-    var textTransform: suspend (String, Arguments) -> String = { string, _ -> string }
+    var transformer: MessageTransformer = DefaultTransformer
 
     fun addListeners(vararg listeners: EventListener) {
         this.listeners.addAll(listeners)
@@ -36,6 +37,7 @@ object DiskordBuilder {
         Diskord.apply {
             this.token = this@DiskordBuilder.token
             this.cache = this@DiskordBuilder.cache
+            this.transformer = this@DiskordBuilder.transformer
         }
         Events.register(listeners, listenerPackage) // Events need to be registered after applying the cache to the Diskord object, so only required listeners get registered
         Websocket.apply { this.intents = this@DiskordBuilder.intents }.connect() // Connect to actual websocket

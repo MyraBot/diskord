@@ -19,7 +19,7 @@ data class Embed(
         var image: Image? = null,
         var thumbnail: Thumbnail? = null,
         var author: Author? = null,
-        val fields: MutableList<Field> = mutableListOf()
+        val fields: MutableList<Field> = mutableListOf(),
 ) {
     suspend fun addField(data: suspend Field.() -> Unit) {
         val field = Field("", "").also { data.invoke(it) }

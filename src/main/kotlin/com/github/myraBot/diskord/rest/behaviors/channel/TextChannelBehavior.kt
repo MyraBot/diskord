@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.rest.transform
 import kotlinx.serialization.encodeToString
 
 @Suppress("unused")

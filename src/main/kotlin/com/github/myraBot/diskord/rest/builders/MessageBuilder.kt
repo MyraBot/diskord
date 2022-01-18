@@ -19,13 +19,16 @@ data class MessageBuilder(
         var content: String? = null,
         var tts: Boolean? = null,
         var embeds: MutableList<Embed> = mutableListOf(),
-        @SerialName("components") var actionRows: MutableList<Component> = mutableListOf()
+        @SerialName("components") var actionRows: MutableList<Component> = mutableListOf(),
 ) {
     @Transient
     var variables: suspend Arguments.() -> Unit = {}
 
+
     suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
+
     fun addEmbed(embed: Embed) = embeds.add(embed)
+
 
     /**
      * Adds a button as a message component. If an action row already exists,
@@ -64,30 +67,4 @@ data class MessageBuilder(
     }
 
     fun addSelectMenus(vararg selectMenus: SelectMenu) = selectMenus.forEach { addSelectMenu(it) }
-
-    /**
-     * Applies [DiskordBuilder.textTransform] function to all strings in the message.
-     */
-    suspend fun transform(): MessageBuilder {
-        val func = DiskordBuilder.textTransform
-        val args = Arguments().apply { variables.invoke(this) }
-
-        content?.let { content = func.invoke(it, args) }
-        embeds.forEach { embed ->
-            embed.description?.let { embed.description = func.invoke(it, args) }
-            embed.fields.forEach {
-                it.name = func.invoke(it.name, args)
-                it.value = func.invoke(it.value, args)
-            }
-            embed.footer?.let { embed.footer = Footer(func.invoke(it.text, args), it.icon) }
-        }
-        actionRows.forEach { actionRow ->
-            actionRow.components.forEach { component ->
-                component.label?.let { component.label = func.invoke(it, args) }
-                component.placeholder?.let { component.placeholder = func.invoke(it, args) }
-            }
-        }
-
-        return this
-    }
 }

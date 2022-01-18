@@ -12,6 +12,8 @@ import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.Locale
+import com.github.myraBot.diskord.gateway.DiskordBuilder
+import com.github.myraBot.diskord.rest.interactionTransform
 import kotlinx.serialization.encodeToString
 
 interface InteractionCreateBehavior {
@@ -32,7 +34,7 @@ interface InteractionCreateBehavior {
     suspend fun acknowledge(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Unit> {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            InteractionCallbackData.fromMessageBuilder(message.transform())
+            InteractionCallbackData.fromMessageBuilder(message.interactionTransform(interaction))
         )
         val json = JSON.encodeToString(responseData)
         return Promise.of(Endpoints.acknowledgeInteraction, json, files.toList()) {
