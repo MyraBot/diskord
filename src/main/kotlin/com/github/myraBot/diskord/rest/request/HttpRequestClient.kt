@@ -3,9 +3,9 @@ package com.github.myraBot.diskord.rest.request
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.utilities.REST_CLIENT
-import com.github.myraBot.diskord.common.utilities.logging.error
 import com.github.myraBot.diskord.common.utilities.logging.trace
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.ErrorValidation
 import com.github.myraBot.diskord.utilities.FileFormats
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -30,11 +30,7 @@ interface HttpRequestClient<R> {
         else formDataRequest(route, data.json!!, data.files) // Request needs to send files
 
         trace(this::class) { "Rest response = ${response.readText()}" }
-
-        if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NoContent && response.status != HttpStatusCode.NotFound) {
-            error(this::class) { "Error (Code ${response.status}) on rest action \"$route\" = ${response.readText()}" }
-            throw Exception()
-        }
+        ErrorValidation.validateResponse(response.status)
 
         if (data.route.serializer == Unit.serializer()) return Unit as R
         return JSON.decodeFromString(data.route.serializer, response.readText()).also {

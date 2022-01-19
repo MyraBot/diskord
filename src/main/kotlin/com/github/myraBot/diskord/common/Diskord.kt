@@ -6,7 +6,7 @@ import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.rest.DefaultTransformer
+import com.github.myraBot.diskord.rest.ErrorHandler
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import com.github.myraBot.diskord.rest.request.Promise
@@ -17,7 +17,8 @@ object Diskord : GetTextChannelBehavior {
     lateinit var id: String
     val listeners: MutableList<EventListener> = mutableListOf()
     var cache: MutableSet<Cache> = mutableSetOf()
-    var transformer: MessageTransformer = DefaultTransformer
+    lateinit var errorHandler: ErrorHandler
+    lateinit var transformer: MessageTransformer
 
     fun getBotUser(): Promise<User> = UserCache[this.id]
     fun getUser(id: String): Promise<User> = UserCache[id]

@@ -28,25 +28,37 @@ interface Promise<T> : HttpRequestClient<T> {
     val value: T?
     val httpRequest: HttpRequest<T>?
 
+    @Throws(Exception::class)
     suspend fun await(): T?
+
+    @Throws(Exception::class)
     suspend fun awaitNonNull(): T
 
+    @Throws(Exception::class)
     fun async(coroutineScope: CoroutineScope = scope)
+
+    @Throws(Exception::class)
     fun async(coroutineScope: CoroutineScope = scope, callback: suspend (T?) -> Unit)
+
+    @Throws(Exception::class)
     fun asyncNonNull(coroutineScope: CoroutineScope = scope, callback: suspend (T) -> Unit)
 
+    @Throws(Exception::class)
     fun <O> map(transform: suspend (T?) -> O?): MapPromise<T, O> {
         return MapPromise(null, null, this, transform)
     }
 
+    @Throws(Exception::class)
     fun <O> mapNonNull(transform: suspend (T) -> O): NonNullMapPromise<T, O> {
         return NonNullMapPromise(null, null, this, transform)
     }
 
+    @Throws(Exception::class)
     fun <O> then(transform: suspend (T?) -> com.github.myraBot.diskord.rest.request.Promise<O>): ChainPromise<T, O> {
         return ChainPromise(null, null, this, transform)
     }
 
+    @Throws(Exception::class)
     fun <O> thenNonNull(transform: suspend (T?) -> com.github.myraBot.diskord.rest.request.Promise<O>): ChainPromise<T, O> {
         return ChainPromise(null, null, this, transform)
     }

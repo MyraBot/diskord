@@ -2,7 +2,9 @@ package com.github.myraBot.diskord.gateway
 
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.gateway.listeners.EventListener
+import com.github.myraBot.diskord.rest.DefaultErrorHandler
 import com.github.myraBot.diskord.rest.DefaultTransformer
+import com.github.myraBot.diskord.rest.ErrorHandler
 import com.github.myraBot.diskord.rest.MessageTransformer
 
 object DiskordBuilder {
@@ -11,6 +13,7 @@ object DiskordBuilder {
     internal val listeners: MutableList<EventListener> = mutableListOf()
     internal var intents: MutableSet<GatewayIntent> = mutableSetOf()
     internal val cache: MutableSet<Cache> = mutableSetOf()
+    var errorHandler: ErrorHandler = DefaultErrorHandler
     var transformer: MessageTransformer = DefaultTransformer
 
     fun addListeners(vararg listeners: EventListener) {
@@ -31,6 +34,7 @@ object DiskordBuilder {
             this.token = this@DiskordBuilder.token
             this.cache = this@DiskordBuilder.cache
             this.transformer = this@DiskordBuilder.transformer
+            this.errorHandler = this@DiskordBuilder.errorHandler
         }
     }
 }

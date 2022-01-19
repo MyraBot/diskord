@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import java.util.concurrent.ForkJoinPool
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.valueParameters
@@ -23,10 +24,15 @@ abstract class Event : DefaultBehavior {
 
     private suspend fun runFunctions(listener: EventListener) = listener.functions
         .filter { it.findAnnotation<ListenTo>()?.event == this::class }
-        .forEach {
-            scope.launch {
-                if (it.valueParameters.isEmpty()) it.callSuspend(listener)
-                else it.callSuspend(listener, this@Event)
-            }
+        .forEach { scope.launch { runEvent(it, listener) } }
+
+    private suspend fun runEvent(func: KFunction<*>, listener: EventListener) {
+        try {
+            if (func.valueParameters.isEmpty()) func.callSuspend(listener)
+            else func.callSuspend(listener, this@Event)
+        } catch (e: Exception) {
+            println("Got error")
         }
+    }
+
 }
