@@ -48,7 +48,7 @@ data class ChannelData(
         val icon: Optional<String?> = Optional.Missing(),
         @SerialName("owner_id") val ownerId: Optional<String> = Optional.Missing(),
         @SerialName("application_id") val applicationId: Optional<String> = Optional.Missing(),
-        @SerialName("parent_id") val parentId: Optional<String> = Optional.Missing(),
+        @SerialName("parent_id") val parentId: Optional<String?> = Optional.Missing(),
         @SerialName("last_pin_timestamp") val lastPinTimestamp: Optional<String?> = Optional.Missing(),
         @SerialName("rtc_region") val voiceRegion: Optional<String?> = Optional.Missing()
 ) : Entity
