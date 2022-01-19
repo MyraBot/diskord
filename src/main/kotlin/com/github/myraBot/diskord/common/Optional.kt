@@ -199,7 +199,7 @@ open class Optional<out T> private constructor() {
 
         @OptIn(ExperimentalSerializationApi::class)
         override fun serialize(encoder: Encoder, value: Optional<T>) = when (value) {
-            is Missing<*> -> throw SerializationException("missing values cannot be serialized")
+            is Missing<*> -> encoder.encodeNull() //TODO make them not serialized at all
             is Null<*> -> encoder.encodeNull()
             is Value -> encoder.encodeSerializableValue(contentSerializer, value.value)
             else -> value.unsupportedOptional()
