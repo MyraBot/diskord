@@ -16,6 +16,7 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelCr
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDeleteEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
+import com.github.myraBot.diskord.gateway.listeners.impl.interactions.GenericInteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import kotlinx.serialization.json.JsonElement
@@ -35,7 +36,7 @@ object Events {
                     GuildCache.ids.addAll(it.guilds.map(UnavailableGuild::id))
                 }
                 "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
-                "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(data))
+                "INTERACTION_CREATE" -> GenericInteractionCreateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))

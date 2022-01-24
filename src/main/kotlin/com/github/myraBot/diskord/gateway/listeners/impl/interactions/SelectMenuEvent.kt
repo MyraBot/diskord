@@ -14,17 +14,17 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 data class SelectMenuEvent(
-        override val interaction: Interaction,
-) : Event(), InteractionCreateBehavior {
-    val message: Message = interaction.message.forceValue
-    val guild: Guild get() = runBlocking { Diskord.getGuild(interaction.guildId.forceValue).awaitNonNull() }
-    val member: Member? get() = interaction.member
+        override val data: Interaction,
+) : InteractionCreateEvent(data) {
+    val message: Message = data.message.forceValue
+    val guild: Guild get() = runBlocking { Diskord.getGuild(data.guildId.forceValue).awaitNonNull() }
+    val member: Member? get() = data.member
     val selectMenu: SelectMenu
         get() = message.components
             .asSequence()
             .flatMap { it.components }
-            .first { it.id == interaction.interactionComponentData?.customId }
+            .first { it.id == data.interactionComponentData?.customId }
             .let { return it.asSelectMenu() }
-    val id: String get() = interaction.id
-    val values: List<String> get() = interaction.interactionDataJson.forceValue.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
+    val id: String get() = data.id
+    val values: List<String> get() = data.interactionDataJson.forceValue.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 }

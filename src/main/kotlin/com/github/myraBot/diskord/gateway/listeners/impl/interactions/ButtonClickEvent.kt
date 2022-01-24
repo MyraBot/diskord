@@ -11,15 +11,15 @@ import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import kotlinx.coroutines.runBlocking
 
 data class ButtonClickEvent(
-        override val interaction: Interaction,
-) : Event(), InteractionCreateBehavior {
-    val message: Message = interaction.message.forceValue
-    val guild: Guild? get() = runBlocking { GuildCache[interaction.guildId.value!!].await() }
-    val member: Member? get() = interaction.member
+        override val data: Interaction,
+) : InteractionCreateEvent(data) {
+    val message: Message = data.message.forceValue
+    val guild: Guild? get() = runBlocking { GuildCache[data.guildId.value!!].await() }
+    val member: Member? get() = data.member
     val button: Button
         get() = message.components
             .asSequence()
             .flatMap { it.components }
-            .first { it.id == interaction.interactionComponentData?.customId }
+            .first { it.id == data.interactionComponentData?.customId }
             .let { return it.asButton() }
 }

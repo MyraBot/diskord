@@ -1,7 +1,9 @@
 package com.github.myraBot.diskord.rest.behaviors
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
+import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackData
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionCallbackType
@@ -9,16 +11,13 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.Interactio
 import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.rest.request.Promise
-import com.github.myraBot.diskord.common.JSON
-import com.github.myraBot.diskord.common.entities.Locale
-import com.github.myraBot.diskord.gateway.DiskordBuilder
 import com.github.myraBot.diskord.rest.interactionTransform
+import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.serialization.encodeToString
 
 interface InteractionCreateBehavior {
 
-    val interaction: Interaction
+     val interaction: Interaction
 
     val locale: Locale? get() = interaction.locale.value
     val guildLocale: Locale? get() = interaction.guildLocale.value

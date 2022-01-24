@@ -13,22 +13,18 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.gateway.listeners.Event
-import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.rest.request.Promise
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
-@Serializable
 data class SlashCommandEvent(
-        override val interaction: Interaction,
-) : Event(), InteractionCreateBehavior {
-    val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.interactionDataJson.forceValue)
-    val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId.forceValue)
-    val member: Member? get() = interaction.member
-    val guild: Promise<Guild> get() = GuildCache[interaction.guildId.forceValue]
-    val channel: Promise<TextChannel> get() = Diskord.getChannel(interaction.channelId.forceValue)
+        override val data: Interaction,
+) : InteractionCreateEvent(data) {
+    val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.forceValue)
+    val resolved: Resolved get() = Resolved(command.resolved, data.guildId.forceValue)
+    val member: Member? get() = data.member
+    val guild: Promise<Guild> get() = GuildCache[data.guildId.forceValue]
+    val channel: Promise<TextChannel> get() = Diskord.getChannel(data.channelId.forceValue)
 
     inline fun <reified T> getOption(name: String): T? {
         // TODO It's unsafe to only check for name.
