@@ -1,30 +1,24 @@
 package com.github.myraBot.diskord.rest
 
+import com.github.myraBot.diskord.common.Diskord
 import io.ktor.http.*
 import kotlin.jvm.Throws
 
 object ErrorValidation {
 
-    @Throws(Exception::class)
     fun validateResponse(status: HttpStatusCode) = when (status) {
         HttpStatusCode.OK -> Unit
         HttpStatusCode.Created -> Unit
         HttpStatusCode.NoContent -> Unit
 
-        HttpStatusCode.NotModified -> throw EntityModifyException()
-        HttpStatusCode.BadRequest -> throw BadRequestException()
+        HttpStatusCode.NotModified -> Diskord.errorHandler.onEntityModifyException()
+        HttpStatusCode.BadRequest -> Diskord.errorHandler.onBadRequest()
         HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
-        HttpStatusCode.Forbidden -> throw MissingPermissionsException()
-        HttpStatusCode.NotFound -> throw UnknownEntityException()
+        HttpStatusCode.Forbidden -> Diskord.errorHandler.onMissingPermissions()
+        HttpStatusCode.NotFound -> Diskord.errorHandler.onNotFoundException()
         HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
-        HttpStatusCode.TooManyRequests -> throw RateLimitException()
+        HttpStatusCode.TooManyRequests -> Diskord.errorHandler.onRateLimit()
         else -> throw UnknownError()
     }
 
 }
-
-class EntityModifyException : Exception()
-class BadRequestException : Exception()
-class MissingPermissionsException : Exception()
-class UnknownEntityException : Exception()
-class RateLimitException : Exception()

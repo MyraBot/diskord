@@ -21,7 +21,6 @@ interface HttpRequestClient<R> {
      *
      * @param data information about the to be executed [HttpRequest].
      */
-    @Throws(Exception::class)
     suspend fun execute(data: HttpRequest<R>): R {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
