@@ -3,11 +3,14 @@ package com.github.myraBot.diskord.gateway.listeners.impl.interactions
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionType
 import com.github.myraBot.diskord.gateway.listeners.Event
+import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import com.github.myraBot.diskord.rest.builders.ComponentType
 
 class InteractionCreateEvent(
-        val data: Interaction
-) : Event() {
+        val data: Interaction,
+) : Event(), InteractionCreateBehavior {
+
+    override val interaction: Interaction = data
 
     override suspend fun call() {
         when (data.type) {
