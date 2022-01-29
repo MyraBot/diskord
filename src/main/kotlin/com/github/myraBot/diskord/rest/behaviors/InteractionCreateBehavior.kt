@@ -10,14 +10,15 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.Interactio
 import com.github.myraBot.diskord.common.entities.applicationCommands.InteractionResponseData
 import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.builders.InteractionMessageBuilder
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.rest.interactionTransform
 import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.transform
 import kotlinx.serialization.encodeToString
 
 interface InteractionCreateBehavior {
 
-     val interaction: Interaction
+    val interaction: Interaction
 
     val locale: Locale? get() = interaction.locale.value
     val guildLocale: Locale? get() = interaction.guildLocale.value
@@ -33,7 +34,7 @@ interface InteractionCreateBehavior {
     suspend fun acknowledge(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Unit> {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            InteractionCallbackData.fromMessageBuilder(message.interactionTransform(interaction))
+            InteractionCallbackData.fromMessageBuilder(message.transform())
         )
         val json = JSON.encodeToString(responseData)
         return Promise.of(Endpoints.acknowledgeInteraction, json, files.toList()) {
@@ -42,7 +43,9 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit) = acknowledge(files = files, message = MessageBuilder().apply { message.invoke(this) })
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionMessageBuilder.() -> Unit) {
+        acknowledge(files = files, message = InteractionMessageBuilder(interaction).apply { message.invoke(this) })
+    }
 
     suspend fun getInteractionResponse(): Promise<Message> {
         return Promise.of(Endpoints.getOriginalInteractionResponse) {

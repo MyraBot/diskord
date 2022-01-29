@@ -1,30 +1,22 @@
 package com.github.myraBot.diskord.rest.builders
 
-import com.github.myraBot.diskord.common.Arguments
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.asComponent
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
-import com.github.myraBot.diskord.common.entities.message.embed.Footer
-import com.github.myraBot.diskord.gateway.DiskordBuilder
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Suppress("unused")
 @Serializable
-data class MessageBuilder(
-        var content: String? = null,
-        var tts: Boolean? = null,
-        var embeds: MutableList<Embed> = mutableListOf(),
-        @SerialName("components") var actionRows: MutableList<Component> = mutableListOf(),
+open class MessageBuilder(
+    var content: String? = null,
+    var tts: Boolean? = null,
+    var embeds: MutableList<Embed> = mutableListOf(),
+    @SerialName("components") var actionRows: MutableList<Component> = mutableListOf(),
 ) {
-    @Transient
-    var variables: suspend Arguments.() -> Unit = {}
-
-
     suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
 
     fun addEmbed(embed: Embed) = embeds.add(embed)
