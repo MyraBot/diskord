@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.rest
 
 import com.github.myraBot.diskord.common.caching.DoubleKey
+import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.MemberCache
 import com.github.myraBot.diskord.common.caching.RoleCache
 import com.github.myraBot.diskord.common.entities.Application
@@ -36,7 +37,9 @@ object Endpoints {
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val getOriginalInteractionResponse = Route(HttpMethod.Get, "/webhooks/{application.id}/{interaction.token}/messages/@original", Message.serializer())
-    val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer())
+    val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer()) { guild, args ->
+        GuildCache.cache[args["guild.id"].toString()] = guild
+    }
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
     val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer())) { roles, args ->
         roles.forEach {
