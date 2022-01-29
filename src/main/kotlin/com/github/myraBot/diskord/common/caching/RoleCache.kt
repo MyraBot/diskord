@@ -7,7 +7,7 @@ import com.github.myraBot.diskord.rest.request.Promise
 object RoleCache : Cache<DoubleKey, Role>(
     retrieve = { key ->
         Promise.of(Endpoints.getRoles) {
-            arg("guild.id", key.second)
-        }.map { roles -> roles?.let { role -> role.first { it.id == key.first } } }
+            arg("guild.id", key.first)
+        }.map { roles -> roles?.let { role -> role.first { it.id == key.second } } }
     }
 )

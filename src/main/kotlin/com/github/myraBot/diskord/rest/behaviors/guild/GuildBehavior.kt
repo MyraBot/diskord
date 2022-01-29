@@ -23,6 +23,6 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
     }
 
     fun getRoles(): Promise<List<Role>> = Promise.of(Endpoints.getRoles) { arg("guild.id", this@GuildBehavior.id) }
-    fun getRole(id: String): Promise<Role> = RoleCache[DoubleKey(id, this.id)]
+    fun getRole(id: String): Promise<Role> = RoleCache[DoubleKey(this.id, id)]
     fun getChannels(): Promise<List<ChannelData>> = Promise.of(Endpoints.getChannels) { arg("guild.id", this@GuildBehavior.id) }
 }

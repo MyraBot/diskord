@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.rest
 
 import com.github.myraBot.diskord.common.caching.DoubleKey
 import com.github.myraBot.diskord.common.caching.MemberCache
+import com.github.myraBot.diskord.common.caching.RoleCache
 import com.github.myraBot.diskord.common.entities.Application
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
@@ -37,7 +38,11 @@ object Endpoints {
     val getOriginalInteractionResponse = Route(HttpMethod.Get, "/webhooks/{application.id}/{interaction.token}/messages/@original", Message.serializer())
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer())
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
-    val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer()))
+    val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer())) { roles, args ->
+        roles.forEach {
+            RoleCache.cache[DoubleKey(args["guild.id"].toString(), it.id)] = it
+        }
+    }
     val addReaction = Route(HttpMethod.Put, "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me", Unit.serializer())
     val addMemberRole = Route(HttpMethod.Put, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
     val removeMemberRole = Route(HttpMethod.Delete, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
