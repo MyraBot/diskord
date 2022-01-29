@@ -13,7 +13,7 @@ plugins {
 
 val id = "Diskord"
 group = "com.github.myraBot"
-version = "1.3"
+version = "1.4"
 
 repositories { mavenCentral() }
 
@@ -43,25 +43,22 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 publishing {
     repositories {
-        maven {
-            name = "jfrog"
-            url = uri("https://m5rian.jfrog.io/artifactory/java")
-            credentials {
-                username = System.getenv("JFROG_USERNAME")
-                password = System.getenv("JFROG_PASSWORD")
+        publications {
+            create<MavenPublication>("repo") {
+                group = project.group as String
+                version = project.version as String
+                artifactId = id
+                from(components["java"])
             }
         }
-    }
-
-    publications {
-        create<MavenPublication>("jfrog") {
-            from(components["java"])
-
-            group = project.group as String
-            version = project.version as String
-            artifactId = id
-
-            artifact(sourcesJar)
+        maven {
+            url = uri( "https://systems.myra.bot/releases/")
+            name = "repo"
+            credentials {
+                username = System.getenv("REPO_NAME")
+                password = System.getenv("REPO_SECRET")
+            }
+            authentication { create<BasicAuthentication>("basic") }
         }
     }
 }
