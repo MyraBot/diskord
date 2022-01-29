@@ -11,7 +11,6 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.Interactio
 import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.InteractionMessageBuilder
-import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.rest.request.Promise
 import com.github.myraBot.diskord.rest.transform
 import kotlinx.serialization.encodeToString
@@ -43,8 +42,8 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionMessageBuilder.() -> Unit) {
-        acknowledge(files = files, message = InteractionMessageBuilder(interaction).apply { message.invoke(this) })
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionMessageBuilder.() -> Unit): Promise<Unit> {
+        return acknowledge(files = files, message = InteractionMessageBuilder(interaction).apply { message.invoke(this) })
     }
 
     suspend fun getInteractionResponse(): Promise<Message> {
