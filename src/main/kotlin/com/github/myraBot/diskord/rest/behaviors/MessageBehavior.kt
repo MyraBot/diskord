@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.rest.behaviors
 import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.encodeToString
 import java.net.URLEncoder

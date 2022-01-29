@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.rest.behaviors.guild
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.Entity
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 
 interface MemberBehavior : Entity {
 

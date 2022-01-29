@@ -14,7 +14,7 @@ import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import diskord.common.entityData.message.MessageFlag
 import diskord.common.entityData.message.MessageFlags

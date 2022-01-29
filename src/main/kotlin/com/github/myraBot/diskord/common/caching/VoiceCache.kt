@@ -4,7 +4,7 @@ import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.listeners.ListenTo
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.GuildCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 
 object VoiceCache : Cache<String, MutableList<VoiceState>>(
     retrieve = { Promise.of(null) }

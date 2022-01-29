@@ -1,19 +1,12 @@
 package com.github.myraBot.diskord.common.caching
 
-import com.github.myraBot.diskord.common.entities.Role
-import com.github.myraBot.diskord.common.entities.User
-import com.github.myraBot.diskord.common.entities.channel.ChannelData
-import com.github.myraBot.diskord.common.entities.guild.Guild
-import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.rest.Endpoints
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 
 data class DoubleKey(val first: String, val second: String)
 
 abstract class Cache<K, V>(
-        var retrieve: (K) -> Promise<V> = { Promise.of(null) },
+    var retrieve: (K) -> Promise<V> = { Promise.of(null) },
 ) : EventListener() {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 

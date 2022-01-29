@@ -5,7 +5,7 @@ import com.github.myraBot.diskord.common.toJson
 import com.github.myraBot.diskord.rest.CdnEndpoints
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.bodies.DmCreation
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

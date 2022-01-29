@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.common.entities.channel
 
 import com.github.myraBot.diskord.common.caching.VoiceCache
 import com.github.myraBot.diskord.common.entities.guild.Member
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.runBlocking
 
 data class VoiceChannel(

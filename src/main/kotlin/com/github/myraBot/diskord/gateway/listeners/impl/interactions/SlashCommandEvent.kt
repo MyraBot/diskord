@@ -14,7 +14,7 @@ import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.rest.behaviors.getChannel
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.json.*
 
 data class SlashCommandEvent(

@@ -12,7 +12,7 @@ import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.InteractionMessageBuilder
 import com.github.myraBot.diskord.rest.interactionTransform
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.encodeToString
 
 interface InteractionCreateBehavior {

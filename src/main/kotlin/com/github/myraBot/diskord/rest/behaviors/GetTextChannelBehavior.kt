@@ -5,7 +5,7 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.DmChannel
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 
 interface GetTextChannelBehavior
 

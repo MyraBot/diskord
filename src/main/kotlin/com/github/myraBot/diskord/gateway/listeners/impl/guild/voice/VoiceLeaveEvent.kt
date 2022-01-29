@@ -4,7 +4,7 @@ import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.listeners.Event
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.runBlocking
 
 data class VoiceLeaveEvent(

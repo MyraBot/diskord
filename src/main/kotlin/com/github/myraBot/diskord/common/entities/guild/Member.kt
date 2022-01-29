@@ -7,7 +7,7 @@ import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.behaviors.guild.MemberBehavior
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.Mention
 import kotlinx.coroutines.runBlocking

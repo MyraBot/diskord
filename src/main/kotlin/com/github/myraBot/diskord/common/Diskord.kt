@@ -9,7 +9,7 @@ import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.rest.ErrorHandler
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
-import com.github.myraBot.diskord.rest.request.Promise
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.flow.Flow
 
 object Diskord : GetTextChannelBehavior {

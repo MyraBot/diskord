@@ -1,15 +1,11 @@
-package com.github.myraBot.diskord.rest.request.impl
+package com.github.myraBot.diskord.rest.request.promises
 
-import com.github.myraBot.diskord.rest.request.HttpRequest
-import com.github.myraBot.diskord.rest.request.Promise
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MapPromise<I, O>(
-        override val value: O?,
-        override val httpRequest: HttpRequest<O>?,
-        override val promise: Promise<I>,
-        private val transform: suspend (I?) -> O?,
+    override val promise: Promise<I>,
+    private val transform: suspend (I?) -> O?,
 ) : PromiseOperator<I, O>(promise) {
 
     override suspend fun await(): O? {
