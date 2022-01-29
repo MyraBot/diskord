@@ -31,7 +31,7 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Unit> {
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionMessageBuilder): Promise<Unit> {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             InteractionCallbackData.fromMessageBuilder(message.transform())
