@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.entities.Emoji
+import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
@@ -19,7 +20,8 @@ data class Guild(
         @SerialName("owner_id") val ownerId: String,
         val roles: List<Role>,
         val emojis: List<Emoji>,
-        @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList()
+        @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList(),
+        @SerialName("preferred_locale") val locale: Locale
 ) : GuildBehavior {
 
     init {
