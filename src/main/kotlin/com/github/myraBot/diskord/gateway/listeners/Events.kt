@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
+import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.common.utilities.logging.error
 import com.github.myraBot.diskord.common.utilities.logging.info
@@ -17,7 +18,6 @@ import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelDe
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.channel.ChannelUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.voice.VoiceStateUpdateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.interactions.GenericInteractionCreateEvent
-import com.github.myraBot.diskord.gateway.listeners.impl.interactions.InteractionCreateEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.message.MessageCreateEvent
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -40,7 +40,11 @@ object Events {
                 "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
-                "GUILD_MEMBER_ADD" -> MemberJoinEvent(JSON.decodeFromJsonElement(data))
+                "GUILD_MEMBER_ADD" -> run {
+                    val member: Member = JSON.decodeFromJsonElement(data.jsonObject["member"]!!)
+                    val guildId: String = data.jsonObject["guild_id"]!!.jsonPrimitive.content
+                    MemberJoinEvent(member, guildId)
+                }
                 "GUILD_MEMBER_REMOVE" -> run {
                     val user: User = JSON.decodeFromJsonElement(data.jsonObject["user"]!!)
                     val guildId: String = data.jsonObject["guild_id"]!!.jsonPrimitive.content
