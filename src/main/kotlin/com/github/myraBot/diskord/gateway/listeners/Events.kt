@@ -40,11 +40,7 @@ object Events {
                 "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(data))
                 "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(data))
-                "GUILD_MEMBER_ADD" -> run {
-                    val member: Member = JSON.decodeFromJsonElement(data.jsonObject["member"]!!)
-                    val guildId: String = data.jsonObject["guild_id"]!!.jsonPrimitive.content
-                    MemberJoinEvent(member, guildId)
-                }
+                "GUILD_MEMBER_ADD" -> MemberJoinEvent(JSON.decodeFromJsonElement(data))
                 "GUILD_MEMBER_REMOVE" -> run {
                     val user: User = JSON.decodeFromJsonElement(data.jsonObject["user"]!!)
                     val guildId: String = data.jsonObject["guild_id"]!!.jsonPrimitive.content

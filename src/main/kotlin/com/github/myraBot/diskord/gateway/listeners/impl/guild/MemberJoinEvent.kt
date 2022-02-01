@@ -10,8 +10,7 @@ import kotlinx.coroutines.runBlocking
  * [Documentation](https://discord.com/developers/docs/topics/gateway#guild-member-add)
  */
 data class MemberJoinEvent(
-    val member: Member,
-    val guildId: String
+    val member: Member
 ) : Event() {
-    val guild: Guild get() = runBlocking { Diskord.getGuild(guildId).awaitNonNull() }
+    val guild: Guild get() = runBlocking { Diskord.getGuild(member.guildId).awaitNonNull() }
 }
