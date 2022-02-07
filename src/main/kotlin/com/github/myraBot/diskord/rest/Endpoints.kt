@@ -37,7 +37,7 @@ object Endpoints {
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val getOriginalInteractionResponse = Route(HttpMethod.Get, "/webhooks/{application.id}/{interaction.token}/messages/@original", Message.serializer())
-    val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}", Guild.serializer()) { guild, args ->
+    val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}?with_counts=true", Guild.serializer()) { guild, args ->
         GuildCache.cache[args["guild.id"].toString()] = guild
     }
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
