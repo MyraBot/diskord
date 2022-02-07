@@ -13,7 +13,7 @@ plugins {
 
 val id = "Diskord"
 group = "com.github.myraBot"
-version = "1.10"
+version = "1.12"
 
 repositories { mavenCentral() }
 
