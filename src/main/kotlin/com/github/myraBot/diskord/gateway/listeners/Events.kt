@@ -6,8 +6,6 @@ import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.common.utilities.logging.error
-import com.github.myraBot.diskord.common.utilities.logging.info
-import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
@@ -59,31 +57,19 @@ object Events {
     }
 
     /**
-     * Loads all event listeners.
-     *
-     * @param listeners A list to register listeners manuel.
-     * @param packageName A package name to search for listeners.
-     */
-    suspend fun register(listeners: MutableList<EventListener>, packageName: String?) {
-        info(this::class) { "Registering discord event listeners" }
-
-        Diskord.cache.map(Cache::cache).forEach(EventListener::loadAsCache) // Load listeners required for the cache
-        listeners.forEach(EventListener::loadAsListener)
-        //listeners.forEach { it.loadAsListener() } // Load custom registered listeners
-        packageName?.let { findListeners(it) } // Load listeners by reflection
-    }
-
-    /**
+     * Load listeners by reflection.
      * Finds and loads all listeners in a specific package.
      *
      * @param packageName The package name to search for listeners.
      */
-    private fun findListeners(packageName: String) {
+    fun findListeners(packageName: String) {
         Reflections(packageName).getSubTypesOf(EventListener::class.java)
             .map { it.kotlin.objectInstance }
-            .forEach { listener ->
-                if (listener == null) throw IllegalStateException("Make sure all listeners are objects!")
-                listener.loadAsListener()
+            .forEach {
+                if (it == null) {
+                    error(this::class) { "Found a listener which is not an object, skipping..." }
+                    return@forEach
+                } else it.loadListeners()
             }
     }
 

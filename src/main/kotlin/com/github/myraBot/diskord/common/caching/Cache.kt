@@ -7,7 +7,7 @@ data class DoubleKey(val first: String, val second: String)
 
 abstract class Cache<K, V>(
     var retrieve: (K) -> Promise<V> = { Promise.of(null) },
-) : EventListener() {
+) : EventListener {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 
     operator fun get(key: K): Promise<V> {

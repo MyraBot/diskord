@@ -160,6 +160,5 @@ suspend fun Diskord.connectGateway() {
     if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
     val ws = Websocket(this.intents) // Create websocket
     Diskord.apply { websocket = ws }
-    Events.register(listeners, listenersPackage)
     ws.connect() // Open websocket connection
 }
