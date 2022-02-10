@@ -4,12 +4,11 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
-import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
 import com.github.myraBot.diskord.common.utilities.logging.error
 import com.github.myraBot.diskord.common.utilities.logging.info
+import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.OptCode
-import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.guild.*
@@ -32,7 +31,7 @@ object Events {
             val data: JsonElement = income.d!!
             when (income.t) {
                 "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(data).also {
-                    Websocket.session = it.sessionId
+                    Diskord.websocket.session = it.sessionId
                     GuildCache.ids.addAll(it.guilds.map(UnavailableGuild::id))
                 }
                 "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(data))
@@ -65,12 +64,13 @@ object Events {
      * @param listeners A list to register listeners manuel.
      * @param packageName A package name to search for listeners.
      */
-    suspend fun register(listeners: MutableList<EventListener>, packageName: String) {
+    suspend fun register(listeners: MutableList<EventListener>, packageName: String?) {
         info(this::class) { "Registering discord event listeners" }
 
-        Diskord.cache.forEach { it.cache.loadAsCache() } // Load listeners required for the cache
-        listeners.forEach { it.loadAsListener() } // Load custom registered listeners
-        if (packageName.isNotBlank()) findListeners(packageName) // Load listeners by reflection
+        Diskord.cache.map(Cache::cache).forEach(EventListener::loadAsCache) // Load listeners required for the cache
+        listeners.forEach(EventListener::loadAsListener)
+        //listeners.forEach { it.loadAsListener() } // Load custom registered listeners
+        packageName?.let { findListeners(it) } // Load listeners by reflection
     }
 
     /**

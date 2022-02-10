@@ -6,7 +6,6 @@ import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
 import com.github.myraBot.diskord.common.utilities.logging.debug
 import com.github.myraBot.diskord.common.utilities.logging.info
 import com.github.myraBot.diskord.common.utilities.logging.trace
-import com.github.myraBot.diskord.gateway.DiskordBuilder.listeners
 import com.github.myraBot.diskord.gateway.listeners.Events
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -25,10 +24,11 @@ import java.util.concurrent.TimeUnit
  *
  * The Gateway websocket to listen to discord events.
  */
-object Websocket {
+class Websocket(
+    val intents: MutableSet<GatewayIntent> = mutableSetOf()
+) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
-    private const val url = "wss://gateway.discord.gg/?v=9&encoding=json"
-    var intents: MutableSet<GatewayIntent> = mutableSetOf()
+    private val url = "wss://gateway.discord.gg/?v=9&encoding=json"
     lateinit var session: String
     private var s: Int = 0
 
@@ -54,7 +54,7 @@ object Websocket {
                 info(this::class) { "Opened websocket connection" }
                 while (true) {
                     val data = incoming.receive() as? Frame.Text
-                    trace(this::class) { "Incoming websocket message: ${data?.readText()}" }
+                    debug(this::class) { "Gateway << ${data?.readText()}" }
                     val income = JSON.decodeFromString<OptCode>(data!!.readText())
                     handleIncome(this, income, resume)
                 }
@@ -86,7 +86,7 @@ object Websocket {
             }
             // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
             11 -> {
-                trace(this::class) { "Heartbeat acknowledged!" }
+                debug(this::class) { "Heartbeat acknowledged!" }
             }
         }
     }
@@ -126,7 +126,7 @@ object Websocket {
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        info(this::class) { "Connecting with intents of $intents (${GatewayIntent.getID(intents)})" }
+        info(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
         val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
@@ -156,12 +156,10 @@ object Websocket {
  *
  * @return Returns the [Diskord] object. Just for laziness.
  */
-suspend fun DiskordBuilder.connect() {
-    Diskord.apply {
-        this.token = this@connect.token
-        this.cache = this@connect.cache
-        this.transformer = this@connect.transformer
-    }
-    Events.register(listeners, DiskordBuilder.listenerPackage) // Events need to be registered after applying the cache to the Diskord object, so only required listeners get registered
-    Websocket.apply { this.intents = this@connect.intents }.connect() // Connect to actual websocket
+suspend fun Diskord.connectGateway() {
+    if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
+    val ws = Websocket(this.intents) // Create websocket
+    Diskord.apply { websocket = ws }
+    Events.register(listeners, listenersPackage)
+    ws.connect() // Open websocket connection
 }

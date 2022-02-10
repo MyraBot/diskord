@@ -1,8 +1,8 @@
 package com.github.myraBot.diskord.rest
 
+import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.applicationCommands.Interaction
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
-import com.github.myraBot.diskord.gateway.DiskordBuilder
 import com.github.myraBot.diskord.rest.builders.InteractionMessageBuilder
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
 
@@ -19,7 +19,7 @@ object DefaultTransformer : MessageTransformer {
 }
 
 suspend fun MessageBuilder.transform(): MessageBuilder {
-    val transform = DiskordBuilder.transformer
+    val transform = Diskord.transformer
 
     embeds.onEach { embed -> transform.onEmbed(embed) }
     transformText()
@@ -28,7 +28,7 @@ suspend fun MessageBuilder.transform(): MessageBuilder {
 }
 
 suspend fun InteractionMessageBuilder.interactionTransform(): MessageBuilder {
-    val transform = DiskordBuilder.transformer
+    val transform = Diskord.transformer
 
     embeds.onEach { embed -> transform.onInteractionEmbed(this.interaction, embed) }
     transformText()
@@ -37,7 +37,7 @@ suspend fun InteractionMessageBuilder.interactionTransform(): MessageBuilder {
 }
 
 private suspend fun MessageBuilder.transformText() {
-    val transform = DiskordBuilder.transformer
+    val transform = Diskord.transformer
 
     content?.let { content = transform.onText(this, it) }
     embeds.onEach { embed ->
