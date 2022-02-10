@@ -28,7 +28,7 @@ interface HttpRequestClient<R> {
         val response = if (data.files.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.files) // Request needs to send files
 
-        kTrace(this::class) { "Rest response = ${response.readText()}" }
+        kTrace(this::class) { "Rest <<< ${response.readText()}" }
         ErrorValidation.validateResponse(response.status)
 
         if (data.route.serializer == Unit.serializer()) return Unit as R
