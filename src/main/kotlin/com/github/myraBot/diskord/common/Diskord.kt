@@ -6,7 +6,6 @@ import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.utilities.info
 import com.github.myraBot.diskord.common.utilities.kError
-import com.github.myraBot.diskord.common.utilities.kInfo
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
@@ -18,7 +17,10 @@ import com.github.myraBot.diskord.rest.ErrorHandler
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import com.github.myraBot.diskord.rest.request.promises.Promise
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
@@ -57,7 +59,7 @@ object Diskord : GetTextChannelBehavior {
     fun getGuild(id: String): Promise<Guild> = GuildCache[id]
 }
 
-suspend fun diskord(builder: suspend Diskord.() -> Unit) {
+fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {
     builder.invoke(Diskord)
     if (Diskord.token.isBlank()) {
         kError(Diskord::class) { "Your token is invalid, aborting..." }
