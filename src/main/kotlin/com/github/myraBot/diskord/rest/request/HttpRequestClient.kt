@@ -3,7 +3,7 @@ package com.github.myraBot.diskord.rest.request
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.utilities.REST_CLIENT
-import com.github.myraBot.diskord.common.utilities.logging.trace
+import com.github.myraBot.diskord.common.utilities.kTrace
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.ErrorValidation
 import com.github.myraBot.diskord.utilities.FileFormats
@@ -28,7 +28,7 @@ interface HttpRequestClient<R> {
         val response = if (data.files.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.files) // Request needs to send files
 
-        trace(this::class) { "Rest response = ${response.readText()}" }
+        kTrace(this::class) { "Rest response = ${response.readText()}" }
         ErrorValidation.validateResponse(response.status)
 
         if (data.route.serializer == Unit.serializer()) return Unit as R

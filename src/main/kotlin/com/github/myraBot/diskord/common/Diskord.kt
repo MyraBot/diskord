@@ -4,8 +4,9 @@ import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.UserCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
-import com.github.myraBot.diskord.common.utilities.logging.error
-import com.github.myraBot.diskord.common.utilities.logging.info
+import com.github.myraBot.diskord.common.utilities.info
+import com.github.myraBot.diskord.common.utilities.kError
+import com.github.myraBot.diskord.common.utilities.kInfo
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
@@ -59,7 +60,7 @@ object Diskord : GetTextChannelBehavior {
 suspend fun diskord(builder: suspend Diskord.() -> Unit) {
     builder.invoke(Diskord)
     if (Diskord.token.isBlank()) {
-        error(Diskord::class) { "Your token is invalid, aborting..." }
+        kError(Diskord::class) { "Your token is invalid, aborting..." }
         exitProcess(-1)
     }
 }

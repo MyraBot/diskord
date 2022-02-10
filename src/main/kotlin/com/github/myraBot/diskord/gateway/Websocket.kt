@@ -3,9 +3,9 @@ package com.github.myraBot.diskord.gateway
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
-import com.github.myraBot.diskord.common.utilities.logging.debug
-import com.github.myraBot.diskord.common.utilities.logging.info
-import com.github.myraBot.diskord.common.utilities.logging.trace
+import com.github.myraBot.diskord.common.utilities.kDebug
+import com.github.myraBot.diskord.common.utilities.kInfo
+import com.github.myraBot.diskord.common.utilities.kTrace
 import com.github.myraBot.diskord.gateway.listeners.Events
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -51,16 +51,16 @@ class Websocket(
     private suspend fun openWebsocketConnection(url: String, resume: Boolean) {
         try {
             GATEWAY_CLIENT.webSocket(url, {}, {
-                info(this::class) { "Opened websocket connection" }
+                kInfo(this::class) { "Opened websocket connection" }
                 while (true) {
                     val data = incoming.receive() as? Frame.Text
-                    debug(this::class) { "Gateway << ${data?.readText()}" }
+                    kDebug(this::class) { "Gateway << ${data?.readText()}" }
                     val income = JSON.decodeFromString<OptCode>(data!!.readText())
                     handleIncome(this, income, resume)
                 }
             })
         } catch (e: ClosedReceiveChannelException) {
-            info(this::class) { "Lost connection..." }
+            kInfo(this::class) { "Lost connection..." }
             openWebsocketConnection(url, true)
         }
     }
@@ -74,7 +74,7 @@ class Websocket(
             }
             // 	Fired periodically by the client to keep the connection alive
             1 -> {
-                debug(this::class) { "Received Heartbeat attack!" }
+                kDebug(this::class) { "Received Heartbeat attack!" }
                 sendHeartbeat(websocket)
             }
             // 	Sent immediately after connecting
@@ -82,11 +82,11 @@ class Websocket(
                 startHeartbeat(websocket, income)
                 if (resume) resume(websocket)
                 else identify(websocket)
-                info(this::class) { "Successfully connected to Discord" }
+                kInfo(this::class) { "Successfully connected to Discord" }
             }
             // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
             11 -> {
-                debug(this::class) { "Heartbeat acknowledged!" }
+                kDebug(this::class) { "Heartbeat acknowledged!" }
             }
         }
     }
@@ -114,7 +114,7 @@ class Websocket(
     private suspend fun sendHeartbeat(websocket: DefaultClientWebSocketSession) {
         val heartbeat = OptCode(null, null, 1, s).toJson()
         websocket.send(heartbeat)
-        trace(this::class) { "Sent heartbeat!" }
+        kTrace(this::class) { "Sent heartbeat!" }
     }
 
     /**
@@ -126,7 +126,7 @@ class Websocket(
      * @param websocket
      */
     private suspend fun identify(websocket: DefaultClientWebSocketSession) {
-        info(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
+        kInfo(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
         val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), Properties())
         val jsonObject = Json.encodeToJsonElement(d).jsonObject
         websocket.send(OptCode(null, null, 2, jsonObject).toJson())
@@ -139,7 +139,7 @@ class Websocket(
      * @param websocket The web
      */
     private suspend fun resume(websocket: DefaultClientWebSocketSession) {
-        info(this::class) { "Reconnecting to Discord" }
+        kInfo(this::class) { "Reconnecting to Discord" }
         val json = JSON.encodeToJsonElement(GatewayResume(
             token = Diskord.token,
             sessionId = session,

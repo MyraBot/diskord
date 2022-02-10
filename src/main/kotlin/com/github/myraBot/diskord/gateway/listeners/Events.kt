@@ -5,7 +5,8 @@ import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.UnavailableGuild
-import com.github.myraBot.diskord.common.utilities.logging.error
+import com.github.myraBot.diskord.common.utilities.error
+import com.github.myraBot.diskord.common.utilities.kError
 import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.listeners.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.listeners.impl.UnknownEvent
@@ -50,8 +51,8 @@ object Events {
                 else -> JSON.decodeFromJsonElement<UnknownEvent>(data)
             }.call()
         } catch (e: Exception) {
-            error(this::class) { "An error occurred on the following event: ${income.t}:" }
-            error(this::class) { "Incoming message = ${income.d}" }
+            kError(this::class) { "An error occurred on the following event: ${income.t}:" }
+            kError(this::class) { "Incoming message = ${income.d}" }
             e.printStackTrace()
         }
     }
