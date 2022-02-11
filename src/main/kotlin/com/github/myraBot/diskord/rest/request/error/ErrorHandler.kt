@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.rest
+package com.github.myraBot.diskord.rest.request.error
 
 import com.github.myraBot.diskord.gateway.listeners.Event
 

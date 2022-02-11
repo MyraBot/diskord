@@ -11,9 +11,9 @@ import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.gateway.listeners.Events
-import com.github.myraBot.diskord.rest.DefaultErrorHandler
+import com.github.myraBot.diskord.rest.request.error.DefaultErrorHandler
 import com.github.myraBot.diskord.rest.DefaultTransformer
-import com.github.myraBot.diskord.rest.ErrorHandler
+import com.github.myraBot.diskord.rest.request.error.ErrorHandler
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import com.github.myraBot.diskord.rest.request.promises.Promise

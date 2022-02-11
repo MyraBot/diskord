@@ -5,7 +5,7 @@ import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.utilities.REST_CLIENT
 import com.github.myraBot.diskord.common.utilities.kTrace
 import com.github.myraBot.diskord.rest.Endpoints
-import com.github.myraBot.diskord.rest.ErrorValidation
+import com.github.myraBot.diskord.rest.request.error.validateResponse
 import com.github.myraBot.diskord.utilities.FileFormats
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -21,7 +21,7 @@ interface HttpRequestClient<R> {
      *
      * @param data information about the to be executed [HttpRequest].
      */
-    suspend fun execute(data: HttpRequest<R>): R {
+    suspend fun execute(data: HttpRequest<R>): R? {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
@@ -29,7 +29,9 @@ interface HttpRequestClient<R> {
         else formDataRequest(route, data.json!!, data.files) // Request needs to send files
 
         kTrace(this::class) { "Rest <<< ${response.readText()}" }
-        ErrorValidation.validateResponse(response.status)
+        val errorValidation = validateResponse(response.status)
+        if (errorValidation.throwError) errorValidation.errorCallback
+        if (errorValidation.returnNull) return null
 
         if (data.route.serializer == Unit.serializer()) return Unit as R
         return JSON.decodeFromString(data.route.serializer, response.readText()).also {
