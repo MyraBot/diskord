@@ -15,15 +15,18 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class User(
-        val id: String,
-        val username: String,
-        val discriminator: String,
-        @SerialName("avatar") private val avatarHash: String?,
-        @SerialName("bot") val isBot: Boolean = false,
-        val system: Boolean = false,
-        @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
+    val id: String,
+    val username: String,
+    val discriminator: String,
+    @SerialName("avatar") private val avatarHash: String?,
+    @SerialName("bot") val isBot: Boolean = false,
+    val system: Boolean = false,
+    @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
 ) {
-    val avatar: String get() = CdnEndpoints.userAvatar.apply { arg("user_id", id); arg("user_avatar", avatarHash ?: (discriminator.toInt() % 5).toString()) }
+    val avatar: String
+        get() = avatarHash?.let {
+            CdnEndpoints.userAvatar.apply { arg("user_id", id); arg("user_avatar", avatarHash) }
+        } ?: CdnEndpoints.defaultUserAvatar.apply { arg("user_discriminator", discriminator.toInt() % 5) }
     val asTag: String get() = "$username#$discriminator"
     val mention: String get() = Mention.user(id)
     fun openDms(): Promise<DmChannel> = Promise

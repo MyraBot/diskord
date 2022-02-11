@@ -15,7 +15,7 @@ object CdnEndpoints {
     val guildDiscoverySplash = CdnRoute("discovery-splashes/guild_id/guild_discovery_splash.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
     val guildBanner = CdnRoute("banners/guild_id/guild_banner.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
     val userBanner = CdnRoute("banners/user_id/user_banner.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
-    val defaultUserAvatar = CdnRoute("embed/avatars/{discriminator.module5}}.png", listOf(FileFormats.PNG))
+    val defaultUserAvatar = CdnRoute("embed/avatars/{user_discriminator}.png", listOf(FileFormats.PNG))
     val userAvatar = CdnRoute("avatars/{user_id}/{user_avatar}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
     val guildMemberAvatar = CdnRoute("guilds/guild_id/users/user_id/avatars/member_avatar.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
     val applicationIcon = CdnRoute("app-icons/{application_id}/icon.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
