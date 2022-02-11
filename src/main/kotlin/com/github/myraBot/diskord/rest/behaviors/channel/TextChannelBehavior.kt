@@ -15,13 +15,17 @@ interface TextChannelBehavior {
 
     val data: ChannelData
 
+    suspend fun send(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Message> {
+        val json = JSON.encodeToString(message.transform())
+        return Promise.of(Endpoints.createMessage, json, files.toList()) { arg("channel.id", data.id) }
+    }
+
     suspend fun send(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit): Promise<Message> {
         return send(files = files, message = MessageBuilder().also { message.invoke(it) })
     }
 
-    suspend fun send(vararg files: File = emptyArray(), message: MessageBuilder): Promise<Message> {
-        val json = JSON.encodeToString(message.transform())
-        return Promise.of(Endpoints.createMessage, json, files.toList()) { arg("channel.id", data.id) }
+    suspend fun send(vararg files: File): Promise<Message> {
+        return send(files = files, message = MessageBuilder())
     }
 
 }
