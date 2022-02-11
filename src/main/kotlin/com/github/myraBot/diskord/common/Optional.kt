@@ -207,6 +207,12 @@ open class Optional<out T> private constructor() {
     }
 }
 
+fun <T : Any> Optional<T>.isMissing(): Boolean = when (this) {
+    is Missing -> true
+    is Null<*>, is Value -> false
+    else -> unsupportedOptional()
+}
+
 fun <T : Any> Optional<T>.switchOnMissing(value: T): Optional<T> = when (this) {
     is Missing -> Value(value)
     is Null<*>, is Value -> this
