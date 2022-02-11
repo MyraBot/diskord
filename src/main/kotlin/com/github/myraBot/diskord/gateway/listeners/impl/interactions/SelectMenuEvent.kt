@@ -6,8 +6,6 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.gateway.listeners.Event
-import com.github.myraBot.diskord.rest.behaviors.InteractionCreateBehavior
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -15,7 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 data class SelectMenuEvent(
         override val data: Interaction,
-) : InteractionCreateEvent(data) {
+) : GenericInteractionCreateEvent(data) {
     val message: Message = data.message.forceValue
     val guild: Guild get() = runBlocking { Diskord.getGuild(data.guildId.forceValue).awaitNonNull() }
     val member: Member? get() = data.member

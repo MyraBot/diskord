@@ -19,7 +19,7 @@ import kotlinx.serialization.json.*
 
 data class SlashCommandEvent(
         override val data: Interaction,
-) : InteractionCreateEvent(data) {
+) : GenericInteractionCreateEvent(data) {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.forceValue)
     val resolved: Resolved get() = Resolved(command.resolved, data.guildId.forceValue)
     val member: Member? get() = data.member
