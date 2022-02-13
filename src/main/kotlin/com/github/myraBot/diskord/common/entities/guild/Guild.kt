@@ -6,7 +6,9 @@ import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
+import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -36,6 +38,16 @@ data class Guild(
 
     suspend fun getMemberCount() = Diskord.getGuild(this.id).mapNonNull { it.memberCount.forceValue }.awaitNonNull()
     suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.forceValue }.awaitNonNull()
+
+    suspend fun unbanMember(id: String, reason: String? = null): Promise<Unit> {
+        return Promise.of(Endpoints.removeGuildBan) {
+            logReason = reason
+            arguments {
+                arg("guild.id", this@Guild.id)
+                arg("user.id", id)
+            }
+        }
+    }
 
 }
 
