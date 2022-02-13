@@ -5,8 +5,9 @@ import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.rest.Route
 
 data class HttpRequest<T>(
-        val route: Route<T>,
-        val json: String?,
-        val files: List<File>,
-        val arguments: Arguments,
+    val route: Route<T>,
+    val json: String?,
+    val reason: String?,
+    val files: List<File>,
+    val arguments: Arguments,
 )

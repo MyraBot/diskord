@@ -4,6 +4,8 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.gateway.listeners.Event
+import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.runBlocking
 
 /**

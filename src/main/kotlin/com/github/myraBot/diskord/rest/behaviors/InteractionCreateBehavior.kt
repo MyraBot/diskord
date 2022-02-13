@@ -36,7 +36,7 @@ interface InteractionCreateBehavior {
             InteractionCallbackData.fromMessageBuilder(message.interactionTransform())
         )
         val json = JSON.encodeToString(responseData)
-        return Promise.of(Endpoints.acknowledgeInteraction, json, files.toList()) {
+        return Promise.of(Endpoints.acknowledgeInteraction, json, null, files.toList()) {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }

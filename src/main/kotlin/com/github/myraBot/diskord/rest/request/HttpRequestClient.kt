@@ -25,7 +25,7 @@ interface HttpRequestClient<R> {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
-        val response = if (data.files.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json) // Request doesn't contain files
+        val response = if (data.files.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.reason) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.files) // Request needs to send files
 
         kTrace(this::class) { "Rest <<< ${response.readText()}" }
@@ -48,17 +48,18 @@ interface HttpRequestClient<R> {
      * @param json Optional json body.
      * @return Returns the response as a [HttpResponse].
      */
-    private suspend fun bodyRequest(route: String, httpMethod: HttpMethod, json: String?): HttpResponse {
+    private suspend fun bodyRequest(route: String, httpMethod: HttpMethod, json: String?, reason: String?): HttpResponse {
         return try {
             REST_CLIENT.request(route) {
                 method = httpMethod
+                reason?.let { headers { header("X-Audit-Log-Reason", it) } }
                 json?.let {
                     contentType(ContentType.Application.Json)
                     body = it
                 }
             }
         } catch (timeout: HttpRequestTimeoutException) {
-            bodyRequest(route, httpMethod, json)
+            bodyRequest(route, httpMethod, json, reason)
         }
     }
 

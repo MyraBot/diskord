@@ -17,9 +17,9 @@ open class Promise<T>(
 ) : HttpRequestClient<T> {
 
     companion object {
-        fun <T> of(route: Route<T>, json: String? = null, files: List<File> = emptyList(), arguments: Arguments.() -> Unit = {}): Promise<T> {
+        fun <T> of(route: Route<T>, json: String? = null, reason: String? = null, files: List<File> = emptyList(), arguments: Arguments.() -> Unit = {}): Promise<T> {
             val args = Arguments().apply(arguments)
-            val request = HttpRequest(route, json, files, args)
+            val request = HttpRequest(route, json, reason, files, args)
             return Promise(httpRequest = request)
         }
 
