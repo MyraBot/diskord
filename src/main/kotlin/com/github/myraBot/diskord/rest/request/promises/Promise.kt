@@ -1,7 +1,5 @@
 package com.github.myraBot.diskord.rest.request.promises
 
-import com.github.myraBot.diskord.common.Arguments
-import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.rest.Route
 import com.github.myraBot.diskord.rest.request.HttpRequest
 import com.github.myraBot.diskord.rest.request.HttpRequestClient
@@ -17,9 +15,8 @@ open class Promise<T>(
 ) : HttpRequestClient<T> {
 
     companion object {
-        fun <T> of(route: Route<T>, json: String? = null, reason: String? = null, files: List<File> = emptyList(), arguments: Arguments.() -> Unit = {}): Promise<T> {
-            val args = Arguments().apply(arguments)
-            val request = HttpRequest(route, json, reason, files, args)
+        suspend fun <T> of(route: Route<T>, builder: suspend HttpRequest<T>.() -> Unit = {}): Promise<T> {
+            val request = HttpRequest(route).apply { builder.invoke(this) }
             return Promise(httpRequest = request)
         }
 

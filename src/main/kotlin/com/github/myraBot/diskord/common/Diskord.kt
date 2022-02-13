@@ -52,11 +52,11 @@ object Diskord : GetTextChannelBehavior {
     fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized
 
 
-    fun getBotUser(): Promise<User> = UserCache[this.id]
-    fun getUser(id: String): Promise<User> = UserCache[id]
+    suspend fun getBotUser(): Promise<User> = UserCache.get(this.id)
+    suspend fun getUser(id: String): Promise<User> = UserCache.get(id)
 
     fun getGuilds(): Flow<Guild> = GuildCache.getAll()
-    fun getGuild(id: String): Promise<Guild> = GuildCache[id]
+    suspend fun getGuild(id: String): Promise<Guild> = GuildCache.get(id)
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {

@@ -6,8 +6,16 @@ import com.github.myraBot.diskord.rest.Route
 
 data class HttpRequest<T>(
     val route: Route<T>,
-    val json: String?,
-    val reason: String?,
-    val files: List<File>,
-    val arguments: Arguments,
-)
+    var json: String? = null,
+    var logReason: String? = null,
+    var attachments: List<File> = emptyList(),
+    val arguments: Arguments = Arguments()
+) {
+    fun arguments(arguments: Arguments.() -> Unit) {
+        this.arguments.apply(arguments)
+    }
+}
+
+suspend fun <T> httpRequest(route: Route<T>, builder: suspend HttpRequest<T>.() -> Unit) {
+    HttpRequest(route).apply { builder.invoke(this) }
+}

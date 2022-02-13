@@ -6,13 +6,13 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.runBlocking
 
 data class VoiceChannel(
-        override val data: ChannelData,
+    override val data: ChannelData,
 ) : GuildChannel {
 
-    fun getMembers(): Promise<List<Member>> {
-        return VoiceCache[data.id].map { states ->
+    suspend fun getMembers(): Promise<List<Member>> {
+        return VoiceCache.get(data.id).map { states ->
             states?.map {
-                it.member.awaitNonNull()
+                it.getMember().awaitNonNull()
             } ?: emptyList()
         }
     }

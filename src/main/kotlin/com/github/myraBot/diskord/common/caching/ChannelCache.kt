@@ -6,6 +6,8 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 
 object ChannelCache : Cache<String, ChannelData>(
     retrieve = { key ->
-        Promise.of(Endpoints.getChannel) { arg("channel.id", key) }
+        Promise.of(Endpoints.getChannel) {
+            arguments { arg("channel.id", key) }
+        }
     }
 )

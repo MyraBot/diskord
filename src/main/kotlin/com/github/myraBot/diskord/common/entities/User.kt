@@ -29,7 +29,7 @@ class User(
         } ?: CdnEndpoints.defaultUserAvatar.apply { arg("user_discriminator", discriminator.toInt() % 5) }
     val asTag: String get() = "$username#$discriminator"
     val mention: String get() = Mention.user(id)
-    fun openDms(): Promise<DmChannel> = Promise
-        .of(Endpoints.createDm, DmCreation(id).toJson())
+    suspend fun openDms(): Promise<DmChannel> = Promise
+        .of(Endpoints.createDm) { json = DmCreation(id).toJson() }
         .map { data -> data?.let { DmChannel(it) } }
 }

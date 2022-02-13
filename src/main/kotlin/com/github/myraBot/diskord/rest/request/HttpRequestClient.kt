@@ -25,8 +25,8 @@ interface HttpRequestClient<R> {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
-        val response = if (data.files.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.reason) // Request doesn't contain files
-        else formDataRequest(route, data.json!!, data.files) // Request needs to send files
+        val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
+        else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
 
         kTrace(this::class) { "Rest <<< ${response.readText()}" }
         val errorValidation = validateResponse(response.status)

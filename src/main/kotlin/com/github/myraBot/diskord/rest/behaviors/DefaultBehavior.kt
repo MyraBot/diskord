@@ -7,7 +7,7 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 
 interface DefaultBehavior {
 
-    fun getApplication(): Promise<Application> = Promise.of(Endpoints.getBotApplication)
+    suspend fun getApplication(): Promise<Application> = Promise.of(Endpoints.getBotApplication)
     val diskord: Diskord get() = Diskord
 
 }

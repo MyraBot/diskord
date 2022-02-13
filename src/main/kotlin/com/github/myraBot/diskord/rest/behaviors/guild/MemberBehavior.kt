@@ -10,20 +10,26 @@ interface MemberBehavior : Entity {
     val guildId: String
 
     suspend fun addRole(role: Role) = addRole(role.id)
+
     suspend fun addRole(id: String): Promise<Unit> {
         return Promise.of(Endpoints.addMemberRole) {
-            arg("guild.id", guildId)
-            arg("user.id", this@MemberBehavior.id)
-            arg("role.id", id)
+            arguments {
+                arg("guild.id", guildId)
+                arg("user.id", this@MemberBehavior.id)
+                arg("role.id", id)
+            }
         }
     }
 
     suspend fun removeRole(role: Role) = removeRole(role.id)
+
     suspend fun removeRole(id: String): Promise<Unit> {
         return Promise.of(Endpoints.removeMemberRole) {
-            arg("guild.id", guildId)
-            arg("user.id", this@MemberBehavior.id)
-            arg("role.id", id)
+            arguments {
+                arg("guild.id", guildId)
+                arg("user.id", this@MemberBehavior.id)
+                arg("role.id", id)
+            }
         }
     }
 

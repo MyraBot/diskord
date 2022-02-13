@@ -54,9 +54,9 @@ data class Message(
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
-    fun getGuild(): Promise<Guild> = guildId.value?.let { Diskord.getGuild(it) } ?: Promise.of(null)
-    fun getChannel(): Promise<ChannelData> = Diskord.getChannel(channelId)
-    inline fun <reified T> getChannelAs(): Promise<T> = Diskord.getChannel<T>(channelId)
+    suspend fun getGuild(): Promise<Guild> = guildId.value?.let { Diskord.getGuild(it) } ?: Promise.of(null)
+    suspend fun getChannel(): Promise<ChannelData> = Diskord.getChannel(channelId)
+    suspend inline fun <reified T> getChannelAs(): Promise<T> = Diskord.getChannel<T>(channelId)
     val member: Promise<Member>
         get() {
             return if (!guildId.isMissing() && memberData != null) {

@@ -18,13 +18,14 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.json.*
 
 data class SlashCommandEvent(
-        override val data: Interaction,
+    override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.forceValue)
     val resolved: Resolved get() = Resolved(command.resolved, data.guildId.forceValue)
     val member: Member? get() = data.member
-    val guild: Promise<Guild> get() = GuildCache[data.guildId.forceValue]
-    val channel: Promise<TextChannel> get() = Diskord.getChannel(data.channelId.forceValue)
+
+    suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.forceValue)
+    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.forceValue)
 
     inline fun <reified T> getOption(name: String): T? {
         // TODO It's unsafe to only check for name.

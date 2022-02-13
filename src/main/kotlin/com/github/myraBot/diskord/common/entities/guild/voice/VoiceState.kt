@@ -30,30 +30,29 @@ import java.time.Instant
  */
 @Serializable
 data class VoiceState(
-        @SerialName("guild_id") internal var guildId: String? = null,
-        @SerialName("channel_id") val channelId: String? = null,
-        @SerialName("user_id") val userId: String,
-        @SerialName("member") private val memberData: MemberData? = null,
-        @SerialName("session_id") val sessionId: String,
-        @SerialName("deaf") val isGuildDeaf: Boolean,
-        @SerialName("mute") val isGuildMuted: Boolean,
-        @SerialName("self_deaf") val isSelfDeaf: Boolean,
-        @SerialName("self_mute") val isSelfMute: Boolean,
-        @SerialName("self_stream") val isStreaming: Boolean? = null,
-        @SerialName("self_video") val hasVideo: Boolean,
-        @Serializable(with = InstantSerializer::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null,
+    @SerialName("guild_id") internal var guildId: String? = null,
+    @SerialName("channel_id") val channelId: String? = null,
+    @SerialName("user_id") val userId: String,
+    @SerialName("member") private val memberData: MemberData? = null,
+    @SerialName("session_id") val sessionId: String,
+    @SerialName("deaf") val isGuildDeaf: Boolean,
+    @SerialName("mute") val isGuildMuted: Boolean,
+    @SerialName("self_deaf") val isSelfDeaf: Boolean,
+    @SerialName("self_mute") val isSelfMute: Boolean,
+    @SerialName("self_stream") val isStreaming: Boolean? = null,
+    @SerialName("self_video") val hasVideo: Boolean,
+    @Serializable(with = InstantSerializer::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null,
 ) {
     val isMuted: Boolean = isSelfMute || isGuildMuted
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
-    val member: Promise<Member>
-        get() {
-            return guildId?.let { it ->
-                if (memberData != null) Promise.of(Member.withUserInMember(memberData, it))
-                else Diskord.getGuild(it).thenNonNull { it!!.getMember(userId) }
-            } ?: Promise.of(null)
-        }
+    suspend fun getMember(): Promise<Member> {
+        return guildId?.let { it ->
+            if (memberData != null) Promise.of(Member.withUserInMember(memberData, it))
+            else Diskord.getGuild(it).thenNonNull { it!!.getMember(userId) }
+        } ?: Promise.of(null)
+    }
 
-    fun getChannel(): Promise<VoiceChannel> = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
+    suspend fun getChannel(): Promise<VoiceChannel> = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
     val channel: VoiceChannel? get() = runBlocking { getChannel().await() }
 }

@@ -52,9 +52,9 @@ data class Member(
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
     val guild: Guild get() = runBlocking { Diskord.getGuild(guildId).awaitNonNull() }
-    fun getGuild(): Promise<Guild> = Diskord.getGuild(guildId)
-    fun getRoles(): Promise<List<Role>> = getGuild().map { guild -> guild?.roles?.filter { roleIds.contains(it.id) } }
-    fun getColour(): Promise<Color> = getRoles().map { roles ->
+    suspend fun getGuild(): Promise<Guild> = Diskord.getGuild(guildId)
+    suspend fun getRoles(): Promise<List<Role>> = getGuild().map { guild -> guild?.roles?.filter { roleIds.contains(it.id) } }
+    suspend fun getColour(): Promise<Color> = getRoles().map { roles ->
         roles?.reversed()
             ?.first { it.colour != Color.decode("0") }
             ?.colour
@@ -63,14 +63,17 @@ data class Member(
     val voiceState: VoiceState? get() = VoiceCache.collect().flatten().find { it.userId == id }
 
 
-    fun ban() = ban(null, null)
-    fun ban(deleteMessages: Int) = ban(deleteMessages, null)
-    fun ban(reason: String) = ban(null, reason)
-    fun ban(deleteMessages: Int?, reason: String?): Promise<Unit> {
-        val params = BanInfo(deleteMessages)
-        return Promise.of(Endpoints.createGuildBan, params.toJson(), reason) {
-            arg("guild.id", guildId)
-            arg("user.id", id)
+    suspend fun ban() = ban(null, null)
+    suspend fun ban(deleteMessages: Int) = ban(deleteMessages, null)
+    suspend fun ban(reason: String) = ban(null, reason)
+    suspend fun ban(deleteMessages: Int?, reason: String?): Promise<Unit> {
+        return Promise.of(Endpoints.createGuildBan) {
+            json = BanInfo(deleteMessages).toJson()
+            logReason = reason
+            arguments {
+                arg("guild.id", guildId)
+                arg("user.id", id)
+            }
         }
     }
 

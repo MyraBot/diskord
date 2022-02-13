@@ -8,9 +8,9 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.runBlocking
 
 data class VoiceLeaveEvent(
-        private val newVoiceState: VoiceState,
-        private val oldVoiceState: VoiceState
+    private val newVoiceState: VoiceState,
+    private val oldVoiceState: VoiceState
 ) : Event() {
-    val member: Promise<Member> get() = newVoiceState.member
+    suspend fun getMember(): Promise<Member> = newVoiceState.getMember()
     val channel: VoiceChannel get() = runBlocking { oldVoiceState.getChannel().awaitNonNull() }
 }

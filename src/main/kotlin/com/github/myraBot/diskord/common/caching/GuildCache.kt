@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.channelFlow
 
 object GuildCache : Cache<String, Guild>(
     retrieve = { key ->
-        Promise.of(Endpoints.getGuild) { arg("guild.id", key) }
+        Promise.of(Endpoints.getGuild) {
+            arguments { arg("guild.id", key) }
+        }
     }
 ) {
     val ids: MutableSet<String> = mutableSetOf()

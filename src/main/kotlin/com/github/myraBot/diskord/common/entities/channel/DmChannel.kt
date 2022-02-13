@@ -9,6 +9,6 @@ import kotlinx.serialization.Serializable
 class DmChannel(
         override val data: ChannelData
 ) : TextChannelBehavior {
-     fun getOwner(): Promise<User> = Diskord.getUser(data.ownerId.value!!)
+     suspend fun getOwner(): Promise<User> = Diskord.getUser(data.ownerId.value!!)
 }
 

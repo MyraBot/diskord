@@ -1,11 +1,10 @@
 package com.github.myraBot.diskord.rest.behaviors
 
 import com.github.myraBot.diskord.common.entities.message.Message
+import com.github.myraBot.diskord.common.toJson
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
 import com.github.myraBot.diskord.rest.request.promises.Promise
-import com.github.myraBot.diskord.common.JSON
-import kotlinx.serialization.encodeToString
 import java.net.URLEncoder
 
 interface MessageBehavior : GetTextChannelBehavior, Entity {
@@ -19,10 +18,12 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * @return Returns the new message.
      */
     suspend fun edit(messageBuilder: MessageBuilder): Promise<Message> {
-        val json = JSON.encodeToString(messageBuilder)
-        return Promise.of(Endpoints.editMessage, json) {
-            arg("channel.id", message.channelId)
-            arg("message.id", message.id)
+        return Promise.of(Endpoints.editMessage) {
+            json = messageBuilder.toJson()
+            arguments {
+                arg("channel.id", message.channelId)
+                arg("message.id", message.id)
+            }
         }
     }
 
@@ -30,9 +31,11 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
 
     suspend fun addReaction(emoji: String): Promise<Unit> {
         return Promise.of(Endpoints.addReaction) {
-            arg("channel.id", message.channelId)
-            arg("message.id", id)
-            arg("emoji", URLEncoder.encode(emoji, "utf-8"))
+            arguments {
+                arg("channel.id", message.channelId)
+                arg("message.id", id)
+                arg("emoji", URLEncoder.encode(emoji, "utf-8"))
+            }
         }
     }
 

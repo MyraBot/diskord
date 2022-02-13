@@ -9,8 +9,10 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 object MemberCache : Cache<DoubleKey, Member>(
     retrieve = { key ->
         Promise.of(Endpoints.getGuildMember) {
-            arg("guild.id", key.first)
-            arg("user.id", key.second)
+            arguments {
+                arg("guild.id", key.first)
+                arg("user.id", key.second)
+            }
         }.map { data -> data?.let { Member.withUserInMember(it, key.second) } }
     }
 ) {

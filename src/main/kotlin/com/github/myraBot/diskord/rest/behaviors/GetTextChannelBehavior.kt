@@ -9,7 +9,7 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 
 interface GetTextChannelBehavior
 
-inline fun <reified T> GetTextChannelBehavior.getChannel(id: String): Promise<T> = ChannelCache[id].map {
+suspend inline fun <reified T> GetTextChannelBehavior.getChannel(id: String): Promise<T> = ChannelCache.get(id).map {
     it?.let { channel ->
         when (T::class) {
             ChannelData::class -> channel as T

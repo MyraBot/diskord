@@ -7,5 +7,5 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 interface GuildChannel : Channel {
     val name: String get() = data.name.value!!
 
-    fun getGuild(): Promise<Guild> = Diskord.getGuild(data.guildId.value!!)
+    suspend fun getGuild(): Promise<Guild> = Diskord.getGuild(data.guildId.value!!)
 }

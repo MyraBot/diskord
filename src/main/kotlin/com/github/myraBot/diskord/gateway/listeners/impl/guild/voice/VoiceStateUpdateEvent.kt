@@ -17,7 +17,7 @@ import kotlinx.serialization.SerialName
  * @property newVoiceState Information about the current voice state of the member.
  */
 data class VoiceStateUpdateEvent(
-        @SerialName("voice_state") val newVoiceState: VoiceState,
+    @SerialName("voice_state") val newVoiceState: VoiceState,
 ) : Event() {
 
     override suspend fun call() {
@@ -34,8 +34,8 @@ data class VoiceStateUpdateEvent(
         super.call()
     }
 
-    val member: Promise<Member> get() = newVoiceState.member
-    fun getGuild(): Promise<Guild> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
+    suspend fun getMember(): Promise<Member> = newVoiceState.getMember()
+    suspend fun getGuild(): Promise<Guild> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
     val oldVoiceState: VoiceState? = VoiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
 
 }

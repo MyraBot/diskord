@@ -6,11 +6,11 @@ import com.github.myraBot.diskord.rest.request.promises.Promise
 data class DoubleKey(val first: String, val second: String)
 
 abstract class Cache<K, V>(
-    var retrieve: (K) -> Promise<V> = { Promise.of(null) },
+    var retrieve: suspend (K) -> Promise<V> = { Promise.of(null) },
 ) : EventListener {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 
-    operator fun get(key: K): Promise<V> {
+    suspend fun get(key: K): Promise<V> {
         return cache[key]?.let { Promise.of(it) } ?: retrieve.invoke(key)
     }
 
