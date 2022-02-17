@@ -1,6 +1,8 @@
 package com.github.myraBot.diskord.common.entities
 
+import com.github.myraBot.diskord.common.Optional
 import com.github.myraBot.diskord.common.entities.channel.DmChannel
+import com.github.myraBot.diskord.common.entities.user.UserFlag
 import com.github.myraBot.diskord.common.toJson
 import com.github.myraBot.diskord.rest.CdnEndpoints
 import com.github.myraBot.diskord.rest.Endpoints
@@ -22,6 +24,7 @@ class User(
     @SerialName("bot") val isBot: Boolean = false,
     val system: Boolean = false,
     @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
+    @Serializable(with = UserFlag.Serializer::class) @SerialName("public_flags") val flags: Optional<List<UserFlag>> = Optional.Missing()
 ) {
     val avatar: String
         get() = avatarHash?.let {
