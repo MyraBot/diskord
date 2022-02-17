@@ -1,11 +1,11 @@
 package com.github.myraBot.diskord.common
 
+import bot.myra.kommons.error
+import bot.myra.kommons.info
 import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.UserCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
-import com.github.myraBot.diskord.common.utilities.info
-import com.github.myraBot.diskord.common.utilities.kError
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
@@ -61,7 +61,7 @@ object Diskord : GetTextChannelBehavior {
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {
     builder.invoke(Diskord)
     if (Diskord.token.isBlank()) {
-        kError(Diskord::class) { "Your token is invalid, aborting..." }
+        error(Diskord::class) { "Your token is invalid, aborting..." }
         exitProcess(-1)
     }
 }

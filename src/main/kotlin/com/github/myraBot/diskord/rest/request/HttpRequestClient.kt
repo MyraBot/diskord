@@ -5,8 +5,6 @@ import bot.myra.kommons.kDebug
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.utilities.REST_CLIENT
-import com.github.myraBot.diskord.common.utilities.kTrace
-import com.github.myraBot.diskord.common.utilities.trace
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.request.error.validateResponse
 import com.github.myraBot.diskord.utilities.FileFormats

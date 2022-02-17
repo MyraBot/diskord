@@ -1,11 +1,9 @@
 package com.github.myraBot.diskord.gateway
 
+import bot.myra.kommons.*
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
-import com.github.myraBot.diskord.common.utilities.kDebug
-import com.github.myraBot.diskord.common.utilities.kInfo
-import com.github.myraBot.diskord.common.utilities.kTrace
 import com.github.myraBot.diskord.gateway.listeners.Events
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -60,7 +58,7 @@ class Websocket(
                 }
             })
         } catch (e: ClosedReceiveChannelException) {
-            kInfo(this::class) { "Lost connection..." }
+            info(this::class) { "Lost connection..." }
             openWebsocketConnection(url, true)
         }
     }
@@ -74,7 +72,7 @@ class Websocket(
             }
             // 	Fired periodically by the client to keep the connection alive
             1 -> {
-                kDebug(this::class) { "Received Heartbeat attack!" }
+                debug(this::class) { "Received Heartbeat attack!" }
                 sendHeartbeat(websocket)
             }
             // 	Sent immediately after connecting
@@ -82,11 +80,11 @@ class Websocket(
                 startHeartbeat(websocket, income)
                 if (resume) resume(websocket)
                 else identify(websocket)
-                kInfo(this::class) { "Successfully connected to Discord" }
+                info(this::class) { "Successfully connected to Discord" }
             }
             // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
             11 -> {
-                kDebug(this::class) { "Heartbeat acknowledged!" }
+                debug(this::class) { "Heartbeat acknowledged!" }
             }
         }
     }
@@ -114,7 +112,7 @@ class Websocket(
     private suspend fun sendHeartbeat(websocket: DefaultClientWebSocketSession) {
         val heartbeat = OptCode(null, null, 1, s).toJson()
         websocket.send(heartbeat)
-        kTrace(this::class) { "Sent heartbeat!" }
+        trace(this::class) { "Sent heartbeat!" }
     }
 
     /**
