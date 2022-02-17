@@ -1,9 +1,12 @@
 package com.github.myraBot.diskord.rest.request
 
+import bot.myra.kommons.debug
+import bot.myra.kommons.kDebug
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.common.utilities.REST_CLIENT
 import com.github.myraBot.diskord.common.utilities.kTrace
+import com.github.myraBot.diskord.common.utilities.trace
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.request.error.validateResponse
 import com.github.myraBot.diskord.utilities.FileFormats
@@ -25,10 +28,10 @@ interface HttpRequestClient<R> {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
+        debug(this::class) { "Rest >>> ${data.route.httpMethod}: $route - ${data.json}" }
         val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
-
-        kTrace(this::class) { "Rest <<< ${response.readText()}" }
+        kDebug(this::class) { "Rest <<< ${response.readText()}" }
 
         val errorValidation = validateResponse(response)
         if (errorValidation.exception != null) throw errorValidation.exception
