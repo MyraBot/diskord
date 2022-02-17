@@ -14,7 +14,6 @@ import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.rest.DefaultTransformer
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
-import com.github.myraBot.diskord.rest.request.error.DefaultErrorHandler
 import com.github.myraBot.diskord.rest.request.error.ErrorHandler
 import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +37,7 @@ object Diskord : GetTextChannelBehavior {
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
     var intents: MutableSet<GatewayIntent> = mutableSetOf()
     var cache: MutableSet<Cache> = mutableSetOf()
-    var errorHandler: ErrorHandler = DefaultErrorHandler
+    var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
 
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)

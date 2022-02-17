@@ -29,8 +29,9 @@ interface HttpRequestClient<R> {
         else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
 
         kTrace(this::class) { "Rest <<< ${response.readText()}" }
-        val errorValidation = validateResponse(response.status)
-        if (errorValidation.throwError) errorValidation.errorCallback
+
+        val errorValidation = validateResponse(response)
+        if (errorValidation.exception != null) throw errorValidation.exception
         if (errorValidation.returnNull) return null
 
         if (data.route.serializer == Unit.serializer()) return Unit as R

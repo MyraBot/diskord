@@ -2,17 +2,6 @@ package com.github.myraBot.diskord.rest.request.error
 
 import com.github.myraBot.diskord.gateway.listeners.Event
 
-interface ErrorHandler {
-    fun onException(event: Event, exception: Throwable)
-
-    // Http exceptions
-    fun onEntityModifyException() {}
-    fun onBadRequest() {}
-    fun onMissingPermissions() {}
-    fun onNotFoundException() {}
-    fun onRateLimit() {}
-}
-
-object DefaultErrorHandler : ErrorHandler {
-    override fun onException(event: Event, exception: Throwable) = exception.printStackTrace()
+open class ErrorHandler {
+    open fun onException(event: Event, exception: Throwable) = exception.printStackTrace()
 }
