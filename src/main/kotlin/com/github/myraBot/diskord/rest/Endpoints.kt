@@ -50,6 +50,6 @@ object Endpoints {
     val addMemberRole = Route(HttpMethod.Put, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
     val removeMemberRole = Route(HttpMethod.Delete, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
     val createDm = Route(HttpMethod.Post, "/users/@me/channels", ChannelData.serializer())
-    val createGuildBan = Route(HttpMethod.Post, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
+    val createGuildBan = Route(HttpMethod.Put, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val removeGuildBan = Route(HttpMethod.Delete, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
 }
