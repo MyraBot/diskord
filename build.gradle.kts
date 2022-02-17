@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kommons: String by project
 val ktor_version: String by project
 val kotlinx_version: String by project
 val logging_version: String by project
@@ -13,11 +14,21 @@ plugins {
 
 val id = "Diskord"
 group = "com.github.myraBot"
-version = "1.18"
+version = "1.19"
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven(url = "https://systems.myra.bot/releases/") {
+        credentials {
+            username = System.getenv("REPO_NAME")
+            password = System.getenv("REPO_SECRET")
+        }
+    }
+}
 
 dependencies {
+    compileOnly("bot.myra:kommons:$kommons")
+
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")
@@ -28,9 +39,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
     compileOnly("org.reflections:reflections:0.10.2")
 
-    compileOnly("ch.qos.logback:logback-classic:$logging_version")
-
-    testImplementation("ch.qos.logback:logback-classic:$logging_version")
+    testImplementation("bot.myra:kommons:$kommons")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
     testImplementation("org.reflections:reflections:0.10.2")
 }
