@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.gateway.listeners.impl.interactions
+package com.github.myraBot.diskord.gateway.listeners.impl.interactions.slashCommands
 
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.JSON
@@ -13,18 +13,19 @@ import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
+import com.github.myraBot.diskord.gateway.listeners.impl.interactions.GenericInteractionCreateEvent
 import com.github.myraBot.diskord.rest.behaviors.getChannel
 import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.json.*
 
-data class SlashCommandEvent(
+open class SlashCommandEvent(
     override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.forceValue)
     val resolved: Resolved get() = Resolved(command.resolved, data.guildId.forceValue)
-    val member: Member? get() = data.member
+    open val member: Member? get() = data.member
 
-    suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.forceValue)
+    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.forceValue)
     suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.forceValue)
 
     inline fun <reified T> getOption(name: String): T? {
