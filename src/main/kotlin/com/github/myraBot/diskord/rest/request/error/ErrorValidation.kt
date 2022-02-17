@@ -1,7 +1,11 @@
 package com.github.myraBot.diskord.rest.request.error
 
+import com.github.myraBot.diskord.common.JSON
+import com.github.myraBot.diskord.utilities.string
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonObject
 
 data class ErrorValidation(
     val exception: Exception?,
@@ -14,17 +18,20 @@ data class ErrorValidation(
     }
 }
 
-fun validateResponse(response: HttpResponse): ErrorValidation = when (response.status) {
-    HttpStatusCode.OK -> ErrorValidation.success()
-    HttpStatusCode.Created -> ErrorValidation.success()
-    HttpStatusCode.NoContent -> ErrorValidation.success()
-
-    HttpStatusCode.NotModified -> ErrorValidation.failure(EntityModifyException())
-    HttpStatusCode.BadRequest -> ErrorValidation.failure(BadReqException())
-    HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
-    HttpStatusCode.Forbidden -> ErrorValidation.failure(MissingPermissionsException())
-    HttpStatusCode.NotFound -> ErrorValidation.failure()
-    HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
-    HttpStatusCode.TooManyRequests -> ErrorValidation.failure(RateLimitException())
-    else -> throw UnknownError()
+suspend fun validateResponse(response: HttpResponse): ErrorValidation {
+    if (response.status.isSuccess()) {
+        return ErrorValidation.success()
+    } else {
+        val error = JSON.decodeFromString<JsonObject>(response.readText())["message"]?.string ?: "No error message provided"
+        return when (response.status) {
+            HttpStatusCode.NotModified -> ErrorValidation.failure(EntityModifyException(error))
+            HttpStatusCode.BadRequest -> ErrorValidation.failure(BadReqException(error))
+            HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
+            HttpStatusCode.Forbidden -> ErrorValidation.failure(MissingPermissionsException(error))
+            HttpStatusCode.NotFound -> ErrorValidation.failure()
+            HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
+            HttpStatusCode.TooManyRequests -> ErrorValidation.failure(RateLimitException(error))
+            else -> throw UnknownError()
+        }
+    }
 }
