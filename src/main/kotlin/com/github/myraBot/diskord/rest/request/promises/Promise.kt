@@ -25,8 +25,11 @@ open class Promise<T>(
         }
     }
 
+
     open suspend fun await(): T? = (httpRequest?.let { execute(it) } ?: value)
+
     open suspend fun awaitNonNull(): T = await()!!
+
 
     open fun async(env: CoroutineScope = scope) {
         env.launch { await() }
@@ -38,9 +41,21 @@ open class Promise<T>(
         }
     }
 
+    open fun asyncWithError(env: CoroutineScope = scope, callback: suspend (Throwable?) -> Unit) {
+        env.launch {
+            try {
+                awaitNonNull()
+                callback.invoke(null)
+            } catch (error: Exception) {
+                callback.invoke(error)
+            }
+        }
+    }
+
     open fun asyncNonNull(env: CoroutineScope = scope, callback: suspend (T) -> Unit) {
         env.launch { callback.invoke(awaitNonNull()) }
     }
+
 
     fun <O> map(transform: suspend (T?) -> O?): MapPromise<T, O> {
         return MapPromise(this, transform)
@@ -49,6 +64,7 @@ open class Promise<T>(
     fun <O> mapNonNull(transform: suspend (T) -> O): NonNullMapPromise<T, O> {
         return NonNullMapPromise(this, transform)
     }
+
 
     fun <O> then(transform: suspend (T?) -> Promise<O>): ChainPromise<T, O> {
         return ChainPromise(this, transform)
