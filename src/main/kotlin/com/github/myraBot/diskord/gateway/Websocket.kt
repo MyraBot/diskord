@@ -107,6 +107,7 @@ class Websocket(
      * @param optCode Opt-code to send.
      */
     private suspend fun send(optCode: OptCode) {
+        debug(this::class) { "Gateway >> ${optCode.toJson()}" }
         connection?.send(optCode.toJson()) ?: waitingCalls.add(optCode)
     }
 
