@@ -1,12 +1,14 @@
 package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.Role
+import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
+import com.github.myraBot.diskord.rest.CdnEndpoints
 import com.github.myraBot.diskord.rest.Endpoints
+import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
 import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.serialization.SerialName
@@ -19,9 +21,10 @@ import kotlinx.serialization.Serializable
 data class Guild(
     override val id: String,
     val name: String,
-    val icon: String?,
-    val splash: String?,
-    @SerialName("owner_id") val ownerId: String,
+    private @SerialName("icon") val iconHash: String?,
+    private @SerialName("splash") val splashHash: String?,
+    private @SerialName("discovery_splash") val discoverySplashHash: String?,
+    internal @SerialName("owner_id") val ownerId: String,
     val roles: List<Role>,
     val emojis: List<Emoji>,
     @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList(),
@@ -36,7 +39,14 @@ data class Guild(
         voiceStates.forEach { it.guildId = id }
     }
 
+    val icon: String? get() = iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild.id", id); arg("guild_icon", it) } }
+    val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild.id", id); arg("guild_splash", it) } }
+    val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild.id", id); arg("guild_discovery_splash", it) } }
+
+    suspend fun getOwner(): Promise<Member> = getMember(ownerId)
+
     suspend fun getMemberCount() = Diskord.getGuild(this.id).mapNonNull { it.memberCount.value!! }.awaitNonNull()
+
     suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.value!! }.awaitNonNull()
 
     suspend fun unbanMember(id: String, reason: String? = null): Promise<Unit> {
