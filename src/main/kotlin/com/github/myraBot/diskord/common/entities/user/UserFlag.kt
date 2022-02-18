@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.entities.user
 
-import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.rest.Optional
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

@@ -22,12 +22,12 @@ import kotlinx.serialization.json.*
 open class SlashCommandEvent(
     override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
-    val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.forceValue)
-    val resolved: Resolved get() = Resolved(command.resolved, data.guildId.forceValue)
+    val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.value!!)
+    val resolved: Resolved get() = Resolved(command.resolved, data.guildId.value!!)
     open val member: Member? get() = data.member
 
-    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.forceValue)
-    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.forceValue)
+    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.value!!)
+    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = command.options

@@ -14,8 +14,8 @@ import kotlinx.serialization.json.jsonPrimitive
 data class SelectMenuEvent(
         override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
-    val message: Message = data.message.forceValue
-    val guild: Guild get() = runBlocking { Diskord.getGuild(data.guildId.forceValue).awaitNonNull() }
+    val message: Message = data.message.value!!
+    val guild: Guild get() = runBlocking { Diskord.getGuild(data.guildId.value!!).awaitNonNull() }
     val member: Member? get() = data.member
     val selectMenu: SelectMenu
         get() = message.components
@@ -24,5 +24,5 @@ data class SelectMenuEvent(
             .first { it.id == data.interactionComponentData?.customId }
             .let { return it.asSelectMenu() }
     val id: String get() = data.id
-    val values: List<String> get() = data.interactionDataJson.forceValue.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
+    val values: List<String> get() = data.interactionDataJson.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 }

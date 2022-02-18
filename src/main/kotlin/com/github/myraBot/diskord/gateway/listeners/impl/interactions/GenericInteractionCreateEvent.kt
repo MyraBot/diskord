@@ -12,5 +12,5 @@ abstract class GenericInteractionCreateEvent(
 ) : Event(), InteractionCreateBehavior {
     override val interaction: Interaction get() = data
 
-    val user: User get() = data.member?.user ?: data.user.forceValue
+    val user: User get() = data.member?.user ?: data.user.value!!
 }

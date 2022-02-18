@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.message
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.Component
 import com.github.myraBot.diskord.common.entities.channel.ChannelData
@@ -9,7 +9,6 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
-import com.github.myraBot.diskord.common.isMissing
 import com.github.myraBot.diskord.rest.JumpUrlEndpoints
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannel
@@ -50,7 +49,7 @@ data class Message(
     val components: MutableList<Component> = mutableListOf(),
 ) : MessageBehavior {
     override val message: Message = this
-    val link: String get() = JumpUrlEndpoints.get(guildId.forceValue, channelId, id)
+    val link: String get() = JumpUrlEndpoints.get(guildId.value!!, channelId, id)
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
@@ -59,10 +58,10 @@ data class Message(
     suspend inline fun <reified T> getChannelAs(): Promise<T> = Diskord.getChannel<T>(channelId)
     val member: Promise<Member>
         get() {
-            return if (!guildId.isMissing() && memberData != null) {
-                Promise.of(Member.withUser(memberData, guildId.forceValue, user))
+            return if (!guildId.missing && memberData != null) {
+                Promise.of(Member.withUser(memberData, guildId.value!!, user))
             } else {
-                return if (memberData != null) Promise.of(Member.withUser(memberData, guildId.forceValue, user))
+                return if (memberData != null) Promise.of(Member.withUser(memberData, guildId.value!!, user))
                 else Promise.of(null)
 
 

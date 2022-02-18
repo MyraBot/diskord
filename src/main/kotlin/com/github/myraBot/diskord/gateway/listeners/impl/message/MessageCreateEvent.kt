@@ -1,14 +1,13 @@
 package com.github.myraBot.diskord.gateway.listeners.impl.message
 
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.common.isMissing
 
 class MessageCreateEvent(
     message: Message
 ) : GenericMessageCreateEvent(message) {
 
     override suspend fun call() {
-        if (message.guildId.isMissing()) PrivateMessageCreateEvent(message).call()
+        if (message.guildId.missing) PrivateMessageCreateEvent(message).call()
         else GuildMessageCreateEvent(message).call()
         super.call()
     }

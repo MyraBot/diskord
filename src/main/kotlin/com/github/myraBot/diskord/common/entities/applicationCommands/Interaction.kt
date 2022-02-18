@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.applicationCommands
 
 import com.github.myraBot.diskord.common.JSON
-import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Member
@@ -32,5 +32,5 @@ data class Interaction(
         @SerialName("guild_locale") val guildLocale: Optional<Locale> = Optional.Missing(),
 ) {
     val interactionComponentData: InteractionComponentData? get() = interactionDataJson.value?.let { JSON.decodeFromJsonElement(it) }
-    val member: Member? get() = memberData.value?.let { Member.withUserInMember(it, guildId.forceValue) }
+    val member: Member? get() = memberData.value?.let { Member.withUserInMember(it, guildId.value!!) }
 }

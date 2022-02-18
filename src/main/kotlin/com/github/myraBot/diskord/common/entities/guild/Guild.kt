@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.guild
 
 import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.Role
@@ -36,8 +36,8 @@ data class Guild(
         voiceStates.forEach { it.guildId = id }
     }
 
-    suspend fun getMemberCount() = Diskord.getGuild(this.id).mapNonNull { it.memberCount.forceValue }.awaitNonNull()
-    suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.forceValue }.awaitNonNull()
+    suspend fun getMemberCount() = Diskord.getGuild(this.id).mapNonNull { it.memberCount.value!! }.awaitNonNull()
+    suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.value!! }.awaitNonNull()
 
     suspend fun unbanMember(id: String, reason: String? = null): Promise<Unit> {
         return Promise.of(Endpoints.removeGuildBan) {

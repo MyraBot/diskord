@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.entities.channel
 
-import com.github.myraBot.diskord.common.Optional
+import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.rest.behaviors.Entity
 import kotlinx.serialization.SerialName
