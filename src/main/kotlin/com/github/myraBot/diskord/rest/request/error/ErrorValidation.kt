@@ -27,7 +27,7 @@ suspend fun validateResponse(response: HttpResponse): ErrorValidation {
             HttpStatusCode.NotModified -> ErrorValidation.failure(EntityModifyException(error))
             HttpStatusCode.BadRequest -> ErrorValidation.failure(BadReqException(error))
             HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
-            HttpStatusCode.Forbidden -> ErrorValidation.failure(MissingPermissionsException(error))
+            HttpStatusCode.Forbidden -> ErrorValidation.failure()
             HttpStatusCode.NotFound -> ErrorValidation.failure()
             HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
             HttpStatusCode.TooManyRequests -> ErrorValidation.failure(RateLimitException(error))
