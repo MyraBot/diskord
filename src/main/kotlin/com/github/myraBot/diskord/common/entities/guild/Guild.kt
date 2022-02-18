@@ -39,9 +39,9 @@ data class Guild(
         voiceStates.forEach { it.guildId = id }
     }
 
-    val icon: String? get() = iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild.id", id); arg("guild_icon", it) } }
-    val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild.id", id); arg("guild_splash", it) } }
-    val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild.id", id); arg("guild_discovery_splash", it) } }
+    val icon: String? get() = iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild_id", id); arg("guild_icon", it) } }
+    val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
+    val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 
     suspend fun getOwner(): Promise<Member> = getMember(ownerId)
 
