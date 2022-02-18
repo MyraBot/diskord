@@ -1,10 +1,7 @@
 package com.github.myraBot.diskord.gateway
 
 import bot.myra.kommons.*
-import com.github.myraBot.diskord.common.Diskord
-import com.github.myraBot.diskord.common.JSON
-import com.github.myraBot.diskord.common.JSON_WITH_NULLS
-import com.github.myraBot.diskord.common.toJson
+import com.github.myraBot.diskord.common.*
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.listeners.Events
@@ -144,9 +141,12 @@ class Websocket(
      */
     private suspend fun identify() {
         kInfo(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
-        val d = IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), Properties())
-        val jsonObject = Json.encodeToJsonElement(d).jsonObject
-        send(OptCode(null, null, 2, jsonObject))
+        val op = IdentifyResponse(
+            token = Diskord.token,
+            intents = GatewayIntent.getID(intents),
+            properties = Properties()
+        )
+        send(OptCode(null, null, 2, op.toJsonObj()))
     }
 
     /**
@@ -155,17 +155,16 @@ class Websocket(
      */
     private suspend fun resume() {
         kInfo(this::class) { "Reconnecting to Discord" }
-        val json = JSON.encodeToJsonElement(GatewayResume(
+        val op = GatewayResume(
             token = Diskord.token,
             sessionId = session,
             seq = s
-        )).jsonObject
-        send(OptCode(null, null, 6, json))
+        )
+        send(OptCode(null, null, 6, op.toJsonObj()))
     }
 
     suspend fun updatePresence(update: PresenceUpdate) {
-        val json = JSON_WITH_NULLS.encodeToJsonElement(update).jsonObject
-        send(OptCode(null, null, 3, json))
+        send(OptCode(null, null, 3, update.toJsonObj(true)))
     }
 
 }
