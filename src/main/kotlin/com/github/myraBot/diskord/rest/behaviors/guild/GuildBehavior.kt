@@ -26,6 +26,16 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         members?.map { Member.withUserInMember(it, this.id) }
     }
 
+    suspend fun unbanMember(id: String, reason: String? = null): Promise<Unit> {
+        return Promise.of(Endpoints.removeGuildBan) {
+            logReason = reason
+            arguments {
+                arg("guild.id", this@GuildBehavior.id)
+                arg("user.id", id)
+            }
+        }
+    }
+
     suspend fun getRoles(): Promise<List<Role>> = Promise.of(Endpoints.getRoles) {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
@@ -35,4 +45,5 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
     suspend fun getChannels(): Promise<List<ChannelData>> = Promise.of(Endpoints.getChannels) {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
+
 }

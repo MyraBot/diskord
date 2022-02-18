@@ -49,16 +49,6 @@ data class Guild(
 
     suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.value!! }.awaitNonNull()
 
-    suspend fun unbanMember(id: String, reason: String? = null): Promise<Unit> {
-        return Promise.of(Endpoints.removeGuildBan) {
-            logReason = reason
-            arguments {
-                arg("guild.id", this@Guild.id)
-                arg("user.id", id)
-            }
-        }
-    }
-
     fun getEmoji(name: String): Emoji? {
         return emojis.find { it.name == name }
     }
