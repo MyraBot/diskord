@@ -102,9 +102,6 @@ class Websocket(
     }
 
     suspend fun send(optCode: OptCode) {
-        println("""
-            ${optCode.toJson()}
-        """.trimIndent())
         connection?.send(optCode.toJson()) ?: waitingCalls.add(optCode)
     }
 
