@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
@@ -23,11 +24,6 @@ data class OptCode(
 
     constructor(t: String?, s: Int?, op: Int, d: JsonObject)
             : this(t, s, op, JSON.encodeToJsonElement(d))
-
-
-    fun toJson(): String {
-        return JSON.encodeToString(this)
-    }
 }
 
 @Serializable
