@@ -34,7 +34,7 @@ enum class UserFlag(val code: Int) {
             val bitCode = decoder.decodeInt()
             return if (bitCode == 0) {
                 decoder.decodeNull()
-                Optional.Missing()
+                Optional(emptyList())
             } else {
                 val flags = values().filter { bitCode == bitCode or it.code }
                 Optional(flags.toList())
