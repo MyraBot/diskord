@@ -101,7 +101,15 @@ class Websocket(
         }
     }
 
-    suspend fun send(optCode: OptCode) {
+    /**
+     * Sends the provided opt code to the websocket.
+     * If the websocket isn't connected, the opt-code will get added to [waitingCalls].
+     * All waiting calls get executed as soon as the websocket is connected again.
+     * As a result, **this is function is async**
+     *
+     * @param optCode Opt-code to send.
+     */
+    private suspend fun send(optCode: OptCode) {
         connection?.send(optCode.toJson()) ?: waitingCalls.add(optCode)
     }
 
