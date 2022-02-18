@@ -163,8 +163,14 @@ class Websocket(
         send(OptCode(null, null, 6, op.toJsonObj()))
     }
 
-    suspend fun updatePresence(update: PresenceUpdate) {
-        send(OptCode(null, null, 3, update.toJsonObj(true)))
+    /**
+     * Updates the applications presence and status.
+     * **Is async**
+     *
+     * @param presence New presence / status.
+     */
+    suspend fun updatePresence(presence: PresenceUpdate) {
+        send(OptCode(null, null, 3, presence.toJsonObj(true)))
     }
 
 }
