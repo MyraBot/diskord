@@ -10,10 +10,10 @@ import kotlinx.serialization.json.encodeToJsonElement
 
 @Serializable
 data class OptCode(
-        val t: String?,
-        val s: Int?,
-        val op: Int,
-        val d: JsonElement? = null
+    val t: String?,
+    val s: Int?,
+    val op: Int,
+    val d: JsonElement? = null
 ) {
     constructor(t: String?, s: Int?, op: Int, d: String)
             : this(t, s, op, JSON.encodeToJsonElement(d))
@@ -32,16 +32,16 @@ data class OptCode(
 
 @Serializable
 data class IdentifyResponse(
-        val token: String,
-        val intents: Int,
-        val properties: Properties
+    val token: String,
+    val intents: Int,
+    val properties: Properties
 )
 
 @Serializable
 data class Properties(
-        @SerialName("\$os") val os: String = "linux",
-        @SerialName("\$browser") val browser: String = "chrome",
-        @SerialName("\$device") val device: String = "chrome"
+    @SerialName("\$os") val os: String = "linux",
+    @SerialName("\$browser") val browser: String = "chrome",
+    @SerialName("\$device") val device: String = "chrome"
 )
 
 /**
@@ -50,7 +50,7 @@ data class Properties(
  */
 @Serializable
 data class GatewayResume(
-        val token: String,
-        @SerialName("session_id") val sessionId: String,
-        val seq: Int
+    val token: String,
+    @SerialName("session_id") val sessionId: String,
+    val seq: Int
 )
