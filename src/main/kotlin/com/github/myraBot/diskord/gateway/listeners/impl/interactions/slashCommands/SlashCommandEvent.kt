@@ -9,6 +9,7 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.Interactio
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.Resolved
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionData
+import com.github.myraBot.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
 import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
@@ -29,24 +30,32 @@ open class SlashCommandEvent(
     suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.forceValue)
 
     inline fun <reified T> getOption(name: String): T? {
-        // TODO It's unsafe to only check for name.
-        // Discord doesn't differ between user and member,
-        // Which I want to be able to do. That's why I can't check for the type like
-        // it.name == name && it.type == SlashCommandOptionType.fromClass<T>()
-        val option: SlashCommandOptionData? = command.options.firstOrNull { it.name == name }
-        return option?.value?.let {
-            when (T::class) {
-                String::class -> option.value.jsonPrimitive.content as T
-                Int::class -> option.value.jsonPrimitive.int as T
-                Boolean::class -> option.value.jsonPrimitive.boolean as T
-                User::class -> resolved.getUser(option.value.jsonPrimitive.content) as T
-                Member::class -> resolved.getMember(option.value.jsonPrimitive.content) as T
-                ChannelData::class -> resolved.getChannel(option.value.jsonPrimitive.content) as T
-                Role::class -> resolved.getRole(option.value.jsonPrimitive.content) as T
-                Unit::class -> TODO() // TODO type -> Mentionable
-                Long::class -> option.value.jsonPrimitive.long as T
-                else -> throw Exception("Couldn't parse ${option.type} to a class")
+        val option: SlashCommandOptionData? = command.options
+            .flatMap {
+                var options = it.options
+                while (
+                    options.firstOrNull()?.type == SlashCommandOptionType.SUB_COMMAND_GROUP
+                    || options.firstOrNull()?.type == SlashCommandOptionType.SUB_COMMAND
+                ) {
+                    options = options.first().options
+                }
+                options
             }
+            .firstOrNull { it.name == name }
+
+        return option?.value?.let {
+            when (T::class.java) {
+                String::class.java -> option.value.jsonPrimitive.content
+                Int::class.java -> option.value.jsonPrimitive.int
+                Boolean::class.java -> option.value.jsonPrimitive.boolean
+                User::class.java -> resolved.getUser(option.value.jsonPrimitive.content)
+                Member::class.java -> resolved.getMember(option.value.jsonPrimitive.content)
+                ChannelData::class.java -> resolved.getChannel(option.value.jsonPrimitive.content)
+                Role::class.java -> resolved.getRole(option.value.jsonPrimitive.content)
+                Unit::class.java -> TODO() // TODO type -> Mentionable
+                Long::class.java -> option.value.jsonPrimitive.long
+                else -> throw Exception("Couldn't parse ${option.type} to a class")
+            } as T
         }
     }
 
