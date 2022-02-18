@@ -49,6 +49,10 @@ data class Guild(
         }
     }
 
+    fun getEmoji(name: String): Emoji? {
+        return emojis.find { it.name == name }
+    }
+
 }
 
 
