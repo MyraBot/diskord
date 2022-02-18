@@ -49,7 +49,7 @@ object Diskord : GetTextChannelBehavior {
         this.intents.addAll(this.cache.flatMap { it.intents })
     }
 
-    fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized
+    fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized && websocket.connected
 
     suspend fun updatePresence(presence: PresenceUpdate) {
         websocket.updatePresence(presence)
