@@ -4,10 +4,8 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.Emoji
 import com.github.myraBot.diskord.common.entities.Locale
 import com.github.myraBot.diskord.common.entities.Role
-import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.CdnEndpoints
-import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
 import com.github.myraBot.diskord.rest.request.promises.Promise
@@ -27,7 +25,11 @@ data class Guild(
     @SerialName("owner_id") internal val ownerId: String,
     val roles: List<Role>,
     val emojis: List<Emoji>,
+    val features: List<String>,
     @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList(),
+    @SerialName("vanity_url_code") val vanity: String?,
+    val description: String?,
+    @SerialName("premium_tier") val boostingTier: Int,
     @SerialName("preferred_locale") val locale: Locale,
     @SerialName("approximate_member_count") private val memberCount: Optional<Int> = Optional.Missing(),
     @SerialName("approximate_presence_count") private val onlineCount: Optional<Int> = Optional.Missing()
