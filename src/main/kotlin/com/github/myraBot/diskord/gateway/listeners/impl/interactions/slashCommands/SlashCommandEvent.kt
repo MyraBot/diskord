@@ -25,12 +25,8 @@ open class SlashCommandEvent(
     val command: SlashCommand get() = JSON.decodeFromJsonElement(data.interactionDataJson.value!!)
     val resolved: Resolved get() = Resolved(command.resolved, data.guildId.value!!)
     open val member: Member? get() = data.member
-
-    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.value!!)
-    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.value!!)
-
-    inline fun <reified T> getOption(name: String): T? {
-        val option: SlashCommandOptionData? = command.options
+    val arguments: List<SlashCommandOptionData>
+        get() = command.options
             .flatMap {
                 var options = it.options
                 while (
@@ -41,8 +37,12 @@ open class SlashCommandEvent(
                 }
                 options
             }
-            .firstOrNull { it.name == name }
 
+    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.value!!)
+    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.value!!)
+
+    inline fun <reified T> getOption(name: String): T? {
+        val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }
         return option?.value?.let {
             when (T::class.java) {
                 String::class.java -> option.value.jsonPrimitive.content
