@@ -9,6 +9,7 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.Cache
 import com.github.myraBot.diskord.gateway.GatewayIntent
 import com.github.myraBot.diskord.gateway.Websocket
+import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.listeners.EventListener
 import com.github.myraBot.diskord.gateway.listeners.Events
 import com.github.myraBot.diskord.rest.DefaultTransformer
@@ -50,6 +51,9 @@ object Diskord : GetTextChannelBehavior {
 
     fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized
 
+    suspend fun updatePresence(presence: PresenceUpdate) {
+        websocket.updatePresence(presence)
+    }
 
     suspend fun getBotUser(): Promise<User> = UserCache.get(this.id)
     suspend fun getUser(id: String): Promise<User> = UserCache.get(id)
