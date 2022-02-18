@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.asComponent
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.ActionRowData
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
+import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import com.github.myraBot.diskord.common.entities.message.embed.Embed
 import kotlinx.serialization.SerialName
@@ -38,6 +39,7 @@ open class MessageBuilder(
         this.actionRows.last().components.add(button.asComponent())
     }
 
+    suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
     fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
 
 
