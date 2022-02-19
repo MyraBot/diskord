@@ -19,7 +19,7 @@ import kotlinx.serialization.encoding.Encoder
  * @property afk Whether the bot is afk.
  */
 data class Presence(
-    val since: Int? = null,
+    var since: Int? = null,
     var activity: Activity? = null,
     val status: Status,
     var afk: Boolean = false
