@@ -1,9 +1,6 @@
 package com.github.myraBot.diskord.rest
 
-import com.github.myraBot.diskord.common.caching.DoubleKey
-import com.github.myraBot.diskord.common.caching.GuildCache
-import com.github.myraBot.diskord.common.caching.MemberCache
-import com.github.myraBot.diskord.common.caching.RoleCache
+import com.github.myraBot.diskord.common.caching.*
 import com.github.myraBot.diskord.common.entities.Application
 import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.common.entities.User
@@ -23,7 +20,9 @@ object Endpoints {
     val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
     val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer())
     val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer()))
-    val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer())
+    val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer()) { user, args ->
+        UserCache.cache[user.id] = user
+    }
     val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer()) { member, args ->
         val m: Member = Member.withUserInMember(member, args["guild.id"].toString())
         MemberCache.cache[DoubleKey(m.guildId, m.id)] = m
