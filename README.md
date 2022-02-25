@@ -4,3 +4,4 @@
 - [ ] Add documentation to everything
 - [ ] Use `Deferred` instead of custom `Promise` class
 - [ ] Maybe make behaviors abstract classes with `@Contextual` 
+- [ ] Name function `fetchX` to show that rest is being used
