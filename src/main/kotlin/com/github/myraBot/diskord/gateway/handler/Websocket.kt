@@ -1,8 +1,12 @@
-package com.github.myraBot.diskord.gateway
+package com.github.myraBot.diskord.gateway.handler
 
 import bot.myra.kommons.*
 import com.github.myraBot.diskord.common.*
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
+import com.github.myraBot.diskord.gateway.GatewayResume
+import com.github.myraBot.diskord.gateway.IdentifyResponse
+import com.github.myraBot.diskord.gateway.OptCode
+import com.github.myraBot.diskord.gateway.Properties
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.events.Events
 import io.ktor.client.features.websocket.*
@@ -14,6 +18,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 

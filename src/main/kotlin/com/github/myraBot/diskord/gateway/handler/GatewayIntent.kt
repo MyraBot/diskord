@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.gateway
+package com.github.myraBot.diskord.gateway.handler
 
 import kotlin.math.pow
 

@@ -6,9 +6,9 @@ import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.UserCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
-import com.github.myraBot.diskord.gateway.Cache
-import com.github.myraBot.diskord.gateway.GatewayIntent
-import com.github.myraBot.diskord.gateway.Websocket
+import com.github.myraBot.diskord.gateway.handler.Cache
+import com.github.myraBot.diskord.gateway.handler.GatewayIntent
+import com.github.myraBot.diskord.gateway.handler.Websocket
 import com.github.myraBot.diskord.gateway.commands.Presence
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.commands.Status
