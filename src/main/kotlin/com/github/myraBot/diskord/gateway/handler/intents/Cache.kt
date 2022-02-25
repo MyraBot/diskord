@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.gateway.handler
+package com.github.myraBot.diskord.gateway.handler.intents
 
 import com.github.myraBot.diskord.common.caching.*
 import com.github.myraBot.diskord.gateway.events.EventListener

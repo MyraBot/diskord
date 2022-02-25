@@ -9,6 +9,7 @@ import com.github.myraBot.diskord.gateway.OptCode
 import com.github.myraBot.diskord.gateway.Properties
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.events.Events
+import com.github.myraBot.diskord.gateway.handler.intents.GatewayIntent
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineName
