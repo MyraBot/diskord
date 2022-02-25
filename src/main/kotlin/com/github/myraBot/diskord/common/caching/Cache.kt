@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.caching
 
-import com.github.myraBot.diskord.gateway.listeners.EventListener
+import com.github.myraBot.diskord.gateway.events.EventListener
 import com.github.myraBot.diskord.rest.request.promises.Promise
 
 data class DoubleKey(val first: String, val second: String)

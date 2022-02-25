@@ -4,7 +4,7 @@ import bot.myra.kommons.*
 import com.github.myraBot.diskord.common.*
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
-import com.github.myraBot.diskord.gateway.listeners.Events
+import com.github.myraBot.diskord.gateway.events.Events
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.CoroutineName

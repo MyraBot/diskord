@@ -1,8 +1,8 @@
 package com.github.myraBot.diskord.common.caching
 
-import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.gateway.listeners.ListenTo
-import com.github.myraBot.diskord.gateway.listeners.impl.guild.MemberUpdateEvent
+import com.github.myraBot.diskord.gateway.events.EventListener
+import com.github.myraBot.diskord.gateway.events.ListenTo
+import com.github.myraBot.diskord.gateway.events.impl.guild.MemberUpdateEvent
 
 object MemberCachingListener : EventListener {
     @ListenTo(MemberUpdateEvent::class)

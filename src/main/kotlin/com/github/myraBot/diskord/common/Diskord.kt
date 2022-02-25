@@ -12,8 +12,8 @@ import com.github.myraBot.diskord.gateway.Websocket
 import com.github.myraBot.diskord.gateway.commands.Presence
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.commands.Status
-import com.github.myraBot.diskord.gateway.listeners.EventListener
-import com.github.myraBot.diskord.gateway.listeners.Events
+import com.github.myraBot.diskord.gateway.events.EventListener
+import com.github.myraBot.diskord.gateway.events.Events
 import com.github.myraBot.diskord.rest.DefaultTransformer
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior

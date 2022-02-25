@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.gateway
 
 import com.github.myraBot.diskord.common.caching.*
-import com.github.myraBot.diskord.gateway.listeners.EventListener
+import com.github.myraBot.diskord.gateway.events.EventListener
 
 enum class Cache(
     val listener: EventListener,
