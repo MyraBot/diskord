@@ -1,7 +1,5 @@
 package com.github.myraBot.diskord.gateway.handler.intents
 
-import kotlin.math.pow
-
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateway-intents)
  *
@@ -28,7 +26,7 @@ enum class GatewayIntent(val index: Int) {
 
     companion object {
         fun getID(intents: Set<GatewayIntent>): Int {
-           return intents.sumOf { (2).toDouble().pow(it.index.toDouble()) }.toInt()
+            return intents.map { 1 shl it.index }.reduce { acc, i -> acc or i }
         }
     }
 }
