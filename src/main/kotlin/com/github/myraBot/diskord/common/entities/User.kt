@@ -26,7 +26,7 @@ class User(
     val system: Boolean = false,
     @SerialName("banner") private val bannerHash: Optional<String?> = Optional.Missing(),
     @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
-    private @Serializable(with = UserFlag.Serializer::class) @SerialName("public_flags") val flags: Optional<List<UserFlag>> = Optional.Missing()
+    @Serializable(with = UserFlag.Serializer::class) @SerialName("public_flags") private val flags: Optional<List<UserFlag>> = Optional.Missing()
 ) {
     val avatar: String
         get() = avatarHash?.let {
