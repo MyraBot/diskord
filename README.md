@@ -7,3 +7,5 @@
 - [ ] Name function `fetchX` to show that rest is being used
 - [ ] Make caching functions not in constructor
 - [ ] Redo builders -> `XModifiers`
+- [ ] Delete `DefaultBehavior#diskord`
+- [ ] Redo event calling
