@@ -6,6 +6,9 @@ import com.github.myraBot.diskord.gateway.events.impl.guild.MemberUpdateEvent
 
 object MemberCachingListener : EventListener {
     @ListenTo(MemberUpdateEvent::class)
-    fun onMemberUpdate(event: MemberUpdateEvent) = MemberCache.cache[DoubleKey(event.guild.id, event.member.id)]
+    suspend fun onMemberUpdate(event: MemberUpdateEvent) {
+        val guild = event.getGuildAsync().await()
+        MemberCache.cache[DoubleKey(guild!!.id, event.member.id)]
+    }
 }
 

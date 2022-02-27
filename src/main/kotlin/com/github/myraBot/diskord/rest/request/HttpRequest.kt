@@ -15,7 +15,3 @@ data class HttpRequest<T>(
         this.arguments.apply(arguments)
     }
 }
-
-suspend fun <T> httpRequest(route: Route<T>, builder: suspend HttpRequest<T>.() -> Unit) {
-    HttpRequest(route).apply { builder.invoke(this) }
-}

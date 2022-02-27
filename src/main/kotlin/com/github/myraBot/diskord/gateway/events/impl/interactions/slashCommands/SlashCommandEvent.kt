@@ -15,8 +15,8 @@ import com.github.myraBot.diskord.common.entities.channel.TextChannel
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.gateway.events.impl.interactions.GenericInteractionCreateEvent
-import com.github.myraBot.diskord.rest.behaviors.getChannel
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import com.github.myraBot.diskord.rest.behaviors.getChannelAsync
+import kotlinx.coroutines.Deferred
 import kotlinx.serialization.json.*
 
 open class SlashCommandEvent(
@@ -38,8 +38,8 @@ open class SlashCommandEvent(
                 options
             }
 
-    open suspend fun getGuild(): Promise<Guild> = GuildCache.get(data.guildId.value!!)
-    suspend fun getChannel(): Promise<TextChannel> = Diskord.getChannel(data.channelId.value!!)
+    open suspend fun getGuild(): Deferred<Guild?> = GuildCache.get(data.guildId.value!!)
+    suspend fun getChannel(): Deferred<TextChannel?> = Diskord.getChannelAsync(data.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }

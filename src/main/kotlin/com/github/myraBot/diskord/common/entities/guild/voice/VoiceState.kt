@@ -4,9 +4,10 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
-import com.github.myraBot.diskord.rest.behaviors.getChannel
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import com.github.myraBot.diskord.rest.behaviors.getChannelAsync
 import com.github.myraBot.diskord.utilities.InstantSerializer
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -46,13 +47,12 @@ data class VoiceState(
     val isMuted: Boolean = isSelfMute || isGuildMuted
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
-    suspend fun getMember(): Promise<Member> {
+    fun getMemberAsync(): Deferred<Member> {
         return guildId?.let { it ->
-            if (memberData != null) Promise.of(Member.withUserInMember(memberData, it))
-            else Diskord.getGuild(it).thenNonNull { it!!.getMember(userId) }
-        } ?: Promise.of(null)
+            CompletableDeferred(Member.withUserInMember(memberData!!, it))
+        } ?: CompletableDeferred(null)
     }
 
-    suspend fun getChannel(): Promise<VoiceChannel> = channelId?.let { Diskord.getChannel(it) } ?: Promise.of(null)
-    val channel: VoiceChannel? get() = runBlocking { getChannel().await() }
+    fun getChannelAsync(): Deferred<VoiceChannel?> = channelId?.let { Diskord.getChannelAsync(it) } ?: CompletableDeferred(null)
+    val channel: VoiceChannel? get() = runBlocking { getChannelAsync().await() }
 }

@@ -6,7 +6,8 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.events.Event
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.serialization.SerialName
 
 /**
@@ -34,8 +35,8 @@ data class VoiceStateUpdateEvent(
         super.call()
     }
 
-    suspend fun getMember(): Promise<Member> = newVoiceState.getMember()
-    suspend fun getGuild(): Promise<Guild> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: Promise.of(null)
+    fun getMemberAsync(): Deferred<Member> = newVoiceState.getMemberAsync()
+    fun getGuildAsync(): Deferred<Guild?> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: CompletableDeferred(null)
     val oldVoiceState: VoiceState? = VoiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
 
 }

@@ -6,20 +6,20 @@ import com.github.myraBot.diskord.common.caching.GuildCache
 import com.github.myraBot.diskord.common.caching.UserCache
 import com.github.myraBot.diskord.common.entities.User
 import com.github.myraBot.diskord.common.entities.guild.Guild
-import com.github.myraBot.diskord.gateway.handler.intents.Cache
-import com.github.myraBot.diskord.gateway.handler.intents.GatewayIntent
-import com.github.myraBot.diskord.gateway.handler.Websocket
 import com.github.myraBot.diskord.gateway.commands.Presence
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.commands.Status
 import com.github.myraBot.diskord.gateway.events.EventListener
 import com.github.myraBot.diskord.gateway.events.Events
+import com.github.myraBot.diskord.gateway.handler.Websocket
+import com.github.myraBot.diskord.gateway.handler.intents.Cache
+import com.github.myraBot.diskord.gateway.handler.intents.GatewayIntent
 import com.github.myraBot.diskord.rest.DefaultTransformer
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import com.github.myraBot.diskord.rest.request.error.ErrorHandler
-import com.github.myraBot.diskord.rest.request.promises.Promise
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -64,11 +64,11 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    suspend fun getBotUser(): Promise<User> = UserCache.get(this.id)
-    suspend fun getUser(id: String): Promise<User> = UserCache.get(id)
+    fun getBotUser(): Deferred<User?> = UserCache.get(this.id)
+    fun getUser(id: String): Deferred<User?> = UserCache.get(id)
 
     fun getGuilds(): Flow<Guild> = GuildCache.getAll()
-    suspend fun getGuild(id: String): Promise<Guild> = GuildCache.get(id)
+    fun getGuild(id: String): Deferred<Guild?> = GuildCache.get(id)
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {

@@ -1,19 +1,18 @@
 package com.github.myraBot.diskord.common.caching
 
-import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.events.ListenTo
 import com.github.myraBot.diskord.gateway.events.impl.guild.GuildCreateEvent
 import com.github.myraBot.diskord.rest.Endpoints
-import com.github.myraBot.diskord.rest.request.promises.Promise
-import kotlinx.coroutines.coroutineScope
+import com.github.myraBot.diskord.rest.request.RestClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 
 object GuildCache : Cache<String, Guild>(
     retrieve = { key ->
-        Promise.of(Endpoints.getGuild) {
+        RestClient.executeAsync(Endpoints.getGuild) {
             arguments { arg("guild.id", key) }
         }
     }
@@ -23,8 +22,8 @@ object GuildCache : Cache<String, Guild>(
     fun getAll(): Flow<Guild> = channelFlow {
         val copiedIds = ids.toList()
         copiedIds.forEach { id ->
-            cache[id]?.run { send(this) } ?: coroutineScope {
-                Diskord.getGuild(id).async(this) { send(it!!) }
+            cache[id]?.let { send(it) } ?: RestClient.coroutineScope.launch {
+                retrieve(id).await()?.let { send(it) }
             }
         }
     }.buffer()

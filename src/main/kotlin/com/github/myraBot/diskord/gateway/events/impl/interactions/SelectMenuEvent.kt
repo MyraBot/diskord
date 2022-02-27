@@ -6,16 +6,16 @@ import com.github.myraBot.diskord.common.entities.applicationCommands.components
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.message.Message
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 data class SelectMenuEvent(
-        override val data: Interaction,
+    override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
     val message: Message = data.message.value!!
-    val guild: Guild get() = runBlocking { Diskord.getGuild(data.guildId.value!!).awaitNonNull() }
     val member: Member? get() = data.member
     val selectMenu: SelectMenu
         get() = message.components
@@ -25,4 +25,7 @@ data class SelectMenuEvent(
             .let { return it.asSelectMenu() }
     val id: String get() = data.id
     val values: List<String> get() = data.interactionDataJson.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
+
+    fun getGuildAsync(): Deferred<Guild?> = data.guildId.value?.let { Diskord.getGuild(it) } ?: CompletableDeferred(value = null)
+
 }

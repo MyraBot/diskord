@@ -1,17 +1,22 @@
 package com.github.myraBot.diskord.common.caching
 
 import com.github.myraBot.diskord.gateway.events.EventListener
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 
 data class DoubleKey(val first: String, val second: String)
 
 abstract class Cache<K, V>(
-    var retrieve: suspend (K) -> Promise<V> = { Promise.of(null) },
+    var retrieve: (K) -> Deferred<V?> = { CompletableDeferred(value = null) },
 ) : EventListener {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 
-    suspend fun get(key: K): Promise<V> {
-        return cache[key]?.let { Promise.of(it) } ?: retrieve.invoke(key)
+    fun get(key: K): Deferred<V?> {
+        cache[key]?.let {
+            return CompletableDeferred(it)
+        } ?: run {
+            return retrieve.invoke(key)
+        }
     }
 
     fun getOrPut(key: K, value: (K) -> V): V {

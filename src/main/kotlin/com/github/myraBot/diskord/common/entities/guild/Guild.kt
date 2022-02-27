@@ -8,7 +8,10 @@ import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.rest.CdnEndpoints
 import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.behaviors.guild.GuildBehavior
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import com.github.myraBot.diskord.rest.request.RestClient
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -45,11 +48,27 @@ data class Guild(
     val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
     val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 
-    suspend fun getOwner(): Promise<Member> = getMember(ownerId)
+    suspend fun getOwnerAsync(): Deferred<Member?> = getMemberAsync(ownerId)
 
-    suspend fun getMemberCount() = Diskord.getGuild(this.id).mapNonNull { it.memberCount.value!! }.awaitNonNull()
+    fun getMemberCountAsync(): Deferred<Int> {
+        val future = CompletableDeferred<Int>()
+        RestClient.coroutineScope.launch {
+            val guild = Diskord.getGuild(id).await()
+            val memberCount = guild!!.memberCount.value!!
+            future.complete(memberCount)
+        }
+        return future
+    }
 
-    suspend fun getOnlineCount() = Diskord.getGuild(this.id).mapNonNull { it.onlineCount.value!! }.awaitNonNull()
+    fun getOnlineCountAsync(): Deferred<Int> {
+        val future = CompletableDeferred<Int>()
+        RestClient.coroutineScope.launch {
+            val guild = Diskord.getGuild(id).await()
+            val onlineCount = guild!!.onlineCount.value!!
+            future.complete(onlineCount)
+        }
+        return future
+    }
 
     fun getEmoji(name: String): Emoji? {
         return emojis.find { it.name == name }

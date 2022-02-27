@@ -1,6 +1,7 @@
 package com.github.myraBot.diskord.common.entities
 
 import com.github.myraBot.diskord.common.Diskord
+import com.github.myraBot.diskord.common.entities.channel.ChannelData
 import com.github.myraBot.diskord.common.entities.channel.DmChannel
 import com.github.myraBot.diskord.common.entities.user.UserFlag
 import com.github.myraBot.diskord.common.toJson
@@ -8,8 +9,11 @@ import com.github.myraBot.diskord.rest.CdnEndpoints
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.bodies.DmCreation
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import com.github.myraBot.diskord.rest.request.RestClient
 import com.github.myraBot.diskord.utilities.Mention
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -36,33 +40,51 @@ class User(
     val mention: String get() = Mention.user(id)
     val link: String get() = "https://discord.com/users/$id"
 
-    suspend fun getBanner(): Promise<String?> {
+    fun getBannerAsync(): Deferred<String?> {
         if (!bannerHash.missing) {
-            val hash = bannerHash.value ?: return Promise.of(null)
+            val hash = bannerHash.value ?: return CompletableDeferred(null)
             val banner = CdnEndpoints.userBanner.apply {
                 arg("user_id", id)
                 arg("user_banner", hash)
             }
-            return Promise.of(banner)
+            return CompletableDeferred(banner)
         } else {
-            return Diskord.getUser(id).mapNonNull { user ->
-                val hash = user.bannerHash.value ?: return@mapNonNull null
+            val future = CompletableDeferred<String?>()
+            RestClient.coroutineScope.launch {
+                val user = Diskord.getUser(id).await()
+                val hash = user!!.bannerHash.value ?: future.complete(null).also { return@launch }
                 val banner = CdnEndpoints.userBanner.apply {
                     arg("user_id", id)
                     arg("user_banner", hash)
                 }
-                return@mapNonNull banner
+                future.complete(banner)
             }
+            return future
         }
     }
 
-    suspend fun getFlags(): Promise<List<UserFlag>> {
-        return if (!flags.missing) Promise.of(flags.value!!)
-        else Diskord.getUser(id).mapNonNull { it.flags.value!! }
+    fun getFlagsAsync(): Deferred<List<UserFlag>> {
+        return if (!flags.missing) CompletableDeferred(flags.value!!)
+        else {
+            val future = CompletableDeferred<List<UserFlag>>()
+            RestClient.coroutineScope.launch {
+                val user = Diskord.getUser(id).await()
+                future.complete(user!!.flags.value!!)
+            }
+            return future
+        }
     }
 
-    suspend fun openDms(): Promise<DmChannel> = Promise
-        .of(Endpoints.createDm) { json = DmCreation(id).toJson() }
-        .map { data -> data?.let { DmChannel(it) } }
+    fun openDmsAsync(): Deferred<DmChannel> {
+        val future = CompletableDeferred<DmChannel>()
+        RestClient.coroutineScope.launch {
+            val channel: ChannelData = RestClient.executeAsync(Endpoints.createDm) {
+                json = DmCreation(id).toJson()
+            }.await()
+            val dmChannel = DmChannel(channel)
+            future.complete(dmChannel)
+        }
+        return future
+    }
 
 }

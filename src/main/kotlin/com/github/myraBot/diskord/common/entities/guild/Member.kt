@@ -10,10 +10,12 @@ import com.github.myraBot.diskord.common.toJson
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.behaviors.guild.MemberBehavior
 import com.github.myraBot.diskord.rest.bodies.BanInfo
-import com.github.myraBot.diskord.rest.request.promises.Promise
+import com.github.myraBot.diskord.rest.request.RestClient
 import com.github.myraBot.diskord.utilities.InstantSerializer
 import com.github.myraBot.diskord.utilities.Mention
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -51,23 +53,39 @@ data class Member(
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
-    val guild: Guild get() = runBlocking { Diskord.getGuild(guildId).awaitNonNull() }
-    suspend fun getGuild(): Promise<Guild> = Diskord.getGuild(guildId)
-    suspend fun getRoles(): Promise<List<Role>> = getGuild().map { guild -> guild?.roles?.filter { roleIds.contains(it.id) } }
-    suspend fun getColour(): Promise<Color> = getRoles().map { roles ->
-        roles?.reversed()
-            ?.first { it.colour != Color.decode("0") }
-            ?.colour
+
+    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuild(guildId)
+
+    fun getRolesAsync(): Deferred<List<Role>> {
+        val future = CompletableDeferred<List<Role>>()
+        RestClient.coroutineScope.launch {
+            val guild = getGuildAsync().await()
+            val roles = guild!!.roles.filter { roleIds.contains(it.id) }
+            future.complete(roles)
+        }
+        return future
+    }
+
+    fun getColourAsync(): Deferred<Color> {
+        val future = CompletableDeferred<Color>()
+        RestClient.coroutineScope.launch {
+            val roles = getRolesAsync().await()
+            val colour = roles.reversed()
+                .first { it.colour != Color.decode("0") }
+                .colour
+            future.complete(colour)
+        }
+        return future
     }
 
     val voiceState: VoiceState? get() = VoiceCache.collect().flatten().find { it.userId == id }
 
 
-    suspend fun ban() = ban(null, null)
-    suspend fun ban(deleteMessages: Int) = ban(deleteMessages, null)
-    suspend fun ban(reason: String) = ban(null, reason)
-    suspend fun ban(deleteMessages: Int?, reason: String?): Promise<Unit> {
-        return Promise.of(Endpoints.createGuildBan) {
+    fun ban() = ban(null, null)
+    fun ban(deleteMessages: Int) = ban(deleteMessages, null)
+    fun ban(reason: String) = ban(null, reason)
+    fun ban(deleteMessages: Int?, reason: String?): Deferred<Unit> {
+        return RestClient.executeAsync(Endpoints.createGuildBan) {
             json = BanInfo(deleteMessages).toJson()
             logReason = reason
             arguments {
