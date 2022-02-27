@@ -5,8 +5,8 @@
 - [x] Use `Deferred` instead of custom `Promise` class
 - [ ] Maybe make behaviors abstract classes with `@Contextual` 
 - [ ] Name function `fetchX` to show that rest is being used
-- [ ] Make caching functions not in constructor
+- [x] Make caching functions not in constructor
 - [ ] Redo builders -> `XModifiers`
-- [ ] Delete `DefaultBehavior#diskord`
+- [x] Delete `DefaultBehavior#diskord`
 - [ ] Redo event calling
 - [ ] add cache#getnonnull
