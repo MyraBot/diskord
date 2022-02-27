@@ -6,16 +6,14 @@ import kotlinx.coroutines.Deferred
 
 data class DoubleKey(val first: String, val second: String)
 
-abstract class Cache<K, V>(
-    var retrieve: (K) -> Deferred<V?> = { CompletableDeferred(value = null) },
-) : EventListener {
+abstract class Cache<K, V> : EventListener {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 
     fun get(key: K): Deferred<V?> {
         cache[key]?.let {
             return CompletableDeferred(it)
         } ?: run {
-            return retrieve.invoke(key)
+            return retrieveAsync(key)
         }
     }
 
@@ -24,5 +22,7 @@ abstract class Cache<K, V>(
     }
 
     fun collect(): List<V> = this.cache.values.toList()
+
+    abstract fun retrieveAsync(key: K): Deferred<V?>
 
 }

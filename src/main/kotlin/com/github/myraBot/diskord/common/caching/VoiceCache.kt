@@ -5,10 +5,14 @@ import com.github.myraBot.diskord.gateway.events.ListenTo
 import com.github.myraBot.diskord.gateway.events.impl.guild.GuildCreateEvent
 import com.github.myraBot.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 
-object VoiceCache : Cache<String, MutableList<VoiceState>>(
-    retrieve = { CompletableDeferred(null) }
-) {
+object VoiceCache : Cache<String, MutableList<VoiceState>>() {
+
+    override fun retrieveAsync(key: String): Deferred<MutableList<VoiceState>?> {
+        return CompletableDeferred(value = null)
+    }
+
     @ListenTo(GuildCreateEvent::class)
     fun onGuildCreate(event: GuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
 

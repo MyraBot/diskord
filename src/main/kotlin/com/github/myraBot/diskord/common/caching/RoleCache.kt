@@ -4,18 +4,21 @@ import com.github.myraBot.diskord.common.entities.Role
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.request.RestClient
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 
-object RoleCache : Cache<DoubleKey, Role>(
-    retrieve = { key ->
-        val future = CompletableDeferred<Role>()
+object RoleCache : Cache<DoubleKey, Role>() {
+
+    override fun retrieveAsync(key: DoubleKey): Deferred<Role?> {
+        val future = CompletableDeferred<Role?>()
         RestClient.coroutineScope.launch {
-            val roles = RestClient.executeAsync(Endpoints.getRoles) {
+            val roles = RestClient.executeNullableAsync(Endpoints.getRoles) {
                 arguments { arg("guild.id", key.first) }
-            }.await()
+            }.await() ?: return@launch Unit.also { future.complete(null) }
             val role = roles.first { it.id == key.second }
             future.complete(role)
         }
-        future
+        return future
     }
-)
+
+}
