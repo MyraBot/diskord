@@ -8,7 +8,7 @@ import com.github.myraBot.diskord.common.utilities.FileFormats
  */
 @Suppress("unused")
 object CdnEndpoints {
-    val baseUrl = "https://cdn.discordapp.com/"
+    const val baseUrl = "https://cdn.discordapp.com/"
 
     val customEmoij = CdnRoute("emojis/{emoji_id}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF))
     val guildIcon = CdnRoute("icons/{guild_id}/{guild_icon}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF))
