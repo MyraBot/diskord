@@ -12,9 +12,9 @@ import kotlinx.serialization.Serializable
  * Represents any channel. Can be cast to any specific channel by parsing an instance
  * to the constructor of the wanted object.
  *
- * @property id Id of the channel
+ * @property id ID of the channel
  * @property source Channel source type.
- * @property guildId Id of guild.
+ * @property guildId I'd of guild.
  * @property position Sorting position.
  * @property name Name of the channel
  * @property topic The topic of the channel.
@@ -27,7 +27,7 @@ import kotlinx.serialization.Serializable
  * @property icon The icon hash.
  * @property ownerId The creator id of a group dm or thread.
  * @property applicationId The application of the group dm, if it's bot-created.
- * @property parentId Id of the parent category for a channel. If [source] is a thread, it's the id of the text channel this thread was created.
+ * @property parentId ID of the parent category for a channel. If [source] is a thread, it's the id of the text channel this thread was created.
  * @property lastPinTimestamp When the last pinned message was pinned.
  * @property voiceRegion The voice region id for the voice channel, automatic when set to null.
  */
