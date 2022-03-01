@@ -17,6 +17,14 @@ abstract class Cache<K, V> : EventListener {
         }
     }
 
+    fun getNonNull(key: K): Deferred<V> {
+        cache[key]?.let {
+            return CompletableDeferred(it)
+        } ?: run {
+            return retrieveAsync(key) as Deferred<V>
+        }
+    }
+
     fun getOrPut(key: K, value: (K) -> V): V {
         return cache[key] ?: value.invoke(key).also { this.cache[key] = it }
     }
