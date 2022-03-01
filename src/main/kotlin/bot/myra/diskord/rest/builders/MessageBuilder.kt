@@ -1,0 +1,64 @@
+package bot.myra.diskord.rest.builders
+
+import bot.myra.diskord.common.entities.applicationCommands.components.Component
+import bot.myra.diskord.common.entities.applicationCommands.components.asComponent
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ActionRowData
+import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
+import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
+import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
+import bot.myra.diskord.common.entities.message.embed.Embed
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Suppress("unused")
+@Serializable
+open class MessageBuilder(
+    var content: String? = null,
+    var tts: Boolean? = null,
+    var embeds: MutableList<Embed> = mutableListOf(),
+    @SerialName("components") var actionRows: MutableList<Component> = mutableListOf(),
+) {
+    suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
+
+    fun addEmbed(embed: Embed) = embeds.add(embed)
+
+
+    /**
+     * Adds a button as a message component. If an action row already exists,
+     * the button is appended to the existing action row. When the action row
+     * is full, a new action row will be created and the button will be appended
+     * to the new one. If there is no action row at all, it will also create a
+     * new one and append the new button there.
+     *
+     * @param button The button to add as a component.
+     */
+    fun addButton(button: Button) {
+        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
+        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+
+        this.actionRows.last().components.add(button.asComponent())
+    }
+
+    suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
+    fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
+
+
+    suspend fun addSelectMenu(selectMenu: suspend SelectMenuBuilder.() -> Unit) {
+        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
+        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+
+        this.actionRows.last().components.add(SelectMenuBuilder()
+            .apply { selectMenu.invoke(this) }
+            .asSelectMenu()
+            .asComponent())
+    }
+
+    fun addSelectMenu(selectMenu: SelectMenu) {
+        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
+        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+
+        this.actionRows.last().components.add(selectMenu.asComponent())
+    }
+
+    fun addSelectMenus(vararg selectMenus: SelectMenu) = selectMenus.forEach { addSelectMenu(it) }
+}
