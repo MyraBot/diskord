@@ -19,11 +19,11 @@ data class ErrorValidation(
 }
 
 suspend fun validateResponse(response: HttpResponse): ErrorValidation {
-    if (response.status.isSuccess()) {
-        return ErrorValidation.success()
+    return if (response.status.isSuccess()) {
+        ErrorValidation.success()
     } else {
         val error = JSON.decodeFromString<JsonObject>(response.readText())["message"]?.string ?: "No error message provided"
-        return when (response.status) {
+        when (response.status) {
             HttpStatusCode.NotModified -> ErrorValidation.failure(EntityModifyException(error))
             HttpStatusCode.BadRequest -> ErrorValidation.failure(BadReqException(error))
             HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
