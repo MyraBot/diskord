@@ -19,7 +19,7 @@ import java.time.Instant
  * @property guildId Guild id of the voice state.
  * @property channelId The channel the user connected to.
  * @property userId The user id of the voice state.
- * @property member The member object of this voice state.
+ * @property memberData The member object of this voice state.
  * @property sessionId Voice state session id.
  * @property isGuildDeaf Whether the user got deafened.
  * @property isGuildMuted Whether the user got muted.

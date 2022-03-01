@@ -54,8 +54,8 @@ abstract class Event : DefaultBehavior {
     /**
      * Executes the actual functions.
      *
+     * @param func Event function to execute.
      * @param listener Event listener superclass.
-     * @param functions Fully filtered listener functions.
      */
     private suspend fun runEvent(func: KFunction<*>, listener: EventListener) {
         try {

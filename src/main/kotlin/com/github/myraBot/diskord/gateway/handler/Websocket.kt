@@ -179,7 +179,7 @@ class Websocket(
 }
 
 /**
- * Registers all registered events from [listeners],
+ * Registers all registered events from [Diskord.listeners],
  * initialises [Diskord] and starts the websocket.
  *
  * @return Returns the [Diskord] object. Just for laziness.
