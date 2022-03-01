@@ -15,20 +15,20 @@ interface TextChannelBehavior {
 
     val data: ChannelData
 
-    suspend fun sendAsync(vararg files: File = emptyArray(), message: MessageBuilder): Deferred<Message> {
+    suspend fun sendAsync(vararg files: File = emptyArray(), message: MessageBuilder): Deferred<Message?> {
         val msg = message.transform()
-        return RestClient.executeAsync(Endpoints.createMessage) {
+        return RestClient.executeNullableAsync(Endpoints.createMessage) {
             json = msg.toJson()
             attachments = files.toList()
             arguments { arg("channel.id", data.id) }
         }
     }
 
-    suspend fun sendAsync(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit): Deferred<Message> {
+    suspend fun sendAsync(vararg files: File = emptyArray(), message: suspend MessageBuilder.() -> Unit): Deferred<Message?> {
         return sendAsync(files = files, message = MessageBuilder().also { message.invoke(it) })
     }
 
-    suspend fun sendAsync(vararg files: File): Deferred<Message> {
+    suspend fun sendAsync(vararg files: File): Deferred<Message?> {
         return sendAsync(files = files, message = MessageBuilder())
     }
 
