@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.common.caching
 
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.events.ListenTo
-import com.github.myraBot.diskord.gateway.events.impl.guild.GuildCreateEvent
+import com.github.myraBot.diskord.gateway.events.impl.guild.GuildLoadEvent
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.request.RestClient
 import kotlinx.coroutines.Deferred
@@ -29,8 +29,8 @@ object GuildCache : Cache<String, Guild>() {
         }
     }
 
-    @ListenTo(GuildCreateEvent::class)
-    fun onGuildCreate(event: GuildCreateEvent) {
+    @ListenTo(GuildLoadEvent::class)
+    fun onGuildCreate(event: GuildLoadEvent) {
         ids.add(event.guild.id)
         cache[event.guild.id] = event.guild
     }

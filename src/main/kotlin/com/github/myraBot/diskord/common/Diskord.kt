@@ -43,6 +43,8 @@ object Diskord : GetTextChannelBehavior {
     var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
 
+    val unavailableGuilds: MutableList<String> = mutableListOf()
+
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
 

@@ -6,6 +6,6 @@ import com.github.myraBot.diskord.gateway.events.Event
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GuildCreateEvent(
+data class GuildAvailableEvent(
     val guild: Guild
 ) : Event()

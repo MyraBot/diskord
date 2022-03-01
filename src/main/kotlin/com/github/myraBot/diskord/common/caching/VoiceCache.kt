@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.common.caching
 
 import com.github.myraBot.diskord.common.entities.guild.voice.VoiceState
 import com.github.myraBot.diskord.gateway.events.ListenTo
-import com.github.myraBot.diskord.gateway.events.impl.guild.GuildCreateEvent
+import com.github.myraBot.diskord.gateway.events.impl.guild.GuildLoadEvent
 import com.github.myraBot.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -13,8 +13,8 @@ object VoiceCache : Cache<String, MutableList<VoiceState>>() {
         return CompletableDeferred(value = null)
     }
 
-    @ListenTo(GuildCreateEvent::class)
-    fun onGuildCreate(event: GuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
+    @ListenTo(GuildLoadEvent::class)
+    fun onGuildCreate(event: GuildLoadEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
 
     @ListenTo(VoiceStateUpdateEvent::class)
     fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = updateVoiceState(event.newVoiceState)
