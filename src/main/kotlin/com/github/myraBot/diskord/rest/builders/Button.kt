@@ -11,5 +11,5 @@ object Button {
     suspend fun secondary(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.SECONDARY, id = id).also { data.invoke(it) }
     suspend fun success(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.SUCCESS, id = id).also { data.invoke(it) }
     suspend fun danger(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.DANGER, id = id).also { data.invoke(it) }
-    suspend fun link(url: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.DANGER, url = url).also { data.invoke(it) }
+    suspend fun link(url: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.LINK, url = url).also { data.invoke(it) }
 }
