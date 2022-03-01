@@ -15,6 +15,4 @@ data class SlashCommand(
         val name: String,
         val options: List<SlashCommandOptionData> = emptyList(),
         val resolved: ResolvedData = ResolvedData(hashMapOf(), hashMapOf(), hashMapOf(), hashMapOf(), hashMapOf()),
-) : Entity {
-
-}
+) : Entity
