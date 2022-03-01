@@ -14,7 +14,7 @@ import kotlinx.serialization.encoding.Encoder
  * Used in [Diskord.updatePresence].
  *
  * @property since The unix time (in milliseconds) of when the client went idle, or null if the client is not idle.
- * @property activity The bots activity.
+ * @property activity The bot's activity.
  * @property status The bots online status.
  * @property afk Whether the bot is afk.
  */
