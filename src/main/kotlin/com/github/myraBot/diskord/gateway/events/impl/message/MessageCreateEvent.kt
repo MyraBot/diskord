@@ -1,15 +1,17 @@
 package com.github.myraBot.diskord.gateway.events.impl.message
 
 import com.github.myraBot.diskord.common.entities.message.Message
+import com.github.myraBot.diskord.gateway.events.Event
+import kotlinx.serialization.Serializable
 
-class MessageCreateEvent(
-    message: Message
-) : GenericMessageCreateEvent(message) {
+@Serializable
+open class MessageCreateEvent(
+    val message: Message
+) : Event() {
 
-    override suspend fun call() {
-        if (message.guildId.missing) PrivateMessageCreateEvent(message).call()
-        else GuildMessageCreateEvent(message).call()
-        super.call()
+    override suspend fun prepareEvent() {
+        if (message.guildId.missing) PrivateMessageCreateEvent(message)
+        else GuildMessageCreateEvent(message)
     }
 
 }

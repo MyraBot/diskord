@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.gateway.events.impl.guild
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.gateway.events.Event
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 /**
  * Can be fired in three different scenarios:
@@ -14,5 +15,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class GuildCreateEvent(
-        val guild: Guild
+    val guild: Guild
 ) : Event()

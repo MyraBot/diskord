@@ -2,6 +2,7 @@ package com.github.myraBot.diskord.gateway.events
 
 import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.rest.behaviors.DefaultBehavior
+import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -21,11 +22,20 @@ private val scope: CoroutineScope = CoroutineScope(ForkJoinPool().asCoroutineDis
  */
 abstract class Event : DefaultBehavior {
 
+    init {
+        Events.coroutineScope.launch {
+            prepareEvent()
+            call()
+        }
+    }
+
+    open suspend fun prepareEvent() {}
+
     /**
      * Runs [runFunctions] for caching purpose and
      * for all registered listeners.
      */
-    open suspend fun call() {
+    private suspend fun call() {
         Diskord.cache.forEach { runFunctions(it.listener, it.listener::class.declaredFunctions.toList()) } //TODO
         Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
     }
