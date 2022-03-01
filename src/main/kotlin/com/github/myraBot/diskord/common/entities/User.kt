@@ -75,14 +75,13 @@ class User(
         }
     }
 
-    fun openDmsAsync(): Deferred<DmChannel> {
-        val future = CompletableDeferred<DmChannel>()
+    fun openDmsAsync(): Deferred<DmChannel?> {
+        val future = CompletableDeferred<DmChannel?>()
         RestClient.coroutineScope.launch {
-            val channel: ChannelData = RestClient.executeAsync(Endpoints.createDm) {
+            val channel: ChannelData = RestClient.executeNullableAsync(Endpoints.createDm) {
                 json = DmCreation(id).toJson()
-            }.await()
-            val dmChannel = DmChannel(channel)
-            future.complete(dmChannel)
+            }.await() ?: return@launch Unit.also { future.complete(null) }
+            future.complete(DmChannel(channel))
         }
         return future
     }
