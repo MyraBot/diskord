@@ -36,6 +36,7 @@ data class MemberData(
     val permissions: String? = null,
 )
 
+@Suppress("unused")
 @Serializable
 data class Member(
     @JsonNames("guildId", "guild_id") @SerialName("guild_id") override val guildId: String,

@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import java.awt.Color
 import java.time.Instant
 
+@Suppress("unused")
 @Serializable
 data class Embed(
     var title: String? = null,

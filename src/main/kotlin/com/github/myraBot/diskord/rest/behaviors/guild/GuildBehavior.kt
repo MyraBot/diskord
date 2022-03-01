@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.myraBot.diskord.rest.behaviors.guild
 
 import com.github.myraBot.diskord.common.caching.DoubleKey

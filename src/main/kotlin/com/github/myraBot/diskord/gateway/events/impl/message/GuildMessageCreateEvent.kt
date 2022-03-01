@@ -7,6 +7,7 @@ import com.github.myraBot.diskord.common.entities.message.Message
 import com.github.myraBot.diskord.gateway.events.Event
 import kotlinx.coroutines.Deferred
 
+@Suppress("unused")
 class GuildMessageCreateEvent(
     val message: Message
 ) : Event() {

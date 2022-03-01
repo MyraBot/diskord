@@ -6,6 +6,7 @@ import com.github.myraBot.diskord.rest.behaviors.Entity
 import com.github.myraBot.diskord.rest.request.RestClient
 import kotlinx.coroutines.Deferred
 
+@Suppress("unused")
 interface MemberBehavior : Entity {
 
     val guildId: String

@@ -4,6 +4,7 @@ import com.github.myraBot.diskord.common.Diskord
 import com.github.myraBot.diskord.common.entities.guild.Guild
 import kotlinx.coroutines.Deferred
 
+@Suppress("unused")
 interface GuildChannel : Channel {
     val name: String get() = data.name.value!!
 

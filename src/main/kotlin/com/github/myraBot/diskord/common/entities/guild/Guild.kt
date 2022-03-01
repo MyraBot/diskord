@@ -18,6 +18,7 @@ import kotlinx.serialization.Serializable
 /**
  * [Documentation](https://discord.com/developers/docs/resources/guild#guild-object-guild-structure)
  */
+@Suppress("unused")
 @Serializable
 data class Guild(
     override val id: String,

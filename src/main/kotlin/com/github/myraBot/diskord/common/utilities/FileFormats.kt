@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.utilities
 
+@Suppress("unused")
 enum class FileFormats(val extension: String) {
     JPEG("jpeg"),
     PNG("png"),

@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
  * @property id
  * @property name
  */
+@Suppress("unused")
 @Serializable
 data class Emoji(
         val id: String? = null,

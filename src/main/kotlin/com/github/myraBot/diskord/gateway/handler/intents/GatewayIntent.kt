@@ -7,6 +7,7 @@ package com.github.myraBot.diskord.gateway.handler.intents
  *
  * @param index Discords used index to count the intents.
  */
+@Suppress("unused")
 enum class GatewayIntent(val index: Int) {
     GUILDS(0),
     GUILD_MEMBERS(1),

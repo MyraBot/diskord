@@ -23,6 +23,7 @@ import java.time.Instant
 /**
  * [Documentation](https://discord.com/developers/docs/resources/channel#message-object)
  */
+@Suppress("unused")
 @Serializable
 data class Message(
     override val id: String,

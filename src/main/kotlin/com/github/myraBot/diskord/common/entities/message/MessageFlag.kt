@@ -1,5 +1,6 @@
 package com.github.myraBot.diskord.common.entities.message
 
+@Suppress("unused")
 enum class MessageFlag(val code: Int) {
     CROSSPOSTED(0),
     IS_CROSSPOST(1),
