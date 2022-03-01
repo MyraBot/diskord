@@ -54,7 +54,7 @@ data class Member(
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
 
-    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuild(guildId)
+    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuildAsync(guildId)
 
     fun getRolesAsync(): Deferred<List<Role>> {
         val future = CompletableDeferred<List<Role>>()

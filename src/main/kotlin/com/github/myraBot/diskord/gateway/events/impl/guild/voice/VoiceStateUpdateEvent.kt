@@ -34,7 +34,7 @@ data class VoiceStateUpdateEvent(
     }
 
     fun getMemberAsync(): Deferred<Member> = newVoiceState.getMemberAsync()
-    fun getGuildAsync(): Deferred<Guild?> = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: CompletableDeferred(null)
+    fun getGuildAsync(): Deferred<Guild?> = newVoiceState.guildId?.let { Diskord.getGuildAsync(it) } ?: CompletableDeferred(null)
     val oldVoiceState: VoiceState? = VoiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
 
 }

@@ -9,6 +9,6 @@ import kotlinx.serialization.Serializable
 class DmChannel(
         override val data: ChannelData
 ) : TextChannelBehavior {
-     fun getOwner(): Deferred<User?> = Diskord.getUser(data.ownerId.value!!)
+     fun getOwner(): Deferred<User?> = Diskord.getUserAsync(data.ownerId.value!!)
 }
 

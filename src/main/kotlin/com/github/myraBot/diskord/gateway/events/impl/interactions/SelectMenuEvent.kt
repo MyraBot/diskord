@@ -26,6 +26,6 @@ data class SelectMenuEvent(
     val id: String get() = data.id
     val values: List<String> get() = data.interactionDataJson.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 
-    fun getGuildAsync(): Deferred<Guild?> = data.guildId.value?.let { Diskord.getGuild(it) } ?: CompletableDeferred(value = null)
+    fun getGuildAsync(): Deferred<Guild?> = data.guildId.value?.let { Diskord.getGuildAsync(it) } ?: CompletableDeferred(value = null)
 
 }

@@ -7,5 +7,5 @@ import kotlinx.coroutines.Deferred
 interface GuildChannel : Channel {
     val name: String get() = data.name.value!!
 
-    suspend fun getGuild(): Deferred<Guild?> = Diskord.getGuild(data.guildId.value!!)
+    suspend fun getGuild(): Deferred<Guild?> = Diskord.getGuildAsync(data.guildId.value!!)
 }

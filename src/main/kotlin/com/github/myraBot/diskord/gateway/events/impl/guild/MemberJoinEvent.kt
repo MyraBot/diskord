@@ -13,6 +13,6 @@ data class MemberJoinEvent(
     val member: Member
 ) : Event() {
 
-    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuild(member.guildId)
+    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuildAsync(member.guildId)
 
 }

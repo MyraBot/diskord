@@ -51,7 +51,7 @@ class User(
         } else {
             val future = CompletableDeferred<String?>()
             RestClient.coroutineScope.launch {
-                val user = Diskord.getUser(id).await()
+                val user = Diskord.getUserAsync(id).await()
                 val hash = user!!.bannerHash.value ?: future.complete(null).also { return@launch }
                 val banner = CdnEndpoints.userBanner.apply {
                     arg("user_id", id)
@@ -68,7 +68,7 @@ class User(
         else {
             val future = CompletableDeferred<List<UserFlag>>()
             RestClient.coroutineScope.launch {
-                val user = Diskord.getUser(id).await()
+                val user = Diskord.getUserAsync(id).await()
                 future.complete(user!!.flags.value!!)
             }
             return future

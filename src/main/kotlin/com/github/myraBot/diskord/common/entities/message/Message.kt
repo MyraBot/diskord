@@ -54,7 +54,7 @@ data class Message(
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
-    fun getGuildAsync(): Deferred<Guild?> = guildId.value?.let { Diskord.getGuild(it) } ?: CompletableDeferred(null)
+    fun getGuildAsync(): Deferred<Guild?> = guildId.value?.let { Diskord.getGuildAsync(it) } ?: CompletableDeferred(null)
     fun getChannelAsync(): Deferred<ChannelData?> = Diskord.getChannelAsync(channelId)
     inline fun <reified T> getChannelAsAsync(): Deferred<T?> = Diskord.getChannelAsync<T>(channelId)
 

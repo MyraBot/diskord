@@ -53,7 +53,7 @@ data class Guild(
     fun getMemberCountAsync(): Deferred<Int> {
         val future = CompletableDeferred<Int>()
         RestClient.coroutineScope.launch {
-            val guild = Diskord.getGuild(id).await()
+            val guild = Diskord.getGuildAsync(id).await()
             val memberCount = guild!!.memberCount.value!!
             future.complete(memberCount)
         }
@@ -63,7 +63,7 @@ data class Guild(
     fun getOnlineCountAsync(): Deferred<Int> {
         val future = CompletableDeferred<Int>()
         RestClient.coroutineScope.launch {
-            val guild = Diskord.getGuild(id).await()
+            val guild = Diskord.getGuildAsync(id).await()
             val onlineCount = guild!!.onlineCount.value!!
             future.complete(onlineCount)
         }
