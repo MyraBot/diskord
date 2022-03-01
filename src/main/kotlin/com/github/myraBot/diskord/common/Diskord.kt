@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flow
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
+@Suppress("unused")
 object Diskord : GetTextChannelBehavior {
     lateinit var token: String
     internal lateinit var websocket: Websocket
