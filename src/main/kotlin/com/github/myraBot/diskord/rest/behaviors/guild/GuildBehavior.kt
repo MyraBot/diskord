@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
-    suspend fun getMemberAsync(id: String): Deferred<Member?> = MemberCache.get(DoubleKey(this.id, id))
+    suspend fun getMemberAsync(id: String): Deferred<Member?> = MemberCache.getAsync(DoubleKey(this.id, id))
 
     suspend fun getBotMemberAsync(): Deferred<Member?> {
         val future = CompletableDeferred<Member?>()
@@ -59,7 +59,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
 
-    suspend fun getRoleAsync(id: String): Deferred<Role?> = RoleCache.get(DoubleKey(this.id, id))
+    suspend fun getRoleAsync(id: String): Deferred<Role?> = RoleCache.getAsync(DoubleKey(this.id, id))
 
     suspend fun getChannelsAsync(): Deferred<List<ChannelData>> = RestClient.executeAsync(Endpoints.getChannels) {
         arguments { arg("guild.id", this@GuildBehavior.id) }

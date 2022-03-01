@@ -11,6 +11,6 @@ data class VoiceLeaveEvent(
     private val newVoiceState: VoiceState,
     private val oldVoiceState: VoiceState
 ) : Event() {
-    fun getMember(): Deferred<Member> = newVoiceState.getMemberAsync()
+    fun getMemberAsync(): Deferred<Member> = newVoiceState.getMemberAsync()
     val channel: VoiceChannel get() = runBlocking { oldVoiceState.getChannelAsync().await()!! }
 }

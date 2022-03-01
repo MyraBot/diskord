@@ -12,7 +12,7 @@ data class ButtonClickEvent(
     override val data: Interaction,
 ) : GenericInteractionCreateEvent(data) {
     val message: Message = data.message.value!!
-    val guild: Guild? get() = runBlocking { GuildCache.get(data.guildId.value!!).await() }
+    val guild: Guild? get() = runBlocking { GuildCache.getAsync(data.guildId.value!!).await() }
     val member: Member? get() = data.member
     val button: Button
         get() = message.components

@@ -12,7 +12,7 @@ data class VoiceChannel(
     fun getMembersAsync(): Deferred<List<Member>> {
         val future = CompletableDeferred<List<Member>>()
         RestClient.coroutineScope.launch {
-            val voiceStates = VoiceCache.get(data.id).await()
+            val voiceStates = VoiceCache.getAsync(data.id).await()
             val members = voiceStates?.map { state ->
                 state.getMemberAsync()
             }?.awaitAll() ?: emptyList()

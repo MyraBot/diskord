@@ -8,6 +8,8 @@ import kotlinx.coroutines.Deferred
 class DmChannel(
         override val data: ChannelData
 ) : TextChannelBehavior {
-     fun getOwner(): Deferred<User?> = Diskord.getUserAsync(data.ownerId.value!!)
+
+     fun getOwnerAsync(): Deferred<User?> = Diskord.getUserAsync(data.ownerId.value!!)
+
 }
 

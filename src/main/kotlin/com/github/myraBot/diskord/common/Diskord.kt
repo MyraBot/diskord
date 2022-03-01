@@ -68,8 +68,8 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    fun getBotUserAsync(): Deferred<User> = UserCache.getNonNull(this.id)
-    fun getUserAsync(id: String): Deferred<User?> = UserCache.get(id)
+    fun getBotUserAsync(): Deferred<User> = UserCache.getNonNullAsync(this.id)
+    fun getUserAsync(id: String): Deferred<User?> = UserCache.getAsync(id)
 
     fun getGuildsAsync(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
@@ -89,7 +89,7 @@ object Diskord : GetTextChannelBehavior {
         guild?.let { emit(it) }
     }
 
-    fun getGuildAsync(id: String): Deferred<Guild?> = GuildCache.get(id)
+    fun getGuildAsync(id: String): Deferred<Guild?> = GuildCache.getAsync(id)
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {

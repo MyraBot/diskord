@@ -82,10 +82,10 @@ data class Member(
     val voiceState: VoiceState? get() = VoiceCache.collect().flatten().find { it.userId == id }
 
 
-    fun ban() = ban(null, null)
-    fun ban(deleteMessages: Int) = ban(deleteMessages, null)
-    fun ban(reason: String) = ban(null, reason)
-    fun ban(deleteMessages: Int?, reason: String?): Deferred<Unit> {
+    fun banAsync() = banAsync(null, null)
+    fun banAsync(deleteMessages: Int) = banAsync(deleteMessages, null)
+    fun banAsync(reason: String) = banAsync(null, reason)
+    fun banAsync(deleteMessages: Int?, reason: String?): Deferred<Unit> {
         return RestClient.executeAsync(Endpoints.createGuildBan) {
             json = BanInfo(deleteMessages).toJson()
             logReason = reason

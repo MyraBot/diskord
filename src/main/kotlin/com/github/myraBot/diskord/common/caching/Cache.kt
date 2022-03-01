@@ -9,7 +9,7 @@ data class DoubleKey(val first: String, val second: String)
 abstract class Cache<K, V> : EventListener {
     internal val cache: MutableMap<K, V> = mutableMapOf()
 
-    fun get(key: K): Deferred<V?> {
+    fun getAsync(key: K): Deferred<V?> {
         cache[key]?.let {
             return CompletableDeferred(it)
         } ?: run {
@@ -17,7 +17,7 @@ abstract class Cache<K, V> : EventListener {
         }
     }
 
-    fun getNonNull(key: K): Deferred<V> {
+    fun getNonNullAsync(key: K): Deferred<V> {
         cache[key]?.let {
             return CompletableDeferred(it)
         } ?: run {

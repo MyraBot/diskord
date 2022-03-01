@@ -38,8 +38,8 @@ open class SlashCommandEvent(
                 options
             }
 
-    open suspend fun getGuild(): Deferred<Guild?> = GuildCache.get(data.guildId.value!!)
-    fun getChannel(): Deferred<TextChannel?> = Diskord.getChannelAsync(data.channelId.value!!)
+    open suspend fun getGuildAsync(): Deferred<Guild?> = GuildCache.getAsync(data.guildId.value!!)
+    fun getChannelAsync(): Deferred<TextChannel?> = Diskord.getChannelAsync(data.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }

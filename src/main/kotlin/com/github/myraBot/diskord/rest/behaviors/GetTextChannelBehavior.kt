@@ -15,7 +15,7 @@ interface GetTextChannelBehavior
 inline fun <reified T> GetTextChannelBehavior.getChannelAsync(id: String): Deferred<T?> {
     val future = CompletableDeferred<T?>()
     RestClient.coroutineScope.launch {
-        val data = ChannelCache.get(id).await()
+        val data = ChannelCache.getAsync(id).await()
         if (data == null){
             future.complete(null)
             return@launch

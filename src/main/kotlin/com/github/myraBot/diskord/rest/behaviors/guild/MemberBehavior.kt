@@ -11,7 +11,7 @@ interface MemberBehavior : Entity {
 
     val guildId: String
 
-    suspend fun addRole(role: Role) = addRoleAsync(role.id)
+    suspend fun addRoleAsync(role: Role) = addRoleAsync(role.id)
 
     suspend fun addRoleAsync(id: String): Deferred<Unit> {
         return RestClient.executeAsync(Endpoints.addMemberRole) {
