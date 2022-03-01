@@ -1,8 +1,11 @@
+@file:Suppress("unused", "unused", "unused", "unused", "unused")
+
 package com.github.myraBot.diskord.rest.builders
 
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 
+@Suppress("unused")
 object Button {
     suspend fun primary(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.PRIMARY, id = id).also { data.invoke(it) }
     suspend fun secondary(id: String, data: suspend Button.() -> Unit = {}): Button = Button(style = ButtonStyle.SECONDARY, id = id).also { data.invoke(it) }

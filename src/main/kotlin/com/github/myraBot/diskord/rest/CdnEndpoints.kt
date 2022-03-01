@@ -6,6 +6,7 @@ import com.github.myraBot.diskord.common.utilities.FileFormats
 /**
  * [Documentation](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
  */
+@Suppress("unused")
 object CdnEndpoints {
     val baseUrl = "https://cdn.discordapp.com/"
 
