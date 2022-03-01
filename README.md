@@ -8,5 +8,5 @@
 - [x] Make caching functions not in constructor
 - [ ] Redo builders -> `XModifiers`
 - [x] Delete `DefaultBehavior#diskord`
-- [ ] Redo event calling
+- [x] Redo event calling
 - [ ] add cache#getnonnull
