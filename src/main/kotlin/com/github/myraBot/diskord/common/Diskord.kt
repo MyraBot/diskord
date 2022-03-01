@@ -18,11 +18,10 @@ import com.github.myraBot.diskord.rest.DefaultTransformer
 import com.github.myraBot.diskord.rest.MessageTransformer
 import com.github.myraBot.diskord.rest.behaviors.GetTextChannelBehavior
 import com.github.myraBot.diskord.rest.request.error.ErrorHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.flow
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
@@ -43,7 +42,9 @@ object Diskord : GetTextChannelBehavior {
     var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
 
-    val unavailableGuilds: MutableList<String> = mutableListOf()
+    val guildIds: MutableSet<String> = mutableSetOf()
+    var unavailableGuilds: MutableSet<String> = mutableSetOf()
+    val pendingGuilds: MutableMap<String, CompletableDeferred<Guild>> = mutableMapOf()
 
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
@@ -69,7 +70,25 @@ object Diskord : GetTextChannelBehavior {
     fun getBotUser(): Deferred<User?> = UserCache.get(this.id)
     fun getUser(id: String): Deferred<User?> = UserCache.get(id)
 
-    fun getGuilds(): Flow<Guild> = GuildCache.getAll()
+    fun getGuildsAsync(): Flow<Guild> = flow {
+        val copiedIds = guildIds.toList()
+        println(copiedIds)
+        when (cache.contains(Cache.GUILD)) {
+            true -> copiedIds.forEach { id -> emitGuildFromCache(id).also { println(id) } }
+            false -> copiedIds.forEach { id -> this@Diskord.getGuild(id).await()?.let { emit(it) } }
+        }
+    }
+
+    private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
+        val guild: Guild? = GuildCache.cache[id] ?: run {
+            if (unavailableGuilds.contains(id)) {
+                pendingGuilds[id] = CompletableDeferred()
+                pendingGuilds[id]?.await()
+            } else GuildCache.retrieveAsync(id).await()
+        }
+        guild?.let { emit(it) }
+    }
+
     fun getGuild(id: String): Deferred<Guild?> = GuildCache.get(id)
 }
 
