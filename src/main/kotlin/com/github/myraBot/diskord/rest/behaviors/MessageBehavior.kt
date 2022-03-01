@@ -8,6 +8,7 @@ import com.github.myraBot.diskord.rest.request.RestClient
 import kotlinx.coroutines.Deferred
 import java.net.URLEncoder
 
+@Suppress("unused")
 interface MessageBehavior : GetTextChannelBehavior, Entity {
     val message: Message
 
