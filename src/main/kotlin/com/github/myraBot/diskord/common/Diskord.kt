@@ -73,9 +73,8 @@ object Diskord : GetTextChannelBehavior {
 
     fun getGuildsAsync(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
-        println(copiedIds)
         when (cache.contains(Cache.GUILD)) {
-            true -> copiedIds.forEach { id -> emitGuildFromCache(id).also { println(id) } }
+            true -> copiedIds.forEach { id -> emitGuildFromCache(id) }
             false -> copiedIds.forEach { id -> this@Diskord.getGuildAsync(id).await()?.let { emit(it) } }
         }
     }
