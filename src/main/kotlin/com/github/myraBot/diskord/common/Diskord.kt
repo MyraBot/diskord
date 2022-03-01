@@ -68,7 +68,7 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    fun getBotUserAsync(): Deferred<User?> = UserCache.get(this.id)
+    fun getBotUserAsync(): Deferred<User> = UserCache.getNonNull(this.id)
     fun getUserAsync(id: String): Deferred<User?> = UserCache.get(id)
 
     fun getGuildsAsync(): Flow<Guild> = flow {
