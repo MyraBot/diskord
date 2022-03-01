@@ -60,7 +60,7 @@ publishing {
             }
         }
         maven {
-            url = uri( "https://systems.myra.bot/releases/")
+            url = uri("https://systems.myra.bot/releases/")
             name = "repo"
             credentials {
                 username = System.getenv("REPO_NAME")
