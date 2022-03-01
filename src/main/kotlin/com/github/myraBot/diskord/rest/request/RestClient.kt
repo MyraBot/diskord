@@ -8,7 +8,7 @@ import com.github.myraBot.diskord.common.entities.File
 import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.Route
 import com.github.myraBot.diskord.rest.request.error.validateResponse
-import com.github.myraBot.diskord.utilities.FileFormats
+import com.github.myraBot.diskord.common.utilities.FileFormats
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*

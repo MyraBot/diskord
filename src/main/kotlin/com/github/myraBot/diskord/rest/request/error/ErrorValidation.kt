@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.rest.request.error
 
 import com.github.myraBot.diskord.common.JSON
-import com.github.myraBot.diskord.utilities.string
+import com.github.myraBot.diskord.common.utilities.string
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString

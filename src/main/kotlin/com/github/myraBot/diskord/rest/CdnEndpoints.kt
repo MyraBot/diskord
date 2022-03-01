@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.rest
 
 import com.github.myraBot.diskord.common.Arguments
-import com.github.myraBot.diskord.utilities.FileFormats
+import com.github.myraBot.diskord.common.utilities.FileFormats
 
 /**
  * [Documentation](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)

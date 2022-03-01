@@ -3,10 +3,6 @@ package com.github.myraBot.diskord.gateway.handler
 import bot.myra.kommons.*
 import com.github.myraBot.diskord.common.*
 import com.github.myraBot.diskord.common.utilities.GATEWAY_CLIENT
-import com.github.myraBot.diskord.gateway.GatewayResume
-import com.github.myraBot.diskord.gateway.IdentifyResponse
-import com.github.myraBot.diskord.gateway.OptCode
-import com.github.myraBot.diskord.gateway.Properties
 import com.github.myraBot.diskord.gateway.commands.PresenceUpdate
 import com.github.myraBot.diskord.gateway.events.Events
 import com.github.myraBot.diskord.gateway.handler.intents.GatewayIntent

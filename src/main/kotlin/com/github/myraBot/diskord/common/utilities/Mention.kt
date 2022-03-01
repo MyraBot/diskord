@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.utilities
+package com.github.myraBot.diskord.common.utilities
 
 object Mention {
     fun user(id: String): String = "<@$id>"

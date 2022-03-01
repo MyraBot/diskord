@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.utilities
+package com.github.myraBot.diskord.common.utilities
 
 enum class FileFormats(val extension: String) {
     JPEG("jpeg"),

@@ -1,6 +1,6 @@
 package com.github.myraBot.diskord.common.entities
 
-import com.github.myraBot.diskord.utilities.Mention
+import com.github.myraBot.diskord.common.utilities.Mention
 import kotlinx.serialization.Serializable
 
 /**

@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.channel
 
 import com.github.myraBot.diskord.rest.behaviors.Entity
-import com.github.myraBot.diskord.utilities.Mention
+import com.github.myraBot.diskord.common.utilities.Mention
 
 interface Channel : Entity {
     val data: ChannelData

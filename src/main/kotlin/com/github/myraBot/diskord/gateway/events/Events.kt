@@ -2,7 +2,7 @@ package com.github.myraBot.diskord.gateway.events
 
 import bot.myra.kommons.error
 import com.github.myraBot.diskord.common.JSON
-import com.github.myraBot.diskord.gateway.OptCode
+import com.github.myraBot.diskord.gateway.handler.OptCode
 import com.github.myraBot.diskord.gateway.events.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.events.impl.guild.*
 import com.github.myraBot.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent

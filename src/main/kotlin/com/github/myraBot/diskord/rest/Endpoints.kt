@@ -9,7 +9,7 @@ import com.github.myraBot.diskord.common.entities.guild.Guild
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.common.entities.message.Message
-import com.github.myraBot.diskord.utilities.ListSerializer
+import com.github.myraBot.diskord.common.utilities.ListSerializer
 import io.ktor.http.*
 import kotlinx.serialization.builtins.serializer
 

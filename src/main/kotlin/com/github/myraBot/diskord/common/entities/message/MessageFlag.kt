@@ -1,4 +1,4 @@
-package diskord.common.entityData.message
+package com.github.myraBot.diskord.common.entities.message
 
 enum class MessageFlag(val code: Int) {
     CROSSPOSTED(0),

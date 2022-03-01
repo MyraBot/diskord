@@ -5,7 +5,7 @@ import com.github.myraBot.diskord.common.entities.channel.VoiceChannel
 import com.github.myraBot.diskord.common.entities.guild.Member
 import com.github.myraBot.diskord.common.entities.guild.MemberData
 import com.github.myraBot.diskord.rest.behaviors.getChannelAsync
-import com.github.myraBot.diskord.utilities.InstantSerializer
+import com.github.myraBot.diskord.common.utilities.InstantSerializer
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking

@@ -1,7 +1,7 @@
 package com.github.myraBot.diskord.common.entities.message.embed
 
-import com.github.myraBot.diskord.utilities.ColorIntSerializer
-import com.github.myraBot.diskord.utilities.InstantSerializer
+import com.github.myraBot.diskord.common.utilities.ColorIntSerializer
+import com.github.myraBot.diskord.common.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.awt.Color

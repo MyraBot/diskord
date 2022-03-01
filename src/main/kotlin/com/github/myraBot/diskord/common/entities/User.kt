@@ -10,7 +10,7 @@ import com.github.myraBot.diskord.rest.Endpoints
 import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.bodies.DmCreation
 import com.github.myraBot.diskord.rest.request.RestClient
-import com.github.myraBot.diskord.utilities.Mention
+import com.github.myraBot.diskord.common.utilities.Mention
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch

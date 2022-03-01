@@ -13,10 +13,7 @@ import com.github.myraBot.diskord.rest.Optional
 import com.github.myraBot.diskord.rest.behaviors.MessageBehavior
 import com.github.myraBot.diskord.rest.behaviors.getChannelAsync
 import com.github.myraBot.diskord.rest.builders.MessageBuilder
-import com.github.myraBot.diskord.utilities.InstantSerializer
-import diskord.common.entityData.message.MessageFlag
-import diskord.common.entityData.message.MessageFlags
-import diskord.common.entityData.message.MessageType
+import com.github.myraBot.diskord.common.utilities.InstantSerializer
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.SerialName

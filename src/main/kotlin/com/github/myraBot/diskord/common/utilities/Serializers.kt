@@ -1,4 +1,4 @@
-package com.github.myraBot.diskord.utilities
+package com.github.myraBot.diskord.common.utilities
 
 import com.github.myraBot.diskord.common.JSON
 import kotlinx.serialization.KSerializer
