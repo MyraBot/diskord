@@ -1,5 +1,3 @@
-@file:Suppress("unused", "unused", "unused", "unused", "unused")
-
 package com.github.myraBot.diskord.rest.builders
 
 import com.github.myraBot.diskord.common.entities.applicationCommands.components.items.button.Button
