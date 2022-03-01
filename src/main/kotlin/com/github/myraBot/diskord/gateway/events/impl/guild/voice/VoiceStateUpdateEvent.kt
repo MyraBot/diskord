@@ -17,6 +17,7 @@ import kotlinx.serialization.SerialName
  *
  * @property newVoiceState Information about the current voice state of the member.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 data class VoiceStateUpdateEvent(
     @SerialName("voice_state") val newVoiceState: VoiceState,
 ) : Event() {

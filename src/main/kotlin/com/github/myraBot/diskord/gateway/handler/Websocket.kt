@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
  * The Gateway websocket to listen to discord events.
  */
 class Websocket(
-    val intents: MutableSet<GatewayIntent> = mutableSetOf()
+    private val intents: MutableSet<GatewayIntent> = mutableSetOf()
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
     private val url = "wss://gateway.discord.gg/?v=9&encoding=json"

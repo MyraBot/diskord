@@ -14,6 +14,7 @@ import kotlinx.serialization.encoding.Encoder
  * @property code IETF language tag of the locale.
  * @property languageName the fully written out name of the locale.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 @Serializable(with = Locale.Serializer::class)
 enum class Locale(val code: String, val languageName: String) {
     ENGLISH_US("en-US", "English (United States)"),
