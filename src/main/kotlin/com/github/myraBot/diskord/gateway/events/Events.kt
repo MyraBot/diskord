@@ -3,6 +3,7 @@ package com.github.myraBot.diskord.gateway.events
 import bot.myra.kommons.error
 import com.github.myraBot.diskord.common.JSON
 import com.github.myraBot.diskord.gateway.OptCode
+import com.github.myraBot.diskord.gateway.events.impl.ReadyEvent
 import com.github.myraBot.diskord.gateway.events.impl.guild.*
 import com.github.myraBot.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import com.github.myraBot.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
@@ -26,14 +27,15 @@ object Events {
             "CHANNEL_CREATE" -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
             "CHANNEL_DELETE" -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
             "CHANNEL_UPDATE" -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
-            "GUILD_CREATE" -> GuildCreateEvent(JSON.decodeFromJsonElement(json))
+            "GUILD_CREATE" -> GuildLoadEvent(JSON.decodeFromJsonElement(json))
             "GUILD_DELETE" -> GuildDeleteEvent(JSON.decodeFromJsonElement(json))
             "GUILD_MEMBER_ADD" -> MemberJoinEvent(JSON.decodeFromJsonElement(json))
             "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent(JSON.decodeFromJsonElement(json))
             "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(json))
             "INTERACTION_CREATE" -> InteractionCreateEvent(JSON.decodeFromJsonElement(json))
-            "VOICE_STATE_UPDATE" -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
             "MESSAGE_CREATE" -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
+            "VOICE_STATE_UPDATE" -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
+            "READY" -> JSON.decodeFromJsonElement<ReadyEvent>(json)
         }
     }
 
