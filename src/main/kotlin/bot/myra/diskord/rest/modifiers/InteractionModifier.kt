@@ -2,28 +2,22 @@ package bot.myra.diskord.rest.modifiers
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.message.MessageFlag
 import bot.myra.diskord.common.entities.message.MessageFlagsSerializer
-import bot.myra.diskord.common.entities.message.embed.Embed
-import bot.myra.diskord.rest.modifiers.message.components.IComponentModifier
-import bot.myra.diskord.rest.modifiers.message.components.IEmbedModifier
+import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class InteractionModifier(
     @Transient val interaction: Interaction? = null,
 
-    var tts: Boolean? = null,
-    var content: String? = null,
-    override var embeds: MutableList<Embed> = mutableListOf(),
     @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
-    @kotlinx.serialization.Serializable(with = MessageFlagsSerializer::class) var flags: MutableList<MessageFlag> = mutableListOf(),
-    override var components: MutableList<Component> = mutableListOf(),
+    @Serializable(with = MessageFlagsSerializer::class) var flags: MutableList<MessageFlag> = mutableListOf(),
     var attachments: MutableList<Attachment> = mutableListOf()
-) : IComponentModifier, IEmbedModifier {
+) : GenericMessageModifier() {
 
     suspend fun transform() {
         val transform = Diskord.transformer

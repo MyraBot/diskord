@@ -1,18 +1,11 @@
 package bot.myra.diskord.rest.modifiers.message.components
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.applicationCommands.components.Component
-import bot.myra.diskord.common.entities.message.embed.Embed
 import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 @Serializable
-open class MessageModifier(
-    var content: String? = null,
-    var tts: Boolean? = null,
-    override var embeds: MutableList<Embed> = mutableListOf(),
-    override var components: MutableList<Component> = mutableListOf(),
-) : IComponentModifier, IEmbedModifier {
+class MessageModifier : GenericMessageModifier() {
 
     suspend fun transform() {
         val transform = Diskord.transformer
