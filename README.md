@@ -6,7 +6,8 @@
 - [ ] Maybe make behaviors abstract classes with `@Contextual` 
 - [ ] Name function `fetchX` to show that rest is being used
 - [x] Make caching functions not in constructor
-- [ ] Redo builders -> `XModifiers`
+- [x] Redo builders -> `XModifiers`
 - [x] Delete `DefaultBehavior#diskord`
 - [x] Redo event calling
-- [ ] add cache#getnonnull
+- [x] add cache#getnonnull
+- [ ] Do not put `Interaction` in `InteractionModifier.kt` - but still make it available to use in myra for finding out the language
