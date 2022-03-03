@@ -3,7 +3,7 @@ package bot.myra.diskord.rest
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.message.embed.Embed
 import bot.myra.diskord.rest.modifiers.InteractionModifier
-import bot.myra.diskord.rest.modifiers.components.MessageModifier
+import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 
 interface MessageTransformer {
     suspend fun onText(builder: MessageModifier, text: String): String

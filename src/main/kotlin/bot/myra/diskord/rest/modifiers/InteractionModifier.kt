@@ -7,8 +7,8 @@ import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.message.MessageFlag
 import bot.myra.diskord.common.entities.message.MessageFlagsSerializer
 import bot.myra.diskord.common.entities.message.embed.Embed
-import bot.myra.diskord.rest.modifiers.components.IComponentModifier
-import bot.myra.diskord.rest.modifiers.components.IEmbedModifier
+import bot.myra.diskord.rest.modifiers.message.components.IComponentModifier
+import bot.myra.diskord.rest.modifiers.message.components.IEmbedModifier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
 

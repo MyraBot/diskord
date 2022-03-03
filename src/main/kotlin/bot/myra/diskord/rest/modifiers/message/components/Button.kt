@@ -1,4 +1,4 @@
-package bot.myra.diskord.rest.modifiers.components
+package bot.myra.diskord.rest.modifiers.message.components
 
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle

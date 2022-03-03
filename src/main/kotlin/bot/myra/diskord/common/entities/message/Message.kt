@@ -12,7 +12,7 @@ import bot.myra.diskord.rest.JumpUrlEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.MessageBehavior
 import bot.myra.diskord.rest.behaviors.getChannelAsync
-import bot.myra.diskord.rest.modifiers.components.MessageModifier
+import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.common.utilities.InstantSerializer
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
