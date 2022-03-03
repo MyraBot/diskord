@@ -19,21 +19,20 @@ class MessageFlags(val code: Int) {
     }
 }
 
-object MessageFlagsSerializer : KSerializer<List<MessageFlag>> {
-    override val descriptor: SerialDescriptor
-        get() = TODO("Not yet implemented")
+object MessageFlagsSerializer : KSerializer<MutableList<MessageFlag>> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("message_flag", PrimitiveKind.INT)
 
-    override fun deserialize(decoder: Decoder): List<MessageFlag> {
+    override fun deserialize(decoder: Decoder): MutableList<MessageFlag> {
         val flags = mutableListOf<MessageFlag>()
         decoder.decodeInt().let { bit ->
             flags.add(MessageFlag.values().first { bit and it.code == it.code })
         }
-        return flags.toList()
+        return flags
     }
 
-    override fun serialize(encoder: Encoder, value: List<MessageFlag>) {
-        if (value.isEmpty()) return encoder.encodeInt(0)
-        else value.map { it.code }.reduce { acc, i -> acc or i }
+    override fun serialize(encoder: Encoder, value: MutableList<MessageFlag>) {
+        val bitCode = value.map { 1 shl it.code }.reduce { acc, i -> acc or i }
+        encoder.encodeInt(bitCode)
     }
 
 }

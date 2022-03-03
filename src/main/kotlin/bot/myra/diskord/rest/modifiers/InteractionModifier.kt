@@ -4,7 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.message.Attachment
-import bot.myra.diskord.common.entities.message.MessageFlags
+import bot.myra.diskord.common.entities.message.MessageFlag
 import bot.myra.diskord.common.entities.message.MessageFlagsSerializer
 import bot.myra.diskord.common.entities.message.embed.Embed
 import bot.myra.diskord.rest.modifiers.components.IComponentModifier
@@ -20,7 +20,7 @@ data class InteractionModifier(
     var content: String? = null,
     override var embeds: MutableList<Embed> = mutableListOf(),
     @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
-    @kotlinx.serialization.Serializable(with = MessageFlagsSerializer::class) var flags: MutableList<MessageFlags> = mutableListOf(),
+    @kotlinx.serialization.Serializable(with = MessageFlagsSerializer::class) var flags: MutableList<MessageFlag> = mutableListOf(),
     override var components: MutableList<Component> = mutableListOf(),
     var attachments: MutableList<Attachment> = mutableListOf()
 ) : IComponentModifier, IEmbedModifier {
