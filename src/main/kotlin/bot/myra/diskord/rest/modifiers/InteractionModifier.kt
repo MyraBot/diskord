@@ -19,6 +19,8 @@ data class InteractionModifier(
     var attachments: MutableList<Attachment> = mutableListOf()
 ) : GenericMessageModifier() {
 
+    fun ephemeral() = flags.add(MessageFlag.EPHEMERAL)
+
     suspend fun transform() {
         val transform = Diskord.transformer
         content?.let { content = Diskord.transformer.onInteractionText(this, it) }
