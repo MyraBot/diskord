@@ -1,4 +1,4 @@
-package bot.myra.diskord.rest.builders
+package bot.myra.diskord.rest.modifiers.components
 
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.applicationCommands.components.asComponent
@@ -6,22 +6,9 @@ import bot.myra.diskord.common.entities.applicationCommands.components.items.Act
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
-import bot.myra.diskord.common.entities.message.embed.Embed
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-@Suppress("unused")
-@Serializable
-open class MessageBuilder(
-    var content: String? = null,
-    var tts: Boolean? = null,
-    var embeds: MutableList<Embed> = mutableListOf(),
-    @SerialName("components") var actionRows: MutableList<Component> = mutableListOf(),
-) {
-    suspend fun addEmbed(embed: suspend Embed.() -> Unit) = embeds.add(Embed().apply { embed.invoke(this) })
-
-    fun addEmbed(embed: Embed) = embeds.add(embed)
-
+interface IComponentModifier {
+    val components: MutableList<Component>
 
     /**
      * Adds a button as a message component. If an action row already exists,
@@ -33,10 +20,10 @@ open class MessageBuilder(
      * @param button The button to add as a component.
      */
     fun addButton(button: Button) {
-        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
-        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRowData().asComponent())
+        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
 
-        this.actionRows.last().components.add(button.asComponent())
+        this.components.last().components.add(button.asComponent())
     }
 
     suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
@@ -44,20 +31,20 @@ open class MessageBuilder(
 
 
     suspend fun addSelectMenu(selectMenu: suspend SelectMenuBuilder.() -> Unit) {
-        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
-        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRowData().asComponent())
+        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
 
-        this.actionRows.last().components.add(SelectMenuBuilder()
+        this.components.last().components.add(SelectMenuBuilder()
             .apply { selectMenu.invoke(this) }
             .asSelectMenu()
             .asComponent())
     }
 
     fun addSelectMenu(selectMenu: SelectMenu) {
-        if (actionRows.size == 0) actionRows.add(ActionRowData().asComponent())
-        else if (actionRows.last().isFull()) actionRows.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRowData().asComponent())
+        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
 
-        this.actionRows.last().components.add(selectMenu.asComponent())
+        this.components.last().components.add(selectMenu.asComponent())
     }
 
     fun addSelectMenus(vararg selectMenus: SelectMenu) = selectMenus.forEach { addSelectMenu(it) }

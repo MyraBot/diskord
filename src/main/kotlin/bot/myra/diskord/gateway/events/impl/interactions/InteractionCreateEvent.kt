@@ -5,7 +5,7 @@ import bot.myra.diskord.common.entities.applicationCommands.InteractionType
 import bot.myra.diskord.gateway.events.Event
 import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.GuildSlashCommandEvent
 import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.SlashCommandEvent
-import bot.myra.diskord.rest.builders.ComponentType
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 
 @kotlinx.serialization.Serializable
 class InteractionCreateEvent(

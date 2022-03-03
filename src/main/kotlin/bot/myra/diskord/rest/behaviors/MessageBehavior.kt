@@ -3,7 +3,7 @@ package bot.myra.diskord.rest.behaviors
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.toJson
 import bot.myra.diskord.rest.Endpoints
-import bot.myra.diskord.rest.builders.MessageBuilder
+import bot.myra.diskord.rest.modifiers.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient
 import kotlinx.coroutines.Deferred
 import java.net.URLEncoder
@@ -16,12 +16,12 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * [Documentation](https://discord.com/developers/docs/resources/channel#edit-message)
      * Edits the current [Message] with the new message parameter.
      *
-     * @param messageBuilder The new message.
+     * @param messageModifier The new message.
      * @return Returns the new message.
      */
-    fun editAsync(messageBuilder: MessageBuilder): Deferred<Message> {
+    fun editAsync(messageModifier: MessageModifier): Deferred<Message> {
         return RestClient.executeAsync(Endpoints.editMessage) {
-            json = messageBuilder.toJson()
+            json = messageModifier.toJson()
             arguments {
                 arg("channel.id", message.channelId)
                 arg("message.id", message.id)
@@ -29,7 +29,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    fun editAsync(messageBuilder: MessageBuilder.() -> Unit): Deferred<Message> = editAsync(message.asBuilder().apply(messageBuilder))
+    fun editAsync(messageModifier: MessageModifier.() -> Unit): Deferred<Message> = editAsync(message.asBuilder().apply(messageModifier))
 
     fun addReactionAsync(emoji: String): Deferred<Unit> {
         return RestClient.executeAsync(Endpoints.addReaction) {

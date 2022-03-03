@@ -1,7 +1,7 @@
 package bot.myra.diskord.common.entities.applicationCommands.components.items.button
 
 import bot.myra.diskord.common.entities.Emoji
-import bot.myra.diskord.rest.builders.ComponentType
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 import kotlinx.serialization.SerialName
 
 /**

@@ -13,8 +13,27 @@ class MessageFlags(val code: Int) {
     operator fun contains(flag: MessageFlag) = flag.code and this.code == flag.code
 
     internal object Serializer : KSerializer<MessageFlags> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("flags", PrimitiveKind.INT)
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("message_flags", PrimitiveKind.INT)
         override fun deserialize(decoder: Decoder): MessageFlags = MessageFlags(decoder.decodeInt())
         override fun serialize(encoder: Encoder, value: MessageFlags) = encoder.encodeInt(value.code)
     }
+}
+
+object MessageFlagsSerializer : KSerializer<List<MessageFlag>> {
+    override val descriptor: SerialDescriptor
+        get() = TODO("Not yet implemented")
+
+    override fun deserialize(decoder: Decoder): List<MessageFlag> {
+        val flags = mutableListOf<MessageFlag>()
+        decoder.decodeInt().let { bit ->
+            flags.add(MessageFlag.values().first { bit and it.code == it.code })
+        }
+        return flags.toList()
+    }
+
+    override fun serialize(encoder: Encoder, value: List<MessageFlag>) {
+        if (value.isEmpty()) return encoder.encodeInt(0)
+        else value.map { it.code }.reduce { acc, i -> acc or i }
+    }
+
 }

@@ -1,4 +1,4 @@
-package bot.myra.diskord.rest.builders
+package bot.myra.diskord.rest.modifiers.components
 
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import bot.myra.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption

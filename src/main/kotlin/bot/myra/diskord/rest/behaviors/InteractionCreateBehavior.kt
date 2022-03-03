@@ -4,14 +4,12 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.entities.Locale
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackData
 import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackType
 import bot.myra.diskord.common.entities.applicationCommands.InteractionResponseData
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.toJson
 import bot.myra.diskord.rest.Endpoints
-import bot.myra.diskord.rest.builders.InteractionMessageBuilder
-import bot.myra.diskord.rest.interactionTransform
+import bot.myra.diskord.rest.modifiers.InteractionModifier
 import bot.myra.diskord.rest.request.RestClient
 import kotlinx.coroutines.Deferred
 
@@ -32,10 +30,10 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: InteractionMessageBuilder): Deferred<Unit> {
+    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: InteractionModifier): Deferred<Unit> {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            InteractionCallbackData.fromMessageBuilder(message.interactionTransform())
+            message.apply { transform() }
         )
         return RestClient.executeAsync(Endpoints.acknowledgeInteraction) {
             json = responseData.toJson()
@@ -47,8 +45,8 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: suspend InteractionMessageBuilder.() -> Unit): Deferred<Unit> {
-        return acknowledgeAsync(files = files, message = InteractionMessageBuilder(interaction).apply { message.invoke(this) })
+    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit): Deferred<Unit> {
+        return acknowledgeAsync(files = files, message = InteractionModifier(interaction).apply { message.invoke(this) })
     }
 
     suspend fun getInteractionResponseAsync(): Deferred<Message> {

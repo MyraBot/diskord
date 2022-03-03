@@ -12,7 +12,7 @@ import bot.myra.diskord.rest.JumpUrlEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.MessageBehavior
 import bot.myra.diskord.rest.behaviors.getChannelAsync
-import bot.myra.diskord.rest.builders.MessageBuilder
+import bot.myra.diskord.rest.modifiers.components.MessageModifier
 import bot.myra.diskord.common.utilities.InstantSerializer
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -62,11 +62,11 @@ data class Message(
         } else CompletableDeferred(null)
     }
 
-    fun asBuilder(): MessageBuilder =
-        MessageBuilder().apply {
+    fun asBuilder(): MessageModifier =
+        MessageModifier().apply {
             content = this@Message.content
             tts = this@Message.tts
             embeds = this@Message.embeds
-            actionRows = this@Message.components
+            components = this@Message.components
         }
 }

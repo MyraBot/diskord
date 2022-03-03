@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.entities.applicationCommands
 
-import bot.myra.diskord.rest.builders.ComponentType
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

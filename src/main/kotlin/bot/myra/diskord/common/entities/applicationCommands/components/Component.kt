@@ -6,7 +6,7 @@ import bot.myra.diskord.common.entities.applicationCommands.components.items.but
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import bot.myra.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
-import bot.myra.diskord.rest.builders.ComponentType
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,18 +15,18 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Component(
-        @Serializable(with = ComponentType.Serializer::class) var type: ComponentType,
-        @SerialName("custom_id") var id: String? = null,
-        var disabled: Boolean = false,
-        var style: ButtonStyle? = null,
-        var label: String? = null,
-        var emoji: Emoji? = null,
-        var url: String? = null,
-        val options: List<SelectOption>? = null,
-        var placeholder: String? = null,
-        @SerialName("min_values") val minValues: Int? = null,
-        @SerialName("max_values") val maxValues: Int? = null,
-        val components: MutableList<Component> = mutableListOf()
+    @Serializable(with = ComponentType.Serializer::class) var type: ComponentType,
+    @SerialName("custom_id") var id: String? = null,
+    var disabled: Boolean = false,
+    var style: ButtonStyle? = null,
+    var label: String? = null,
+    var emoji: Emoji? = null,
+    var url: String? = null,
+    val options: List<SelectOption>? = null,
+    var placeholder: String? = null,
+    @SerialName("min_values") val minValues: Int? = null,
+    @SerialName("max_values") val maxValues: Int? = null,
+    val components: MutableList<Component> = mutableListOf()
 ) {
     /**
      * @return Return a boolean whether the last [components] entry is full or not.
