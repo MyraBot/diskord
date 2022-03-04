@@ -4,7 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.message.MessageFlag
-import bot.myra.diskord.common.entities.message.MessageFlagsSerializer
+import bot.myra.diskord.common.entities.message.MessageFlags
 import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ data class InteractionModifier(
     @Transient val interaction: Interaction? = null,
 
     @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
-    @Serializable(with = MessageFlagsSerializer::class) var flags: MutableList<MessageFlag> = mutableListOf(),
+    var flags: MessageFlags = MessageFlags(),
     var attachments: MutableList<Attachment> = mutableListOf()
 ) : GenericMessageModifier() {
 
