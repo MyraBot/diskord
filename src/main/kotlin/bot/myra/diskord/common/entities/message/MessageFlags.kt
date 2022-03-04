@@ -23,8 +23,13 @@ class MessageFlags(flags: MutableList<MessageFlag> = mutableListOf()) : MutableL
         }
 
         override fun serialize(encoder: Encoder, value: MessageFlags) {
-            val bitCode = value.map { 1 shl it.code }.reduce { acc, i -> acc or i }
-            encoder.encodeInt(bitCode)
+            when (value.isEmpty()) {
+                true -> encoder.encodeInt(0)
+                false -> {
+                    val bitCode = value.map { 1 shl it.code }.reduce { acc, i -> acc or i }
+                    encoder.encodeInt(bitCode)
+                }
+            }
         }
 
     }
