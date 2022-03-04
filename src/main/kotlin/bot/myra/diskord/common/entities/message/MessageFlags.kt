@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = MessageFlags.MessageFlagsSerializer::class)
-class MessageFlags(flags: MutableList<MessageFlag>) : MutableList<MessageFlag> by flags {
+class MessageFlags(flags: MutableList<MessageFlag> = mutableListOf()) : MutableList<MessageFlag> by flags {
 
     internal object MessageFlagsSerializer : KSerializer<MessageFlags> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("message_flag", PrimitiveKind.INT)
