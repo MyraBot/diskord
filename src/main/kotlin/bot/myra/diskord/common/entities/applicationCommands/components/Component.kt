@@ -2,11 +2,11 @@ package bot.myra.diskord.common.entities.applicationCommands.components
 
 import bot.myra.diskord.common.entities.Emoji
 import bot.myra.diskord.common.entities.applicationCommands.components.items.ActionRowData
+import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import bot.myra.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
-import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Component(
-    @Serializable(with = ComponentType.Serializer::class) var type: ComponentType,
+    var type: ComponentType,
     @SerialName("custom_id") var id: String? = null,
     var disabled: Boolean = false,
     var style: ButtonStyle? = null,
