@@ -26,8 +26,19 @@ enum class UserFlag(val code: Int) {
 
     internal object Serializer : KSerializer<Optional<List<UserFlag>>> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Badge", PrimitiveKind.INT)
-        override fun serialize(encoder: Encoder, value: Optional<List<UserFlag>>) {
 
+        override fun serialize(encoder: Encoder, value: Optional<List<UserFlag>>) {
+            when (value.missing) {
+                true -> encoder.encodeInt(0)
+                false -> {
+                    if (value.value!!.isEmpty()) {
+                        encoder.encodeInt(0)
+                    } else {
+                        val bitCode = value.value.map { 1 shl it.code }.reduce { acc, i -> acc or i }
+                        encoder.encodeInt(bitCode)
+                    }
+                }
+            }
         }
 
         override fun deserialize(decoder: Decoder): Optional<List<UserFlag>> {
