@@ -51,4 +51,5 @@ object Endpoints {
     val createDm = Route(HttpMethod.Post, "/users/@me/channels", ChannelData.serializer())
     val createGuildBan = Route(HttpMethod.Put, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val removeGuildBan = Route(HttpMethod.Delete, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
+    val getChannelMessage = Route(HttpMethod.Get, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
 }

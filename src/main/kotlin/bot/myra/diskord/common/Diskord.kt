@@ -1,11 +1,10 @@
 package bot.myra.diskord.common
 
-import bot.myra.kommons.error
-import bot.myra.kommons.info
 import bot.myra.diskord.common.caching.GuildCache
 import bot.myra.diskord.common.caching.UserCache
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.Guild
+import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.gateway.commands.Presence
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.commands.Status
@@ -15,9 +14,13 @@ import bot.myra.diskord.gateway.handler.Websocket
 import bot.myra.diskord.gateway.handler.intents.Cache
 import bot.myra.diskord.gateway.handler.intents.GatewayIntent
 import bot.myra.diskord.rest.DefaultTransformer
+import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.MessageTransformer
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
+import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
+import bot.myra.kommons.error
+import bot.myra.kommons.info
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -90,6 +93,16 @@ object Diskord : GetTextChannelBehavior {
     }
 
     fun getGuildAsync(id: String): Deferred<Guild?> = GuildCache.getAsync(id)
+
+    fun getMessageAsync(channel: String, message: String): Deferred<Message?> {
+        return RestClient.executeNullableAsync (Endpoints.getChannelMessage) {
+            arguments {
+                arg("channel.id", channel)
+                arg("message.id", message)
+            }
+        }
+    }
+
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {
