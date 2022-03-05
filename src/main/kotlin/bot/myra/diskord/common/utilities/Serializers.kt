@@ -10,23 +10,6 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import java.awt.Color
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.util.*
-
-object InstantSerializer : KSerializer<Instant> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Instant) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        val date = Date.from(value)
-        encoder.encodeString(formatter.format(date))
-    }
-
-    override fun deserialize(decoder: Decoder): Instant {
-        return Instant.parse(decoder.decodeString())
-    }
-}
 
 object ColorIntSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("color_int", PrimitiveKind.INT)

@@ -4,15 +4,15 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.JSON
 import bot.myra.diskord.common.caching.VoiceCache
 import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.Time
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.common.toJson
+import bot.myra.diskord.common.utilities.Mention
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.guild.MemberBehavior
 import bot.myra.diskord.rest.bodies.BanInfo
 import bot.myra.diskord.rest.request.RestClient
-import bot.myra.diskord.common.utilities.InstantSerializer
-import bot.myra.diskord.common.utilities.Mention
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
@@ -20,7 +20,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.awt.Color
-import java.time.Instant
 
 @Serializable
 data class MemberData(
@@ -28,8 +27,8 @@ data class MemberData(
     val nick: String? = null,
     val avatar: String? = null,
     val roles: List<String>,
-    @SerialName("joined_at") @Serializable(with = InstantSerializer::class) val joinedAt: Instant,
-    @SerialName("premium_since") @Serializable(with = InstantSerializer::class) val premiumSince: Instant? = null,
+    @SerialName("joined_at") val joinedAt: Time,
+    @SerialName("premium_since") val premiumSince: Time? = null,
     val deaf: Boolean? = null,
     val mute: Boolean? = null,
     val pending: Boolean = false,
@@ -44,8 +43,8 @@ data class Member(
     val nick: String? = null,
     val avatar: String? = null,
     @SerialName("roles") val roleIds: List<String>,
-    @SerialName("joined_at") @Serializable(with = InstantSerializer::class) val joinedAt: Instant,
-    @SerialName("premium_since") @Serializable(with = InstantSerializer::class) val premiumSince: Instant? = null,
+    @SerialName("joined_at") val joinedAt: Time,
+    @SerialName("premium_since") val premiumSince: Time? = null,
     val deaf: Boolean? = null,
     val mute: Boolean? = null,
     val pending: Boolean = false,

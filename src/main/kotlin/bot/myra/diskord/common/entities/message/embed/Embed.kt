@@ -1,11 +1,10 @@
 package bot.myra.diskord.common.entities.message.embed
 
+import bot.myra.diskord.common.entities.Time
 import bot.myra.diskord.common.utilities.ColorIntSerializer
-import bot.myra.diskord.common.utilities.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.awt.Color
-import java.time.Instant
 
 @Suppress("unused")
 @Serializable
@@ -14,7 +13,7 @@ data class Embed(
     var type: String? = null,
     var description: String? = null,
     var url: String? = null,
-    @Serializable(with = InstantSerializer::class) var timestamp: Instant? = null,
+    var timestamp: Time? = null,
     @SerialName("color") @Serializable(with = ColorIntSerializer::class) var colour: Color? = null,
     var footer: Footer? = null,
     var image: Image? = null,
