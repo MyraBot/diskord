@@ -17,7 +17,7 @@ class Time(val instant: Instant) {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("time", PrimitiveKind.STRING)
 
         override fun serialize(encoder: Encoder, value: Time) {
-            encoder.encodeLong(value.millis)
+            encoder.encodeString(value.millis.toString())
         }
 
         override fun deserialize(decoder: Decoder): Time {
