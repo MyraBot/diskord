@@ -4,9 +4,9 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.JSON
 import bot.myra.diskord.common.caching.VoiceCache
 import bot.myra.diskord.common.entities.Role
-import bot.myra.diskord.common.entities.Time
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.common.toJson
 import bot.myra.diskord.common.utilities.Mention
 import bot.myra.diskord.rest.Endpoints
@@ -20,6 +20,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.awt.Color
+import java.time.Instant
 
 @Serializable
 data class MemberData(
@@ -27,8 +28,8 @@ data class MemberData(
     val nick: String? = null,
     val avatar: String? = null,
     val roles: List<String>,
-    @SerialName("joined_at") val joinedAt: Time,
-    @SerialName("premium_since") val premiumSince: Time? = null,
+    @Serializable(with = SInstant::class) @SerialName("joined_at") val joinedAt: Instant,
+    @Serializable(with = SInstant::class) @SerialName("premium_since") val premiumSince: Instant? = null,
     val deaf: Boolean? = null,
     val mute: Boolean? = null,
     val pending: Boolean = false,
@@ -43,8 +44,8 @@ data class Member(
     val nick: String? = null,
     val avatar: String? = null,
     @SerialName("roles") val roleIds: List<String>,
-    @SerialName("joined_at") val joinedAt: Time,
-    @SerialName("premium_since") val premiumSince: Time? = null,
+    @Serializable(with = SInstant::class) @SerialName("joined_at") val joinedAt: Instant,
+    @Serializable(with = SInstant::class) @SerialName("premium_since") val premiumSince: Instant? = null,
     val deaf: Boolean? = null,
     val mute: Boolean? = null,
     val pending: Boolean = false,

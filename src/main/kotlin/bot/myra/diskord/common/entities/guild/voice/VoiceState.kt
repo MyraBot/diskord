@@ -1,16 +1,17 @@
 package bot.myra.diskord.common.entities.guild.voice
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.Time
 import bot.myra.diskord.common.entities.channel.VoiceChannel
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
+import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.rest.behaviors.getChannelAsync
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.Instant
 
 /**
  * [Documentation](https://discord.com/developers/docs/resources/voice#voice-state-object)
@@ -41,7 +42,7 @@ data class VoiceState(
     @SerialName("self_mute") val isSelfMute: Boolean,
     @SerialName("self_stream") val isStreaming: Boolean? = null,
     @SerialName("self_video") val hasVideo: Boolean,
-    @SerialName("request_to_speak_timestamp") val requestToSpeak: Time? = null,
+    @Serializable(with = SInstant::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null,
 ) {
     val isMuted: Boolean = isSelfMute || isGuildMuted
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf

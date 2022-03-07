@@ -1,7 +1,6 @@
 package bot.myra.diskord.common.entities.message
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.Time
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.channel.ChannelData
@@ -9,6 +8,7 @@ import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.embed.Embed
+import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.rest.JumpUrlEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.MessageBehavior
@@ -18,6 +18,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.Instant
 
 /**
  * [Documentation](https://discord.com/developers/docs/resources/channel#message-object)
@@ -31,8 +32,8 @@ data class Message(
     @SerialName("author") val user: User,
     @SerialName("member") internal val memberData: MemberData? = null,
     val content: String,
-    val timestamp: Time,
-    val edited: Time?,
+    @Serializable(with = SInstant::class) val timestamp: Instant,
+    @Serializable(with = SInstant::class) val edited: Instant?,
     val tts: Boolean,
     @SerialName("mention_everyone") val mentionsEveryone: Boolean = false,
     @SerialName("mentions") val mentionedUsers: List<User>,
