@@ -11,3 +11,5 @@
 - [x] Redo event calling
 - [x] add cache#getnonnull
 - [ ] Do not put `Interaction` in `InteractionModifier.kt` - but still make it available to use in myra for finding out the language
+- [ ] Use normal Instant class instead of custom time class
+- [ ] Make caching use external service to let the website access it easier (trying redis???)
