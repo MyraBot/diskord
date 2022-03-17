@@ -21,6 +21,9 @@ import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
 import bot.myra.kommons.info
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.websocket.WebSockets
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -33,6 +36,8 @@ object Diskord : GetTextChannelBehavior {
     lateinit var token: String
     internal lateinit var websocket: Websocket
     lateinit var id: String
+
+    var gatewayClient = HttpClient(CIO) { install(WebSockets) }
 
     var listenersPackage: String? = null
         set(value) {

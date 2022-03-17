@@ -1,24 +1,27 @@
 package bot.myra.diskord.gateway.handler
 
-import bot.myra.kommons.*
-import bot.myra.diskord.common.*
-import bot.myra.diskord.common.utilities.GATEWAY_CLIENT
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.handler.intents.GatewayIntent
-import io.ktor.client.features.websocket.*
-import io.ktor.http.cio.websocket.*
+import bot.myra.kommons.*
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.ktor.client.features.websocket.webSocket
+import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.readText
+import io.ktor.http.cio.websocket.send
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.*
-import java.util.*
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -57,7 +60,7 @@ class Websocket(
      */
     private suspend fun openWebsocketConnection(url: String, resume: Boolean) {
         try {
-            GATEWAY_CLIENT.webSocket(url, {}, {
+            Diskord.gatewayClient.webSocket(url, {}, {
                 kInfo(this::class) { "Opened websocket connection" }
                 connection = this
                 waitingCalls.forEach { send(it.toJson()) }
