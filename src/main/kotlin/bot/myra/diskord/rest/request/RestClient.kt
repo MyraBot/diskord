@@ -3,7 +3,7 @@ package bot.myra.diskord.rest.request
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route

@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events
 
 import bot.myra.kommons.error
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.handler.OptCode
 import bot.myra.diskord.gateway.events.impl.ReadyEvent
 import bot.myra.diskord.gateway.events.impl.guild.*

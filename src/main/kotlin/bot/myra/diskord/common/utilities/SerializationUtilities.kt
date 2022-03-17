@@ -1,4 +1,4 @@
-package bot.myra.diskord.common
+package bot.myra.diskord.common.utilities
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

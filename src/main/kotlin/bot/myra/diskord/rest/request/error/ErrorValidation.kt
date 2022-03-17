@@ -1,6 +1,6 @@
 package bot.myra.diskord.rest.request.error
 
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.string
 import io.ktor.client.statement.*
 import io.ktor.http.*

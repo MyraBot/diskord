@@ -4,7 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.channel.DmChannel
 import bot.myra.diskord.common.entities.user.UserFlag
-import bot.myra.diskord.common.toJson
+import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Optional

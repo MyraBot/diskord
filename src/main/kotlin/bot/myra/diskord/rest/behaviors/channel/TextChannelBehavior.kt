@@ -3,7 +3,7 @@ package bot.myra.diskord.rest.behaviors.channel
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.message.Message
-import bot.myra.diskord.common.toJson
+import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient

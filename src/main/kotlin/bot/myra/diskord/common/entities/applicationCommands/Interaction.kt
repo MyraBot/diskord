@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.entities.applicationCommands
 
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.common.entities.Locale
 import bot.myra.diskord.common.entities.User

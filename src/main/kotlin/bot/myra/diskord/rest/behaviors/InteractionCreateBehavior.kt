@@ -7,7 +7,7 @@ import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackType
 import bot.myra.diskord.common.entities.applicationCommands.InteractionResponseData
 import bot.myra.diskord.common.entities.message.Message
-import bot.myra.diskord.common.toJson
+import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.InteractionModifier
 import bot.myra.diskord.rest.request.RestClient

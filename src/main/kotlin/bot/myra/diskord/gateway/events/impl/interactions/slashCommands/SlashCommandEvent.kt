@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.interactions.slashCommands
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.caching.GuildCache
 import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.User

@@ -1,13 +1,13 @@
 package bot.myra.diskord.common.entities.guild
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.JSON
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.caching.VoiceCache
 import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.common.serializers.SInstant
-import bot.myra.diskord.common.toJson
+import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.common.utilities.Mention
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.guild.MemberBehavior
