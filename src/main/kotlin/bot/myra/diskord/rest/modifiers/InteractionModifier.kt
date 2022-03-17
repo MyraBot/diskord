@@ -24,18 +24,17 @@ data class InteractionModifier(
     suspend fun transform() {
         val transform = Diskord.transformer
         content?.let { content = Diskord.transformer.onInteractionText(this, it) }
-        embeds.onEach { embed ->
-            transform.onEmbed(embed)
-
-            embed.title?.let { embed.title == transform.onInteractionText(this, it) }
-            embed.author?.name?.let { embed.author!!.name = transform.onInteractionText(this, it) }
-            embed.description?.let { embed.description = transform.onInteractionText(this, it) }
-            embed.fields.forEach { field ->
-                field.name.let { field.name = transform.onInteractionText(this, it) }
-                field.value.let { field.value = transform.onInteractionText(this, it) }
+        embeds.map { transform.onInteractionEmbed(this, it) }
+            .onEach { embed ->
+                embed.title?.let { embed.title == transform.onInteractionText(this, it) }
+                embed.author?.name?.let { embed.author!!.name = transform.onInteractionText(this, it) }
+                embed.description?.let { embed.description = transform.onInteractionText(this, it) }
+                embed.fields.forEach { field ->
+                    field.name.let { field.name = transform.onInteractionText(this, it) }
+                    field.value.let { field.value = transform.onInteractionText(this, it) }
+                }
+                embed.footer?.text?.let { embed.footer!!.text = transform.onInteractionText(this, it) }
             }
-            embed.footer?.text?.let { embed.footer!!.text = transform.onInteractionText(this, it) }
-        }
     }
 
 }
