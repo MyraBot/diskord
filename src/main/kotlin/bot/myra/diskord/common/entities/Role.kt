@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.awt.Color
 
+@Suppress("unused")
 @Serializable
 data class Role(
     val id: String,
