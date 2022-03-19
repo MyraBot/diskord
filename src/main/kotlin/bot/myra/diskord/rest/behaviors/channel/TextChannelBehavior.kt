@@ -1,5 +1,6 @@
 package bot.myra.diskord.rest.behaviors.channel
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.message.Message
@@ -30,5 +31,7 @@ interface TextChannelBehavior {
     suspend fun sendAsync(vararg files: File): Deferred<Message?> {
         return sendAsync(files = files, message = MessageModifier())
     }
+
+    suspend fun getMessageAsync(id: String): Deferred<Message?> = Diskord.getMessageAsync(data.id, id)
 
 }
