@@ -1,7 +1,6 @@
 package bot.myra.diskord.common
 
-import bot.myra.diskord.common.caching.GuildCache
-import bot.myra.diskord.common.caching.UserCache
+import bot.myra.diskord.common.caching.CachePolicy
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message
@@ -11,10 +10,10 @@ import bot.myra.diskord.gateway.commands.Status
 import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.handler.Websocket
-import bot.myra.diskord.gateway.handler.intents.Cache
 import bot.myra.diskord.gateway.handler.intents.GatewayIntent
 import bot.myra.diskord.rest.DefaultTransformer
 import bot.myra.diskord.rest.Endpoints
+import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.MessageTransformer
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.RestClient
@@ -47,7 +46,17 @@ object Diskord : GetTextChannelBehavior {
         }
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
     var intents: MutableSet<GatewayIntent> = mutableSetOf()
-    var cache: MutableSet<Cache> = mutableSetOf()
+    var cachePolicy: CachePolicy = CachePolicy()
+        set(value) {
+            field = value
+
+            value.userCachePolicy.loadListeners()
+            value.guildCachePolicy.loadListeners()
+            value.memberCachePolicy.loadListeners()
+            value.voiceStateCachePolicy.loadListeners()
+            value.channelCachePolicy.loadListeners()
+            value.roleCachePolicy.loadListeners()
+        }
     var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
 
@@ -58,9 +67,8 @@ object Diskord : GetTextChannelBehavior {
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
 
-    fun cache(vararg cache: Cache) {
-        this.cache.addAll(cache)
-        this.intents.addAll(this.cache.flatMap { it.intents })
+    fun cachePolicy(builder: CachePolicy.() -> Unit) {
+        cachePolicy = CachePolicy().apply(builder)
     }
 
     fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized && websocket.connected
@@ -76,31 +84,31 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    fun getBotUserAsync(): Deferred<User> = UserCache.getNonNullAsync(this.id)
-    fun getUserAsync(id: String): Deferred<User?> = UserCache.getAsync(id)
+    fun getBotUserAsync(): Deferred<User> = EntityProvider.getUserNonNull(this.id)
+    fun getUserAsync(id: String): Deferred<User?> = EntityProvider.getUser(id)
 
     fun getGuildsAsync(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
-        when (cache.contains(Cache.GUILD)) {
+        when (cachePolicy.guildCachePolicy.update === null) {
             true -> copiedIds.forEach { id -> emitGuildFromCache(id) }
             false -> copiedIds.forEach { id -> this@Diskord.getGuildAsync(id).await()?.let { emit(it) } }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
-        val guild: Guild? = GuildCache.cache[id] ?: run {
+        val guild: Guild? = cachePolicy.guildCachePolicy.get(id) ?: run {
             if (unavailableGuilds.contains(id)) {
                 pendingGuilds[id] = CompletableDeferred()
                 pendingGuilds[id]?.await()
-            } else GuildCache.retrieveAsync(id).await()
+            } else EntityProvider.getGuild(id).await()
         }
         guild?.let { emit(it) }
     }
 
-    fun getGuildAsync(id: String): Deferred<Guild?> = GuildCache.getAsync(id)
+    fun getGuildAsync(id: String): Deferred<Guild?> = EntityProvider.getGuild(id)
 
     fun getMessageAsync(channel: String, message: String): Deferred<Message?> {
-        return RestClient.executeNullableAsync (Endpoints.getChannelMessage) {
+        return RestClient.executeNullableAsync(Endpoints.getChannelMessage) {
             arguments {
                 arg("channel.id", channel)
                 arg("message.id", message)

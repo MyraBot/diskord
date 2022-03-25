@@ -1,30 +1,35 @@
 package bot.myra.diskord.rest.request
 
-import bot.myra.kommons.debug
-import bot.myra.kommons.kDebug
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.entities.File
+import bot.myra.diskord.common.utilities.FileFormats
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route
 import bot.myra.diskord.rest.request.error.validateResponse
-import bot.myra.diskord.common.utilities.FileFormats
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
+import bot.myra.kommons.debug
+import bot.myra.kommons.kDebug
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.HttpTimeout
+import io.ktor.client.features.defaultRequest
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.header
+import io.ktor.client.request.headers
+import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.builtins.serializer
-import java.util.concurrent.ForkJoinPool
 
 /**
  * Http client for executing rest requests.
  */
 object RestClient {
-    val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
+    //val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
+    val coroutineScope = CoroutineScope(Dispatchers.IO)
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(HttpTimeout) {
             connectTimeoutMillis = 5000

@@ -1,7 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild.voice
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.caching.VoiceCache
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
@@ -36,6 +35,6 @@ data class VoiceStateUpdateEvent(
 
     fun getMemberAsync(): Deferred<Member> = newVoiceState.getMemberAsync()
     fun getGuildAsync(): Deferred<Guild?> = newVoiceState.guildId?.let { Diskord.getGuildAsync(it) } ?: CompletableDeferred(null)
-    val oldVoiceState: VoiceState? = VoiceCache.collect().flatten().firstOrNull { it.userId == newVoiceState.userId && it.guildId == it.guildId }
+    val oldVoiceState: VoiceState? = Diskord.cachePolicy.voiceStateCachePolicy.view().find {  it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId}
 
 }

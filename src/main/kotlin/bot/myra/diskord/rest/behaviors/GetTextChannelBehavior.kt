@@ -1,10 +1,10 @@
 package bot.myra.diskord.rest.behaviors
 
-import bot.myra.diskord.common.caching.ChannelCache
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.channel.DmChannel
 import bot.myra.diskord.common.entities.channel.TextChannel
 import bot.myra.diskord.common.entities.channel.VoiceChannel
+import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.request.RestClient
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -15,8 +15,9 @@ interface GetTextChannelBehavior
 inline fun <reified T> GetTextChannelBehavior.getChannelAsync(id: String): Deferred<T?> {
     val future = CompletableDeferred<T?>()
     RestClient.coroutineScope.launch {
-        val data = ChannelCache.getAsync(id).await()
-        if (data == null){
+        val data: ChannelData? = EntityProvider.getChannel(id).await()
+
+        if (data == null) {
             future.complete(null)
             return@launch
         }
@@ -27,6 +28,7 @@ inline fun <reified T> GetTextChannelBehavior.getChannelAsync(id: String): Defer
             VoiceChannel::class -> VoiceChannel(data)
             else -> throw IllegalStateException("Unknown channel to cast: ${T::class.simpleName}")
         } as T
+        println("completing...")
         future.complete(channel)
     }
     return future

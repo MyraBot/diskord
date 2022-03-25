@@ -1,6 +1,6 @@
 package bot.myra.diskord.rest
 
-import bot.myra.diskord.common.caching.*
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Application
 import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.User
@@ -10,7 +10,7 @@ import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.utilities.ListSerializer
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import kotlinx.serialization.builtins.serializer
 
 
@@ -18,31 +18,33 @@ object Endpoints {
     const val baseUrl = "https://discord.com/api/v8"
 
     val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
-    val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer())
+    val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer()) { channel, args ->
+        Diskord.cachePolicy.channelCachePolicy.update(channel)
+    }
     val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer()))
     val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer()) { user, args ->
-        UserCache.cache[user.id] = user
+        Diskord.cachePolicy.userCachePolicy.update(user)
     }
-    val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer()) { member, args ->
-        val m: Member = Member.withUserInMember(member, args["guild.id"].toString())
-        MemberCache.cache[DoubleKey(m.guildId, m.id)] = m
+    val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer()) { data, args ->
+        val member = Member.withUserInMember(data, args["guild.id"].toString())
+        Diskord.cachePolicy.memberCachePolicy.update(member)
     }
     val listGuildMembers = Route(HttpMethod.Get, "/guilds/{guild.id}/members?limit={limit}&after=0", ListSerializer(MemberData.serializer())) { members, args ->
-        members.forEach { member ->
-            val m = Member.withUserInMember(member, args["guild.id"].toString())
-            MemberCache.cache[DoubleKey(m.guildId, m.id)] = m
+        members.forEach { data ->
+            val member = Member.withUserInMember(data, args["guild.id"].toString())
+            Diskord.cachePolicy.memberCachePolicy.update(member)
         }
     }
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val getOriginalInteractionResponse = Route(HttpMethod.Get, "/webhooks/{application.id}/{interaction.token}/messages/@original", Message.serializer())
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}?with_counts=true", Guild.serializer()) { guild, args ->
-        GuildCache.cache[args["guild.id"].toString()] = guild
+        Diskord.cachePolicy.guildCachePolicy.update(guild)
     }
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
     val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer())) { roles, args ->
         roles.forEach {
-            RoleCache.cache[DoubleKey(args["guild.id"].toString(), it.id)] = it
+            Diskord.cachePolicy.roleCachePolicy.update(it)
         }
     }
     val addReaction = Route(HttpMethod.Put, "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me", Unit.serializer())

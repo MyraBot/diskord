@@ -2,7 +2,6 @@ package bot.myra.diskord.gateway.events
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -10,7 +9,6 @@ import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.ForkJoinPool
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.valueParameters
 
@@ -32,11 +30,9 @@ abstract class Event : DefaultBehavior {
     open suspend fun prepareEvent() {}
 
     /**
-     * Runs [runFunctions] for caching purpose and
-     * for all registered listeners.
+     * Runs [runFunctions] for caching purpose and for all registered listeners.
      */
     private suspend fun call() {
-        Diskord.cache.forEach { runFunctions(it.listener, it.listener::class.declaredFunctions.toList()) } //TODO
         Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
     }
 

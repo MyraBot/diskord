@@ -2,13 +2,11 @@
 
 package bot.myra.diskord.rest.behaviors.guild
 
-import bot.myra.diskord.common.caching.DoubleKey
-import bot.myra.diskord.common.caching.MemberCache
-import bot.myra.diskord.common.caching.RoleCache
 import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.rest.Endpoints
+import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.RestClient
@@ -18,7 +16,7 @@ import kotlinx.coroutines.launch
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
-    suspend fun getMemberAsync(id: String): Deferred<Member?> = MemberCache.getAsync(DoubleKey(this.id, id))
+    suspend fun getMemberAsync(id: String): Deferred<Member?> = EntityProvider.getMember(this.id, id)
 
     suspend fun getBotMemberAsync(): Deferred<Member?> {
         val future = CompletableDeferred<Member?>()
@@ -59,7 +57,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
 
-    suspend fun getRoleAsync(id: String): Deferred<Role?> = RoleCache.getAsync(DoubleKey(this.id, id))
+    suspend fun getRoleAsync(id: String): Deferred<Role?> = EntityProvider.getRole(this.id, id)
 
     suspend fun getChannelsAsync(): Deferred<List<ChannelData>> = RestClient.executeAsync(Endpoints.getChannels) {
         arguments { arg("guild.id", this@GuildBehavior.id) }
