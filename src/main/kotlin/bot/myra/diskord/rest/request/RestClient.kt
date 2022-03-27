@@ -4,9 +4,12 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.utilities.FileFormats
 import bot.myra.diskord.common.utilities.JSON
+import bot.myra.diskord.common.utilities.string
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route
-import bot.myra.diskord.rest.request.error.validateResponse
+import bot.myra.diskord.rest.request.error.BadReqException
+import bot.myra.diskord.rest.request.error.EntityModifyException
+import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
 import io.ktor.client.HttpClient
@@ -23,6 +26,9 @@ import io.ktor.client.statement.readText
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
 
 /**
  * Http client for executing rest requests.
@@ -62,7 +68,7 @@ object RestClient {
      *
      * @param data information about the to be executed [HttpRequest].
      */
-    private suspend fun <R> executeRequest(data: HttpRequest<R>): R? {
+    internal suspend fun <R> executeRequest(data: HttpRequest<R>): R? {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
@@ -71,16 +77,27 @@ object RestClient {
         else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
         kDebug(this::class) { "Rest <<< ${response.readText()}" }
 
-        val errorValidation = validateResponse(response)
-        if (errorValidation.exception != null) throw errorValidation.exception
-        if (errorValidation.returnNull) return null
-
-        @Suppress("UNCHECKED_CAST")
-        return if (data.route.serializer == Unit.serializer()) Unit as R
-        else {
-            val deserialized: R = JSON.decodeFromString(data.route.serializer, response.readText())
-            data.route.cache?.invoke(deserialized, data.arguments)
-            deserialized
+        if (response.status.isSuccess()) {
+            @Suppress("UNCHECKED_CAST")
+            return if (data.route.serializer == Unit.serializer()) Unit as R
+            else {
+                val deserialized: R = JSON.decodeFromString(data.route.serializer, response.readText())
+                data.route.cache?.invoke(deserialized, data.arguments)
+                deserialized
+            }
+        } else {
+            val error = JSON.decodeFromString<JsonObject>(response.readText())
+            val errorMessage = error["message"]?.string ?: "No error message provided"
+            when (response.status) {
+                HttpStatusCode.NotModified -> throw EntityModifyException(errorMessage)
+                HttpStatusCode.BadRequest -> throw BadReqException(errorMessage)
+                HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
+                HttpStatusCode.Forbidden -> return null
+                HttpStatusCode.NotFound -> return null
+                HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
+                HttpStatusCode.TooManyRequests -> return RateLimitWorker.queue(data,JSON.decodeFromJsonElement(error))
+                else -> throw UnknownError()
+            }
         }
     }
 

@@ -57,6 +57,7 @@ object Diskord : GetTextChannelBehavior {
             value.channelCachePolicy.loadListeners()
             value.roleCachePolicy.loadListeners()
         }
+    var rateLimitThreshold = 1000
     var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
 
@@ -66,11 +67,7 @@ object Diskord : GetTextChannelBehavior {
 
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
-
-    fun cachePolicy(builder: CachePolicy.() -> Unit) {
-        cachePolicy = CachePolicy().apply(builder)
-    }
-
+    fun cachePolicy(builder: CachePolicy.() -> Unit) = run { cachePolicy = CachePolicy().apply(builder) }
     fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized && websocket.connected
 
     suspend fun updatePresence(status: Status, presence: Presence.() -> Unit) {
