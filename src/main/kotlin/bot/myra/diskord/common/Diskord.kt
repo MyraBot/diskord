@@ -23,10 +23,13 @@ import bot.myra.kommons.info
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.websocket.WebSockets
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
@@ -81,31 +84,30 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    fun getBotUserAsync(): Deferred<User> = EntityProvider.getUserNonNull(this.id)
-    fun getUserAsync(id: String): Deferred<User?> = EntityProvider.getUser(id)
+    suspend fun getBotUser():User = EntityProvider.getUserNonNull(this.id)!!
+    suspend fun getUser(id: String):User? = EntityProvider.getUser(id)
 
-    fun getGuildsAsync(): Flow<Guild> = flow {
+    fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
         when (cachePolicy.guildCachePolicy.update === null) {
             true -> copiedIds.forEach { id -> emitGuildFromCache(id) }
-            false -> copiedIds.forEach { id -> this@Diskord.getGuildAsync(id).await()?.let { emit(it) } }
+            false -> copiedIds.forEach { id -> this@Diskord.getGuild(id)?.let { emit(it) } }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
         val guild: Guild? = cachePolicy.guildCachePolicy.get(id) ?: run {
             if (unavailableGuilds.contains(id)) {
-                pendingGuilds[id] = CompletableDeferred()
-                pendingGuilds[id]?.await()
-            } else EntityProvider.getGuild(id).await()
+                pendingGuilds[id]!!.await()
+            } else EntityProvider.getGuild(id)
         }
         guild?.let { emit(it) }
     }
 
-    fun getGuildAsync(id: String): Deferred<Guild?> = EntityProvider.getGuild(id)
+    suspend fun getGuild(id: String):Guild? = EntityProvider.getGuild(id)
 
-    fun getMessageAsync(channel: String, message: String): Deferred<Message?> {
-        return RestClient.executeNullableAsync(Endpoints.getChannelMessage) {
+    suspend fun getMessage(channel: String, message: String):Message? {
+        return RestClient.executeNullable(Endpoints.getChannelMessage) {
             arguments {
                 arg("channel.id", channel)
                 arg("message.id", message)

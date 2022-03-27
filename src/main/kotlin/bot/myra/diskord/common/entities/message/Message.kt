@@ -12,10 +12,8 @@ import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.rest.JumpUrlEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.MessageBehavior
-import bot.myra.diskord.rest.behaviors.getChannelAsync
+import bot.myra.diskord.rest.behaviors.getChannel
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
@@ -52,15 +50,13 @@ data class Message(
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
 
-    fun getGuildAsync(): Deferred<Guild?> = guildId.value?.let { Diskord.getGuildAsync(it) } ?: CompletableDeferred(null)
-    fun getChannelAsync(): Deferred<ChannelData?> = Diskord.getChannelAsync(channelId)
-    inline fun <reified T> getChannelAsAsync(): Deferred<T?> = Diskord.getChannelAsync<T>(channelId)
+    suspend fun getGuild(): Guild? = guildId.value?.let { Diskord.getGuild(it) }
+    suspend fun getChannel(): ChannelData? = Diskord.getChannel(channelId)
+    suspend inline fun <reified T> getChannelAs(): T? = Diskord.getChannel<T>(channelId)
 
-    fun getMemberAsync(): Deferred<Member> {
-        return if (!guildId.missing && memberData != null) {
-            CompletableDeferred(Member.withUser(memberData, guildId.value!!, user))
-        } else CompletableDeferred(null)
-    }
+    fun getMember(): Member? = if (!guildId.missing && memberData != null) {
+        Member.withUser(memberData, guildId.value!!, user)
+    } else null
 
     fun asBuilder(): MessageModifier =
         MessageModifier().apply {

@@ -8,10 +8,6 @@ import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.guild.GuildBehavior
-import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -49,31 +45,10 @@ data class Guild(
     val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
     val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 
-    suspend fun getOwnerAsync(): Deferred<Member?> = getMemberAsync(ownerId)
-
-    fun getMemberCountAsync(): Deferred<Int> {
-        val future = CompletableDeferred<Int>()
-        RestClient.coroutineScope.launch {
-            val guild = Diskord.getGuildAsync(id).await()
-            val memberCount = guild!!.memberCount.value!!
-            future.complete(memberCount)
-        }
-        return future
-    }
-
-    fun getOnlineCountAsync(): Deferred<Int> {
-        val future = CompletableDeferred<Int>()
-        RestClient.coroutineScope.launch {
-            val guild = Diskord.getGuildAsync(id).await()
-            val onlineCount = guild!!.onlineCount.value!!
-            future.complete(onlineCount)
-        }
-        return future
-    }
-
-    fun getEmoji(name: String): Emoji? {
-        return emojis.find { it.name == name }
-    }
+    suspend fun getOwner(): Member? = getMember(ownerId)
+    suspend fun getMemberCount(): Int = Diskord.getGuild(id)!!.memberCount.value!!
+    suspend fun getOnlineCount(): Int = Diskord.getGuild(id)!!.onlineCount.value!!
+    fun getEmoji(name: String): Emoji? = emojis.find { it.name == name }
 
 }
 

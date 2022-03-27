@@ -11,7 +11,6 @@ import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.InteractionModifier
 import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.Deferred
 
 interface InteractionCreateBehavior {
 
@@ -20,8 +19,8 @@ interface InteractionCreateBehavior {
     val locale: Locale? get() = interaction.locale.value
     val guildLocale: Locale? get() = interaction.guildLocale.value
 
-    suspend fun acknowledgeAsync(): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.acknowledgeInteraction) {
+    suspend fun acknowledge():Unit {
+        return RestClient.execute(Endpoints.acknowledgeInteraction) {
             json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
             arguments {
                 arg("interaction.id", interaction.id)
@@ -30,12 +29,12 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: InteractionModifier): Deferred<Unit> {
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier):Unit {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             message.apply { transform() }
         )
-        return RestClient.executeAsync(Endpoints.acknowledgeInteraction) {
+        return RestClient.execute(Endpoints.acknowledgeInteraction) {
             json = responseData.toJson()
             attachments = files.toList()
             arguments {
@@ -45,12 +44,12 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledgeAsync(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit): Deferred<Unit> {
-        return acknowledgeAsync(files = files, message = InteractionModifier(interaction).apply { message.invoke(this) })
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit):Unit {
+        return acknowledge(files = files, message = InteractionModifier(interaction).apply { message.invoke(this) })
     }
 
-    suspend fun getInteractionResponseAsync(): Deferred<Message> {
-        return RestClient.executeAsync(Endpoints.getOriginalInteractionResponse) {
+    suspend fun getInteractionResponse():Message {
+        return RestClient.execute(Endpoints.getOriginalInteractionResponse) {
             arguments {
                 arg("application.id", Diskord.id)
                 arg("interaction.token", interaction.token)

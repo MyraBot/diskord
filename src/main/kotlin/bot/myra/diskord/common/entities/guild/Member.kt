@@ -12,9 +12,6 @@ import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.guild.MemberBehavior
 import bot.myra.diskord.rest.bodies.BanInfo
 import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -53,45 +50,20 @@ data class Member(
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
-
-    fun getGuildAsync(): Deferred<Guild?> = Diskord.getGuildAsync(guildId)
-
-    fun getRolesAsync(): Deferred<List<Role>> {
-        val future = CompletableDeferred<List<Role>>()
-        RestClient.coroutineScope.launch {
-            val guild = getGuildAsync().await()
-            val roles = guild!!.roles.filter { roleIds.contains(it.id) }
-            future.complete(roles)
-        }
-        return future
-    }
-
-    fun getColourAsync(): Deferred<Color> {
-        val future = CompletableDeferred<Color>()
-        RestClient.coroutineScope.launch {
-            val roles = getRolesAsync().await()
-            val colour = roles.reversed()
-                .first { it.colour != Color.decode("0") }
-                .colour
-            future.complete(colour)
-        }
-        return future
-    }
-
     val voiceState: VoiceState? get() = Diskord.cachePolicy.voiceStateCachePolicy.view().firstOrNull { it.userId == this.id && it.guildId == this.guildId }
 
-
-    fun banAsync() = banAsync(null, null)
-    fun banAsync(deleteMessages: Int) = banAsync(deleteMessages, null)
-    fun banAsync(reason: String) = banAsync(null, reason)
-    fun banAsync(deleteMessages: Int?, reason: String?): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.createGuildBan) {
-            json = BanInfo(deleteMessages).toJson()
-            logReason = reason
-            arguments {
-                arg("guild.id", guildId)
-                arg("user.id", id)
-            }
+    suspend fun getGuild(): Guild? = Diskord.getGuild(guildId)
+    suspend fun getRoles(): List<Role> = getGuild()!!.roles.filter { roleIds.contains(it.id) }
+    suspend fun getColour(): Color = getRoles().reversed().first { it.colour != Color.decode("0") }.colour
+    suspend fun ban() = ban(null, null)
+    suspend fun ban(deleteMessages: Int) = ban(deleteMessages, null)
+    suspend fun ban(reason: String) = ban(null, reason)
+    suspend fun ban(deleteMessages: Int?, reason: String?) = RestClient.execute(Endpoints.createGuildBan) {
+        json = BanInfo(deleteMessages).toJson()
+        logReason = reason
+        arguments {
+            arg("guild.id", guildId)
+            arg("user.id", id)
         }
     }
 

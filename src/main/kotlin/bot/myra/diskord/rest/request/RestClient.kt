@@ -24,7 +24,8 @@ import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.readText
 import io.ktor.http.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonObject
@@ -45,23 +46,8 @@ object RestClient {
         defaultRequest { header("Authorization", "Bot ${Diskord.token}") }
     }
 
-    private suspend fun <R> execute(route: Route<R>, request: HttpRequest<R>.() -> Unit): R? {
-        val requestOptions = HttpRequest(route).apply(request)
-        return executeRequest(requestOptions)
-    }
-
-    fun <R> executeAsync(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): Deferred<R> {
-        val future = CompletableDeferred<R>()
-        coroutineScope.launch { future.complete(execute(route, request)!!) }
-        return future
-    }
-
-    fun <R> executeNullableAsync(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): Deferred<R?> {
-        val future = CompletableDeferred<R?>()
-        coroutineScope.launch { future.complete(execute(route, request)) }
-        return future
-    }
-
+    suspend fun <R> execute(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R = executeRequest(HttpRequest(route).apply(request))!!
+    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = executeRequest(HttpRequest(route).apply(request))
 
     /**
      * Executes a http request to the saved path of [data].
@@ -95,7 +81,7 @@ object RestClient {
                 HttpStatusCode.Forbidden -> return null
                 HttpStatusCode.NotFound -> return null
                 HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
-                HttpStatusCode.TooManyRequests -> return RateLimitWorker.queue(data,JSON.decodeFromJsonElement(error))
+                HttpStatusCode.TooManyRequests -> return RateLimitWorker.queue(data, JSON.decodeFromJsonElement(error))
                 else -> throw UnknownError()
             }
         }

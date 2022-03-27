@@ -10,41 +10,25 @@ import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.launch
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
-    suspend fun getMemberAsync(id: String): Deferred<Member?> = EntityProvider.getMember(this.id, id)
+    suspend fun getMember(id: String): Member? = EntityProvider.getMember(this.id, id)
 
-    suspend fun getBotMemberAsync(): Deferred<Member?> {
-        val future = CompletableDeferred<Member?>()
-        RestClient.coroutineScope.launch {
-            val application = getApplicationAsync().await()
-            val member = getMemberAsync(application.id).await()
-            future.complete(member)
+    suspend fun getBotMember(): Member? = getMember(getApplication().id)
+
+    suspend fun getMembers(limit: Int = 1000): List<Member> {
+        val memberDataList = RestClient.execute(Endpoints.listGuildMembers) {
+            arguments {
+                arg("guild.id", this@GuildBehavior.id)
+                arg("limit", limit)
+            }
         }
-        return future
+        return memberDataList.map { Member.withUserInMember(it, id) }
     }
 
-    suspend fun getMembersAsync(limit: Int = 1000): Deferred<List<Member>> {
-        val future = CompletableDeferred<List<Member>>()
-        RestClient.coroutineScope.launch {
-            val memberDataList = RestClient.executeAsync(Endpoints.listGuildMembers) {
-                arguments {
-                    arg("guild.id", this@GuildBehavior.id)
-                    arg("limit", limit)
-                }
-            }.await()
-            val members = memberDataList.map { Member.withUserInMember(it, id) }
-            future.complete(members)
-        }
-        return future
-    }
-
-    suspend fun unbanMemberAsync(id: String, reason: String? = null): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.removeGuildBan) {
+    suspend fun unbanMember(id: String, reason: String? = null): Unit {
+        return RestClient.execute(Endpoints.removeGuildBan) {
             logReason = reason
             arguments {
                 arg("guild.id", this@GuildBehavior.id)
@@ -53,13 +37,13 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         }
     }
 
-    suspend fun getRolesAsync(): Deferred<List<Role>> = RestClient.executeAsync(Endpoints.getRoles) {
+    suspend fun getRoles(): List<Role> = RestClient.execute(Endpoints.getRoles) {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
 
-    suspend fun getRoleAsync(id: String): Deferred<Role?> = EntityProvider.getRole(this.id, id)
+    suspend fun getRole(id: String): Role? = EntityProvider.getRole(this.id, id)
 
-    suspend fun getChannelsAsync(): Deferred<List<ChannelData>> = RestClient.executeAsync(Endpoints.getChannels) {
+    suspend fun getChannels(): List<ChannelData> = RestClient.execute(Endpoints.getChannels) {
         arguments { arg("guild.id", this@GuildBehavior.id) }
     }
 

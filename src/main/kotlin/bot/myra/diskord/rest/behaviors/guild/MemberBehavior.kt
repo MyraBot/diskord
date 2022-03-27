@@ -4,17 +4,16 @@ import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.Deferred
 
 @Suppress("unused")
 interface MemberBehavior : Entity {
 
     val guildId: String
 
-    suspend fun addRoleAsync(role: Role) = addRoleAsync(role.id)
+    suspend fun addRole(role: Role) = addRole(role.id)
 
-    suspend fun addRoleAsync(id: String): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.addMemberRole) {
+    suspend fun addRole(id: String):Unit {
+        return RestClient.execute(Endpoints.addMemberRole) {
             arguments {
                 arg("guild.id", guildId)
                 arg("user.id", this@MemberBehavior.id)
@@ -23,10 +22,10 @@ interface MemberBehavior : Entity {
         }
     }
 
-    suspend fun removeRoleAsync(role: Role) = removeRoleAsync(role.id)
+    suspend fun removeRole(role: Role) = removeRole(role.id)
 
-    suspend fun removeRoleAsync(id: String): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.removeMemberRole) {
+    suspend fun removeRole(id: String):Unit {
+        return RestClient.execute(Endpoints.removeMemberRole) {
             arguments {
                 arg("guild.id", guildId)
                 arg("user.id", this@MemberBehavior.id)

@@ -5,7 +5,6 @@ import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient
-import kotlinx.coroutines.Deferred
 import java.net.URLEncoder
 
 @Suppress("unused")
@@ -19,8 +18,8 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * @param messageModifier The new message.
      * @return Returns the new message.
      */
-    fun editAsync(messageModifier: MessageModifier): Deferred<Message> {
-        return RestClient.executeAsync(Endpoints.editMessage) {
+    suspend fun edit(messageModifier: MessageModifier):Message {
+        return RestClient.execute(Endpoints.editMessage) {
             json = messageModifier.toJson()
             arguments {
                 arg("channel.id", message.channelId)
@@ -29,10 +28,10 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    fun editAsync(messageModifier: MessageModifier.() -> Unit): Deferred<Message> = editAsync(message.asBuilder().apply(messageModifier))
+    suspend fun edit(messageModifier: MessageModifier.() -> Unit):Message = edit(message.asBuilder().apply(messageModifier))
 
-    fun addReactionAsync(emoji: String): Deferred<Unit> {
-        return RestClient.executeAsync(Endpoints.addReaction) {
+    suspend fun addReaction(emoji: String):Unit {
+        return RestClient.execute(Endpoints.addReaction) {
             arguments {
                 arg("channel.id", message.channelId)
                 arg("message.id", id)

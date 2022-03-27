@@ -110,7 +110,7 @@ class Websocket(
      * Sends the provided opt code to the websocket.
      * If the websocket isn't connected, the opt-code will get added to [waitingCalls].
      * All waiting calls get executed as soon as the websocket is connected again.
-     * As a result, **this is function is async**
+     * As a result, **this is function is **
      *
      * @param optCode Opt-code to send.
      */
@@ -174,7 +174,7 @@ class Websocket(
 
     /**
      * Updates the applications presence and status.
-     * **Is async**
+     * **Is **
      *
      * @param presence New presence / status.
      */
