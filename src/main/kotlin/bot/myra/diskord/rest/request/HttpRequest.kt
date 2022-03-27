@@ -9,9 +9,9 @@ data class HttpRequest<T>(
     var json: String? = null,
     var logReason: String? = null,
     var attachments: List<File> = emptyList(),
-    val arguments: bot.myra.diskord.common.Arguments = bot.myra.diskord.common.Arguments()
+    val arguments: Arguments = Arguments()
 ) {
-    fun arguments(arguments: bot.myra.diskord.common.Arguments.() -> Unit) {
+    fun arguments(arguments: Arguments.() -> Unit) {
         this.arguments.apply(arguments)
     }
 }
