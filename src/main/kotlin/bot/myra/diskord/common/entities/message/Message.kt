@@ -46,7 +46,7 @@ data class Message(
     val components: MutableList<Component> = mutableListOf(),
 ) : MessageBehavior {
     override val message: Message = this
-    val link: String get() = if (isFromGuild) MessageLink.guild(guildId.value!!, channelId, id) else MessageLink.dms(channelId, id)
+    val link: String get() = guildId.value?.let { MessageLink.guild(it, channelId, id) } ?: MessageLink.dms(channelId, id)
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
     val isFromGuild: Boolean = !message.guildId.missing
