@@ -9,7 +9,7 @@ import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.embed.Embed
 import bot.myra.diskord.common.serializers.SInstant
-import bot.myra.diskord.rest.JumpUrlEndpoints
+import bot.myra.diskord.common.utilities.MessageLink
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.MessageBehavior
 import bot.myra.diskord.rest.behaviors.getChannel
@@ -46,9 +46,10 @@ data class Message(
     val components: MutableList<Component> = mutableListOf(),
 ) : MessageBehavior {
     override val message: Message = this
-    val link: String get() = JumpUrlEndpoints.get(guildId.value!!, channelId, id)
+    val link: String get() = if (isFromGuild) MessageLink.guild(guildId.value!!, channelId, id) else MessageLink.dms(channelId, id)
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
+    val isFromGuild: Boolean = !message.guildId.missing
 
     suspend fun getGuild(): Guild? = guildId.value?.let { Diskord.getGuild(it) }
     suspend fun getChannel(): ChannelData? = Diskord.getChannel(channelId)
