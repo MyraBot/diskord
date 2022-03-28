@@ -25,20 +25,22 @@ open class SlashCommandEvent(
     val resolved: Resolved get() = Resolved(command.resolved, data.guildId.value!!)
     open val member: Member? get() = data.member
     val arguments: List<SlashCommandOptionData>
-        get() = command.options
-            .flatMap {
-                var options = it.options
-                while (
-                    options.firstOrNull()?.type == SlashCommandOptionType.SUB_COMMAND_GROUP
-                    || options.firstOrNull()?.type == SlashCommandOptionType.SUB_COMMAND
-                ) {
-                    options = options.first().options
+        get() = command.options.flatMap { option ->
+            when (SlashCommandOptionType.isArgument(option.type)) {
+                true -> listOf(option)
+                false -> {
+                    val options = option.options.toMutableList()
+                    if (option.type == SlashCommandOptionType.SUB_COMMAND) {
+                        val subcommandOptions = options.flatMap { it.options }
+                        options.addAll(subcommandOptions)
+                    }
+                    options
                 }
-                options
             }
+        }
 
-    open suspend fun getGuild():Guild? = EntityProvider.getGuild(data.guildId.value!!)
-    suspend fun getChannel():TextChannel? = Diskord.getChannel(data.channelId.value!!)
+    open suspend fun getGuild(): Guild? = EntityProvider.getGuild(data.guildId.value!!)
+    suspend fun getChannel(): TextChannel? = Diskord.getChannel(data.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }
