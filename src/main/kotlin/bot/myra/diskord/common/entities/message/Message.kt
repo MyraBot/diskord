@@ -46,10 +46,10 @@ data class Message(
     val components: MutableList<Component> = mutableListOf(),
 ) : MessageBehavior {
     override val message: Message = this
-    val link: String get() = guildId.value?.let { MessageLink.guild(it, channelId, id) } ?: MessageLink.dms(channelId, id)
+    val link: String get() = Diskord.cachePolicy.channelCachePolicy.associatedByGuild(channelId)?.let { MessageLink.guild(it, channelId, id) } ?: MessageLink.dms(channelId, id)
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
-    val isFromGuild: Boolean = !message.guildId.missing
+    val isFromGuild: Boolean = guildId.value !== null || Diskord.cachePolicy.channelCachePolicy.associatedByGuild(channelId) != null
 
     suspend fun getGuild(): Guild? = guildId.value?.let { Diskord.getGuild(it) }
     suspend fun getChannel(): ChannelData? = Diskord.getChannel(channelId)
