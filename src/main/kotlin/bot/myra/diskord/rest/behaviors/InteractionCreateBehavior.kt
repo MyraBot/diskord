@@ -19,7 +19,7 @@ interface InteractionCreateBehavior {
     val locale: Locale? get() = interaction.locale.value
     val guildLocale: Locale? get() = interaction.guildLocale.value
 
-    suspend fun acknowledge():Unit {
+    suspend fun acknowledge() {
         return RestClient.execute(Endpoints.acknowledgeInteraction) {
             json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
             arguments {
@@ -29,7 +29,7 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier):Unit {
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) {
         val responseData = InteractionResponseData(
             InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             message.apply { transform() }
@@ -44,11 +44,11 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit):Unit {
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) {
         return acknowledge(files = files, message = InteractionModifier(interaction).apply { message.invoke(this) })
     }
 
-    suspend fun getInteractionResponse():Message {
+    suspend fun getInteractionResponse(): Message {
         return RestClient.execute(Endpoints.getOriginalInteractionResponse) {
             arguments {
                 arg("application.id", Diskord.id)
