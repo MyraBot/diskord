@@ -23,11 +23,9 @@ object EntityProvider {
                 arguments { arg("user.id", id) }
             }
 
-    suspend fun getGuild(id: String): Guild? =
-        Diskord.cachePolicy.guildCachePolicy.get(id)
-            ?: RestClient.executeNullable(Endpoints.getGuild) {
-                arguments { arg("guild.id", id) }
-            }
+    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCachePolicy.get(id) ?: fetchGuild(id)
+    suspend fun fetchGuild(id: String): Guild? = RestClient.executeNullable(Endpoints.getGuild) { arguments { arg("guild.id", id) } }
+
 
     suspend fun getChannel(id: String): ChannelData? =
         Diskord.cachePolicy.channelCachePolicy.get(id)

@@ -46,8 +46,8 @@ data class Guild(
     val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 
     suspend fun getOwner(): Member? = getMember(ownerId)
-    suspend fun getMemberCount(): Int = Diskord.getGuild(id)!!.memberCount.value!!
-    suspend fun getOnlineCount(): Int = Diskord.getGuild(id)!!.onlineCount.value!!
+    suspend fun getMemberCount(): Int = Diskord.fetchGuild(id)!!.memberCount.value!!
+    suspend fun getOnlineCount(): Int = Diskord.fetchGuild(id)!!.onlineCount.value!!
     fun getEmoji(name: String): Emoji? = emojis.find { it.name == name }
 
 }

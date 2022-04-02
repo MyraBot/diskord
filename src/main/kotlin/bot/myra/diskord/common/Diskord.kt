@@ -105,6 +105,7 @@ object Diskord : GetTextChannelBehavior {
     }
 
     suspend fun getGuild(id: String):Guild? = EntityProvider.getGuild(id)
+    suspend fun fetchGuild(id: String):Guild? = EntityProvider.fetchGuild(id)
 
     suspend fun getMessage(channel: String, message: String):Message? {
         return RestClient.executeNullable(Endpoints.getChannelMessage) {
