@@ -11,7 +11,7 @@ import bot.myra.diskord.rest.request.RestClient
 
 object EntityProvider {
 
-    suspend fun getUserNonNull(id: String): User? =
+    suspend fun getUserNonNull(id: String): User =
         Diskord.cachePolicy.userCachePolicy.get(id)
             ?: RestClient.execute(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
