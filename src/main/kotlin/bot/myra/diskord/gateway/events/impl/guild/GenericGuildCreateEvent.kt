@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @property guild The guild.
  */
 @Serializable
-data class GuildLoadEvent(
+data class GenericGuildCreateEvent(
     val guild: Guild
 ) : Event() {
 

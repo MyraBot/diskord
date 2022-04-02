@@ -8,6 +8,6 @@ import bot.myra.diskord.gateway.events.Event
  *
  * @property guild The guild.
  */
-data class GuildDeleteEvent(
+data class GuildLeaveEvent(
         val guild: UnavailableGuild
 ) : Event()

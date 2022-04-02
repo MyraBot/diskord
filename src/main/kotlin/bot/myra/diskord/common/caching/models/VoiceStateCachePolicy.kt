@@ -4,13 +4,13 @@ import bot.myra.diskord.common.caching.DoubleKey
 import bot.myra.diskord.common.caching.GenericCachePolicy
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.gateway.events.ListenTo
-import bot.myra.diskord.gateway.events.impl.guild.GuildLoadEvent
+import bot.myra.diskord.gateway.events.impl.guild.GenericGuildCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 
 class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>() {
 
-    @ListenTo(GuildLoadEvent::class)
-    fun onGuildCreate(event: GuildLoadEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
+    @ListenTo(GenericGuildCreateEvent::class)
+    fun onGuildCreate(event: GenericGuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
 
     @ListenTo(VoiceStateUpdateEvent::class)
     fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = updateVoiceState(event.newVoiceState)
