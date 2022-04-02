@@ -10,10 +10,7 @@ class DefaultChannelCache {
 
     fun policy(): ChannelCachePolicy = ChannelCachePolicy().apply {
         view { map.values.toList() }
-        get {
-            println("Getting from cache")
-            map[it]
-        }
+        get { map[it] }
         update { map[it.id] = it }
         remove { map.remove(it) }
         viewByGuild { guildMap[it] ?: emptyList() }
