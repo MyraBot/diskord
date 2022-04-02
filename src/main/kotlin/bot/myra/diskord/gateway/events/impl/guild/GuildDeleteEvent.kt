@@ -1,12 +1,13 @@
 package bot.myra.diskord.gateway.events.impl.guild
 
+import bot.myra.diskord.common.entities.guild.UnavailableGuild
 import bot.myra.diskord.gateway.events.Event
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#guild-delete)
  *
- * @property id Guild id.
+ * @property guild The guild.
  */
 data class GuildDeleteEvent(
-        val id: String
+        val guild: UnavailableGuild
 ) : Event()
