@@ -28,7 +28,7 @@ interface IComponentModifier {
 
     suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
     fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
-
+    fun addButtons(buttons: List<Button>) = buttons.forEach { addButton(it) }
 
     suspend fun addSelectMenu(selectMenu: suspend SelectMenuBuilder.() -> Unit) {
         if (components.size == 0) components.add(ActionRowData().asComponent())
