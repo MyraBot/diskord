@@ -2,7 +2,6 @@ package bot.myra.diskord.gateway.events
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import bot.myra.diskord.rest.request.error.DiscordRestException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -57,7 +56,7 @@ abstract class Event : DefaultBehavior {
         try {
             if (func.valueParameters.isEmpty()) func.callSuspend(listener)
             else func.callSuspend(listener, this@Event)
-        } catch (e: DiscordRestException) {
+        } catch (e: Exception) {
             Diskord.errorHandler.onException(this, e)
         }
     }

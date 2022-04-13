@@ -7,8 +7,7 @@ import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.string
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route
-import bot.myra.diskord.rest.request.error.DiscordRestErrors
-import bot.myra.diskord.rest.request.error.DiscordRestExceptionBuilder
+import bot.myra.diskord.rest.request.error.*
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
@@ -46,19 +45,38 @@ object RestClient {
         defaultRequest { header("Authorization", "Bot ${Diskord.token}") }
     }
 
-    suspend fun <R> execute(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R = executeRequest(HttpRequest(route).apply(request))!!
-    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = executeRequest(HttpRequest(route).apply(request))
+    /**
+     * Executes a http request using the [StacktraceRecovery].
+     * This is the recommended way to execute requests and is
+     * preferred over [executeRequest].
+     *
+     * @param R The response type.
+     * @param route The route to execute.
+     * @param request Detailed information about the request.
+     * @return Returns the response as [R].
+     */
+    suspend fun <R> execute(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R = StacktraceRecovery.handle(HttpRequest(route).apply(request))
+
+    /**
+     * Executes a nullable http request using the [StacktraceRecovery].
+     * This is the recommended way to execute requests and is
+     * preferred over [executeRequest].
+     *
+     * @param R The response type.
+     * @param route The route to execute.
+     * @param request Detailed information about the request.
+     * @return Returns the response as a nullable [R].
+     */
+    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = StacktraceRecovery.handleNullable(HttpRequest(route).apply(request))
 
     /**
      * Executes a http request to the saved path of [data].
      *
      * @param data information about the to be executed [HttpRequest].
      */
-    internal suspend fun <R> executeRequest(data: HttpRequest<R>): R? {
+    suspend fun <R> executeRequest(data: HttpRequest<R>): R? {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
-
-        val dummyException = DiscordRestExceptionBuilder()
 
         debug(this::class) { "Rest >>> ${data.route.httpMethod}: $route - ${data.json}" }
         val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
@@ -74,16 +92,16 @@ object RestClient {
                 deserialized
             }
         } else {
-            val json = JSON.decodeFromString<JsonObject>(response.readText())
-            val errorMessage = json["message"]?.string ?: "No error message provided"
+            val error = JSON.decodeFromString<JsonObject>(response.readText())
+            val message = error["message"]?.string ?: "No error message provided"
             return when (response.status) {
-                HttpStatusCode.NotModified      -> throw dummyException.apply { error = DiscordRestErrors.ENTITY_MODIFICATION }.apply { info = errorMessage }.exception
-                HttpStatusCode.BadRequest       -> throw dummyException.apply { error = DiscordRestErrors.BAD_REQ_EXCEPTION }.apply { info = errorMessage }.exception
+                HttpStatusCode.NotModified      -> throw  ModificationException(message)
+                HttpStatusCode.BadRequest       -> throw BadReqException(message)
                 HttpStatusCode.Unauthorized     -> throw Exception("Unauthorized") // Internal exception
-                HttpStatusCode.Forbidden        -> throw dummyException.apply { error = DiscordRestErrors.MISSING_PERMISSIONS }.apply { info = errorMessage }.exception
-                HttpStatusCode.NotFound         -> null
+                HttpStatusCode.Forbidden        -> throw MissingPermissionsException(message)
+                HttpStatusCode.NotFound         -> throw NotFoundException(message)
                 HttpStatusCode.MethodNotAllowed -> throw Exception("Method not allowed") // Internal exception
-                HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(data, JSON.decodeFromJsonElement(json), dummyException)
+                HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(data, JSON.decodeFromJsonElement(error))
                 else                            -> throw UnknownError()
             }
         }
