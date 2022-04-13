@@ -7,8 +7,8 @@ import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.string
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route
-import bot.myra.diskord.rest.request.error.BadReqException
-import bot.myra.diskord.rest.request.error.EntityModifyException
+import bot.myra.diskord.rest.request.error.DiscordRestErrors
+import bot.myra.diskord.rest.request.error.DiscordRestExceptionBuilder
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
@@ -58,6 +58,8 @@ object RestClient {
         var route = Endpoints.baseUrl + data.route.path
         data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
 
+        val dummyException = DiscordRestExceptionBuilder()
+
         debug(this::class) { "Rest >>> ${data.route.httpMethod}: $route - ${data.json}" }
         val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
@@ -72,17 +74,17 @@ object RestClient {
                 deserialized
             }
         } else {
-            val error = JSON.decodeFromString<JsonObject>(response.readText())
-            val errorMessage = error["message"]?.string ?: "No error message provided"
-            when (response.status) {
-                HttpStatusCode.NotModified -> throw EntityModifyException(errorMessage)
-                HttpStatusCode.BadRequest -> throw BadReqException(errorMessage)
-                HttpStatusCode.Unauthorized -> throw Exception() // Internal exception
-                HttpStatusCode.Forbidden -> return null
-                HttpStatusCode.NotFound -> return null
-                HttpStatusCode.MethodNotAllowed -> throw Exception() // Internal exception
-                HttpStatusCode.TooManyRequests -> return RateLimitWorker.queue(data, JSON.decodeFromJsonElement(error))
-                else -> throw UnknownError()
+            val json = JSON.decodeFromString<JsonObject>(response.readText())
+            val errorMessage = json["message"]?.string ?: "No error message provided"
+            return when (response.status) {
+                HttpStatusCode.NotModified      -> throw dummyException.apply { error = DiscordRestErrors.ENTITY_MODIFICATION }.apply { info = errorMessage }.exception
+                HttpStatusCode.BadRequest       -> throw dummyException.apply { error = DiscordRestErrors.BAD_REQ_EXCEPTION }.apply { info = errorMessage }.exception
+                HttpStatusCode.Unauthorized     -> throw Exception("Unauthorized") // Internal exception
+                HttpStatusCode.Forbidden        -> throw dummyException.apply { error = DiscordRestErrors.MISSING_PERMISSIONS }.apply { info = errorMessage }.exception
+                HttpStatusCode.NotFound         -> null
+                HttpStatusCode.MethodNotAllowed -> throw Exception("Method not allowed") // Internal exception
+                HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(data, JSON.decodeFromJsonElement(json), dummyException)
+                else                            -> throw UnknownError()
             }
         }
     }
@@ -94,8 +96,8 @@ object RestClient {
      * @param json Optional json body.
      * @return Returns the response as a [HttpResponse].
      */
-    private suspend fun bodyRequest(route: String, httpMethod: HttpMethod, json: String?, reason: String?): HttpResponse =
-        httpClient.request(route) {
+    private suspend fun bodyRequest(route: String, httpMethod: HttpMethod, json: String?, reason: String?): HttpResponse {
+        return httpClient.request(route) {
             method = httpMethod
             reason?.let { headers { header("X-Audit-Log-Reason", it) } }
             json?.let {
@@ -103,6 +105,7 @@ object RestClient {
                 body = it
             }
         }
+    }
 
     /**
      * Used to send files with messages. See [Discords documentation](https://discord.com/developers/docs/reference#uploading-files)
@@ -130,9 +133,9 @@ object RestClient {
     private fun getContentType(file: File): ContentType {
         return when (file.type) {
             FileFormats.JPEG -> ContentType.Image.JPEG
-            FileFormats.PNG -> ContentType.Image.PNG
-            FileFormats.GIF -> ContentType.Image.GIF
-            else -> throw Exception("The provided file type isn't registered as a content type")
+            FileFormats.PNG  -> ContentType.Image.PNG
+            FileFormats.GIF  -> ContentType.Image.GIF
+            else             -> throw Exception("The provided file type isn't registered as a content type")
         }
     }
 
