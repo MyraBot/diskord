@@ -14,7 +14,7 @@ interface TextChannelBehavior {
 
     val data: ChannelData
 
-    suspend fun send(vararg files: File = emptyArray(), message: MessageModifier):Message? {
+    suspend fun send(vararg files: File = emptyArray(), message: MessageModifier): Message? {
         val msg = message.apply { transform() }
         return RestClient.executeNullable(Endpoints.createMessage) {
             json = msg.toJson()
@@ -23,14 +23,14 @@ interface TextChannelBehavior {
         }
     }
 
-    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageModifier.() -> Unit):Message? {
+    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageModifier.() -> Unit): Message? {
         return send(files = files, message = MessageModifier().also { message.invoke(it) })
     }
 
-    suspend fun send(vararg files: File):Message? {
+    suspend fun send(vararg files: File): Message? {
         return send(files = files, message = MessageModifier())
     }
 
-    suspend fun getMessage(id: String):Message? = Diskord.getMessage(data.id, id)
+    suspend fun getMessage(id: String): Message? = Diskord.getMessage(data.id, id)
 
 }
