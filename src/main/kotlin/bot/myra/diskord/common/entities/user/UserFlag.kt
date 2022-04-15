@@ -8,7 +8,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-enum class UserFlag(val code: Int) {
+enum class UserFlag(val value: Int) {
     STAFF(1 shl 0),
     PARTNER(1 shl 1),
     HYPESQUAD(1 shl 2),
@@ -29,12 +29,12 @@ enum class UserFlag(val code: Int) {
 
         override fun serialize(encoder: Encoder, value: Optional<List<UserFlag>>) {
             when (value.missing) {
-                true -> encoder.encodeInt(0)
+                true  -> encoder.encodeInt(0)
                 false -> {
                     if (value.value!!.isEmpty()) {
                         encoder.encodeInt(0)
                     } else {
-                        val bitCode = value.value.map { 1 shl it.code }.reduce { acc, i -> acc or i }
+                        val bitCode = value.value.map { it.value }.reduce { x, y -> x or y }
                         encoder.encodeInt(bitCode)
                     }
                 }
@@ -47,7 +47,7 @@ enum class UserFlag(val code: Int) {
                 decoder.decodeNull()
                 Optional(emptyList())
             } else {
-                val flags = values().filter { bitCode == bitCode or it.code }
+                val flags = values().filter { bitCode or it.value == bitCode }
                 Optional(flags.toList())
             }
         }
