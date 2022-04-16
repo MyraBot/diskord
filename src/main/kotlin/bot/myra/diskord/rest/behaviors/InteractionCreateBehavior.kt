@@ -48,6 +48,28 @@ interface InteractionCreateBehavior {
         return acknowledge(files = files, message = InteractionModifier(interaction).apply { message.invoke(this) })
     }
 
+    /**
+     * Edits the original [Interaction.message].
+     * Overwrites the old message entirely.
+     *
+     * @param message The new interaction.
+     */
+    suspend fun edit(message: InteractionModifier) {
+        val responseData = InteractionResponseData(
+            InteractionCallbackType.UPDATE_MESSAGE,
+            message.apply { transform() }
+        )
+        return RestClient.execute(Endpoints.acknowledgeInteraction) {
+            json = responseData.toJson()
+            arguments {
+                arg("interaction.id", interaction.id)
+                arg("interaction.token", interaction.token)
+            }
+        }
+    }
+
+    suspend fun edit(modifier: InteractionModifier.() -> Unit) = edit(InteractionModifier().apply(modifier))
+
     suspend fun getInteractionResponse(): Message {
         return RestClient.execute(Endpoints.getOriginalInteractionResponse) {
             arguments {
