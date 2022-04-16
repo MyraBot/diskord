@@ -11,6 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 @Suppress("unused")
 @Serializable(with = InteractionCallbackType.Serializer::class)
 enum class InteractionCallbackType(val value: Int, val onlyComponents: Boolean) {
+    PONG(1, false),
     CHANNEL_MESSAGE_WITH_SOURCE(4, false),
     DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE(5, false),
     DEFERRED_UPDATE_MESSAGE(6, true),
