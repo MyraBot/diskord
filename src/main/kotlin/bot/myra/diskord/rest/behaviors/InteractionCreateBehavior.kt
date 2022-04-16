@@ -2,7 +2,6 @@ package bot.myra.diskord.rest.behaviors
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
-import bot.myra.diskord.common.entities.Locale
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackType
 import bot.myra.diskord.common.entities.applicationCommands.InteractionResponseData
@@ -15,9 +14,6 @@ import bot.myra.diskord.rest.request.RestClient
 interface InteractionCreateBehavior {
 
     val interaction: Interaction
-
-    val locale: Locale? get() = interaction.locale.value
-    val guildLocale: Locale? get() = interaction.guildLocale.value
 
     suspend fun acknowledge() {
         return RestClient.execute(Endpoints.acknowledgeInteraction) {
