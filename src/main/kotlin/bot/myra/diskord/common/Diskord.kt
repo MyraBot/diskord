@@ -8,7 +8,6 @@ import bot.myra.diskord.gateway.commands.Presence
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.commands.Status
 import bot.myra.diskord.gateway.events.EventListener
-import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.handler.Websocket
 import bot.myra.diskord.gateway.handler.intents.GatewayIntent
 import bot.myra.diskord.rest.DefaultTransformer
@@ -19,7 +18,6 @@ import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
-import bot.myra.kommons.info
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.websocket.WebSockets
@@ -40,13 +38,7 @@ object Diskord : GetTextChannelBehavior {
     lateinit var id: String
 
     var gatewayClient = HttpClient(CIO) { install(WebSockets) }
-
-    var listenersPackage: String? = null
-        set(value) {
-            info(this::class) { "Registering discord event listeners" }
-            field = value
-            value?.let { Events.findListeners(it) }
-        }
+    var listenersPackage: List<String> = emptyList()
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
     var intents: MutableSet<GatewayIntent> = mutableSetOf()
     var cachePolicy: CachePolicy = CachePolicy()

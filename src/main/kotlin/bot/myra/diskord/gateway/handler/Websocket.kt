@@ -185,12 +185,15 @@ class Websocket(
 }
 
 /**
- * Registers all registered events from [Diskord.listeners],
+ * Registers all registered events from [Diskord.listenersPackage],
  * initialises [Diskord] and starts the websocket.
  *
  * @return Returns the [Diskord] object. Just for laziness.
  */
 suspend fun Diskord.connectGateway() {
+    info(this::class) { "Registering discord event listeners" }
+    listenersPackage.forEach { Events.findListeners(it) }
+
     if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
     val ws = Websocket(this.intents) // Create websocket
     Diskord.apply { websocket = ws }
