@@ -46,15 +46,15 @@ open class SlashCommandEvent(
         val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }
         return option?.value?.let {
             when (T::class.java) {
-                String::class.java -> option.value.jsonPrimitive.content
-                Int::class.java -> option.value.jsonPrimitive.int
-                Boolean::class.java -> option.value.jsonPrimitive.boolean
+                String::class.javaObjectType -> option.value.jsonPrimitive.content
+                Int::class.javaObjectType -> option.value.jsonPrimitive.int
+                Boolean::class.javaObjectType -> option.value.jsonPrimitive.boolean
                 User::class.java -> resolved.getUser(option.value.jsonPrimitive.content)
                 Member::class.java -> resolved.getMember(option.value.jsonPrimitive.content)
                 ChannelData::class.java -> resolved.getChannel(option.value.jsonPrimitive.content)
                 Role::class.java -> resolved.getRole(option.value.jsonPrimitive.content)
-                Unit::class.java -> TODO() // TODO type -> Mentionable
-                Long::class.java -> option.value.jsonPrimitive.long
+                Unit::class.javaObjectType -> TODO() // TODO type -> Mentionable
+                Long::class.javaObjectType -> option.value.jsonPrimitive.long
                 else -> throw Exception("Couldn't parse ${option.type} to a class")
             } as T
         }
