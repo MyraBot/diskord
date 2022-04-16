@@ -76,7 +76,7 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    suspend fun getBotUser():User = EntityProvider.getUserNonNull(this.id)!!
+    suspend fun getBotUser():User = EntityProvider.getUserNonNull(this.id)
     suspend fun getUser(id: String):User? = EntityProvider.getUser(id)
 
     fun getGuilds(): Flow<Guild> = flow {
