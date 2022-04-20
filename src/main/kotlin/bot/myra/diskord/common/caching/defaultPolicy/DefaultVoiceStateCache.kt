@@ -6,7 +6,7 @@ import bot.myra.diskord.common.entities.guild.voice.VoiceState
 
 class DefaultVoiceStateCache {
 
-    val map = mutableMapOf<DoubleKey<String?, String>, VoiceState>()
+    private val map = mutableMapOf<DoubleKey<String?, String>, VoiceState>()
 
     fun policy(): VoiceStateCachePolicy = VoiceStateCachePolicy().apply {
         view { map.values.toList() }

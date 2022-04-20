@@ -5,7 +5,7 @@ import bot.myra.diskord.common.entities.guild.Guild
 
 class DefaultGuildCache {
 
-    val map = mutableMapOf<String, Guild>()
+    private val map = mutableMapOf<String, Guild>()
 
     fun policy(): GuildCachePolicy = GuildCachePolicy().apply {
         view { map.values.toList() }

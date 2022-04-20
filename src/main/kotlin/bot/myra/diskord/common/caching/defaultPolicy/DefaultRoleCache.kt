@@ -5,7 +5,7 @@ import bot.myra.diskord.common.entities.Role
 
 class DefaultRoleCache {
 
-    val map = mutableMapOf<String, Role>()
+    private val map = mutableMapOf<String, Role>()
 
     fun policy(): RoleCachePolicy = RoleCachePolicy().apply {
         view { map.values.toList() }

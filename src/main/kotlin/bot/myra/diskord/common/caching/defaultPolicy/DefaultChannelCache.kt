@@ -6,8 +6,8 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 
 class DefaultChannelCache {
 
-    val map = mutableMapOf<String, ChannelData>()
-    val guildMap = mutableMapOf<String, MutableList<ChannelData>>()
+    private val map = mutableMapOf<String, ChannelData>()
+    private val guildMap = mutableMapOf<String, MutableList<ChannelData>>()
 
     fun policy(): ChannelCachePolicy = ChannelCachePolicy().apply {
         view { map.values.toList() }

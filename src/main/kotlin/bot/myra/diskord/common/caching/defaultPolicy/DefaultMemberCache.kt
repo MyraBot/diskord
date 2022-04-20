@@ -6,7 +6,7 @@ import bot.myra.diskord.common.entities.guild.Member
 
 class DefaultMemberCache {
 
-    val map = mutableMapOf<DoubleKey<String, String>, Member>()
+    private val map = mutableMapOf<DoubleKey<String, String>, Member>()
 
     fun policy(): MemberCachePolicy = MemberCachePolicy().apply {
         view { map.values.toList() }
