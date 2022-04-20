@@ -16,7 +16,7 @@ class DefaultChannelCache {
         remove { map.remove(it) }
         guildAssociation.apply {
             viewOrNull { guildMap[it] }
-            associatedByGuild { view().firstOrNull { it.id == id }?.guildId?.value }
+            associatedByGuild { view().find { it.id == id }?.guildId?.value }
             update { channel ->
                 val guild = channel.guildId.value ?: return@update
                 val guildCache = guildMap.getOrPut(guild) { mutableListOf() }

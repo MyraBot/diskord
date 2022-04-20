@@ -43,7 +43,7 @@ open class SlashCommandEvent(
     suspend fun getChannel(): TextChannel? = Diskord.getChannel(data.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
-        val option: SlashCommandOptionData? = arguments.firstOrNull { it.name == name }
+        val option: SlashCommandOptionData? = arguments.find { it.name == name }
         return option?.value?.let {
             when (T::class.java) {
                 String::class.javaObjectType -> option.value.jsonPrimitive.content
