@@ -12,32 +12,32 @@ import bot.myra.diskord.rest.request.RestClient
 object EntityProvider {
 
     suspend fun getUserNonNull(id: String): User =
-        Diskord.cachePolicy.userCachePolicy.get(id)
+        Diskord.cachePolicy.userCache.get(id)
             ?: RestClient.execute(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
             }
 
     suspend fun getUser(id: String): User? =
-        Diskord.cachePolicy.userCachePolicy.get(id)
+        Diskord.cachePolicy.userCache.get(id)
             ?: RestClient.executeNullable(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
             }
 
-    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCachePolicy.get(id) ?: fetchGuild(id)
+    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCache.get(id) ?: fetchGuild(id)
     suspend fun fetchGuild(id: String): Guild? = RestClient.executeNullable(Endpoints.getGuild) { arguments { arg("guild.id", id) } }
 
-    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channelCachePolicy.guildAssociation.view(id) ?: fetchGuildChannels(id)
+    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channelCache.guildAssociation.view(id) ?: fetchGuildChannels(id)
     suspend fun fetchGuildChannels(id: String): List<ChannelData> = RestClient.execute(Endpoints.getChannels) { arguments { arg("guild.id", id) } }
 
     suspend fun getChannel(id: String): ChannelData? =
-        Diskord.cachePolicy.channelCachePolicy.get(id)
+        Diskord.cachePolicy.channelCache.get(id)
             ?: RestClient.executeNullable(Endpoints.getChannel) {
                 arguments { arg("channel.id", id) }
             }
 
     suspend fun getMember(guildId: String, userId: String): Member? {
         val key = DoubleKey(guildId, userId)
-        return Diskord.cachePolicy.memberCachePolicy.get(key) ?: run {
+        return Diskord.cachePolicy.memberCache.get(key) ?: run {
             val member = RestClient.executeNullable(Endpoints.getGuildMember) {
                 arguments {
                     arg("guild.id", guildId)
@@ -48,7 +48,7 @@ object EntityProvider {
         }
     }
 
-    suspend fun getRole(guildId: String, roleId: String): Role? = Diskord.cachePolicy.roleCachePolicy.get(roleId) ?: run {
+    suspend fun getRole(guildId: String, roleId: String): Role? = Diskord.cachePolicy.roleCache.get(roleId) ?: run {
         val roles = RestClient.executeNullable(Endpoints.getRoles) {
             arguments { arg("guild.id", guildId) }
         }

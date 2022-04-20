@@ -12,7 +12,7 @@ data class VoiceChannel(
 ) : GuildChannel {
 
     suspend fun getMembers(): List<Member> {
-        val voiceStates = Diskord.cachePolicy.voiceStateCachePolicy.view().filter { it.channelId === data.id }
+        val voiceStates = Diskord.cachePolicy.voiceStateCache.view().filter { it.channelId === data.id }
         return voiceStates.map {
             val future = CompletableDeferred<Member?>()
             RestClient.coroutineScope.launch { future.complete(it.getMember()) }

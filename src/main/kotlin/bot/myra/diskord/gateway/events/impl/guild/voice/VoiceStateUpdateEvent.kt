@@ -32,7 +32,7 @@ data class VoiceStateUpdateEvent(
     }
 
     fun getMember(): Member? = newVoiceState.getMember()
-    suspend fun getGuild():Guild? = newVoiceState.guildId?.let { Diskord.getGuild(it) } ?: null
-    val oldVoiceState: VoiceState? = Diskord.cachePolicy.voiceStateCachePolicy.view().find {  it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId}
+    suspend fun getGuild():Guild? = newVoiceState.guildId?.let { Diskord.getGuild(it) }
+    val oldVoiceState: VoiceState? = Diskord.cachePolicy.voiceStateCache.view().find {  it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId}
 
 }
