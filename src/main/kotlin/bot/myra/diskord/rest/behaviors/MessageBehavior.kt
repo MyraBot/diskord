@@ -18,7 +18,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * @param messageModifier The new message.
      * @return Returns the new message.
      */
-    suspend fun edit(messageModifier: MessageModifier):Message {
+    suspend fun edit(messageModifier: MessageModifier): Message {
         return RestClient.execute(Endpoints.editMessage) {
             json = messageModifier.toJson()
             arguments {
@@ -28,9 +28,18 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    suspend fun edit(messageModifier: MessageModifier.() -> Unit):Message = edit(message.asBuilder().apply(messageModifier))
+    suspend fun edit(messageModifier: MessageModifier.() -> Unit): Message = edit(message.asBuilder().apply(messageModifier))
 
-    suspend fun addReaction(emoji: String):Unit {
+    suspend fun delete() {
+        RestClient.execute(Endpoints.deleteMessage) {
+            arguments {
+                arg("channel.id", message.channelId)
+                arg("message.id", message.id)
+            }
+        }
+    }
+
+    suspend fun addReaction(emoji: String): Unit {
         return RestClient.execute(Endpoints.addReaction) {
             arguments {
                 arg("channel.id", message.channelId)

@@ -42,6 +42,7 @@ object Endpoints {
         Diskord.cachePolicy.guildCachePolicy.update(guild)
     }
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
+    val deleteMessage = Route(HttpMethod.Delete, "/channels/{channel.id}/messages/{message.id}", Unit.serializer())
     val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer())) { roles, args ->
         roles.forEach {
             Diskord.cachePolicy.roleCachePolicy.update(it)
