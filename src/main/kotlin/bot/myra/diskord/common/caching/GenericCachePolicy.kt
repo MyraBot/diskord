@@ -10,26 +10,13 @@ abstract class GenericCachePolicy<K, V>(
     internal var update: ((V) -> Unit)? = null,
     internal var remove: ((K) -> Unit)? = null
 ) : EventListener {
-
-    fun view(action: () -> List<V>) {
-        view = action
-    }
-
-    fun get(action: (K) -> V?) {
-        get = action
-    }
-
-    fun update(action: (V) -> Unit) {
-        update = action
-    }
-
-    fun remove(action: (K) -> Unit) {
-        remove = action
-    }
+    fun view(action: () -> List<V>) = run { view = action }
+    fun get(action: (K) -> V?) = run { get = action }
+    fun update(action: (V) -> Unit) = run { update = action }
+    fun remove(action: (K) -> Unit) = run { remove = action }
 
     fun view() = view?.invoke() ?: emptyList()
     fun get(key: K): V? = get?.invoke(key)
     fun update(value: V) = update?.invoke(value)
     fun remove(key: K) = remove?.invoke(key)
-
 }
