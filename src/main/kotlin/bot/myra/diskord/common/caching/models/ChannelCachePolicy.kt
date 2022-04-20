@@ -1,22 +1,32 @@
 package bot.myra.diskord.common.caching.models
 
 import bot.myra.diskord.common.caching.GenericCachePolicy
+import bot.myra.diskord.common.caching.GuildCacheAssociation
 import bot.myra.diskord.common.entities.channel.ChannelData
+import bot.myra.diskord.gateway.events.ListenTo
+import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
+import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
+import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
 
-class ChannelCachePolicy(
-    var viewByGuild: ((String) -> List<ChannelData>)? = null,
-    var associatedByGuild: ((String) -> String)? = null
-) : GenericCachePolicy<String, ChannelData>() {
+class ChannelCachePolicy : GenericCachePolicy<String, ChannelData>() {
+    val guildAssociation = GuildCacheAssociation<ChannelData>()
 
-    fun viewByGuild(action: (String) -> List<ChannelData>) {
-        viewByGuild = action
+    @ListenTo(ChannelCreateEvent::class)
+    fun onChannelCreate(event: ChannelCreateEvent) = updateChannel(event.channelData)
+
+    @ListenTo(ChannelUpdateEvent::class)
+    fun onChannelUpdate(event: ChannelUpdateEvent) = updateChannel(event.channelData)
+
+    private fun updateChannel(channel: ChannelData) {
+        update(channel)
+        guildAssociation.update(channel)
     }
 
-    fun associatedByGuild(action: (String) -> String) {
-        associatedByGuild = action
+    @ListenTo(ChannelDeleteEvent::class)
+    fun onChannelDelete(event: ChannelDeleteEvent) {
+        remove(event.channelData.id)
+        val guild = event.channelData.guildId.value ?: return
+        guildAssociation.remove(guild, event.channelData.id)
     }
-
-    fun viewByGuild(id: String): List<ChannelData> = viewByGuild?.invoke(id) ?: view().filter { it.guildId.value == id }
-    fun associatedByGuild(id: String): String? = associatedByGuild?.invoke(id) ?: view().firstOrNull { it.id == id }?.guildId?.value
 
 }

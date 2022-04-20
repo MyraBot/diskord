@@ -43,8 +43,6 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
 
     suspend fun getRole(id: String): Role? = EntityProvider.getRole(this.id, id)
 
-    suspend fun getChannels(): List<ChannelData> = RestClient.execute(Endpoints.getChannels) {
-        arguments { arg("guild.id", this@GuildBehavior.id) }
-    }
+    suspend fun getChannels(): List<ChannelData> = EntityProvider.getGuildChannels(this.id)
 
 }

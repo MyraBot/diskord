@@ -21,7 +21,12 @@ object Endpoints {
     val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer()) { channel, args ->
         Diskord.cachePolicy.channelCachePolicy.update(channel)
     }
-    val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer()))
+    val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer())) {channels,args->
+        channels.forEach {
+            Diskord.cachePolicy.channelCachePolicy.update(it)
+            Diskord.cachePolicy.channelCachePolicy.guildAssociation.update(it)
+        }
+    }
     val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer()) { user, args ->
         Diskord.cachePolicy.userCachePolicy.update(user)
     }
