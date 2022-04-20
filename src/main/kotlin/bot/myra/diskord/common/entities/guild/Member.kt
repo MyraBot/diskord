@@ -52,8 +52,8 @@ data class Member(
     val mention: String = Mention.user(id)
     val voiceState: VoiceState? get() = Diskord.cachePolicy.voiceStateCache.view().firstOrNull { it.userId == this.id && it.guildId == this.guildId }
 
-    suspend fun getGuild(): Guild? = Diskord.getGuild(guildId)
-    suspend fun getRoles(): List<Role> = getGuild()!!.roles.filter { roleIds.contains(it.id) }
+    suspend fun getGuild(): Guild = Diskord.getGuild(guildId)!!
+    suspend fun getRoles(): List<Role> = getGuild().roles.filter { roleIds.contains(it.id) }
     suspend fun getColour(): Color = getRoles().reversed().first { it.colour != Color.decode("0") }.colour
     suspend fun ban() = ban(null, null)
     suspend fun ban(deleteMessages: Int) = ban(deleteMessages, null)
