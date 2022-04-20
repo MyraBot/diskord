@@ -17,21 +17,17 @@ data class AutoCompleteEvent(
     val subcommand: AutoCompleteOption? get() = (subcommandGroup?.options ?: autoCompletion.options!!).firstOrNull { it.type == SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
     val option: AutoCompleteOption?
         get() = (subcommand?.options ?: autoCompletion.options!!).firstOrNull { it.type != SlashCommandOptionType.SUB_COMMAND_GROUP && it.type != SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
-    val focused: AutoCompleteOption get() = findFocused(autoCompletion.options!!) ?: throw Exception("Couldn't find the focused value")
+    val focused: AutoCompleteOption get() = findFocused(autoCompletion.options!!)
     val member: Member? = data.member
 
+    private val subcommandTypes = listOf(SlashCommandOptionType.SUB_COMMAND_GROUP, SlashCommandOptionType.SUB_COMMAND)
+    private fun findFocused(options: List<AutoCompleteOption>): AutoCompleteOption =
+        options.firstOrNull { it.type in subcommandTypes }?.let { findFocused(it.options!!) }
+            ?: options.first { it.focused == true }
 
-    private fun findFocused(options: List<AutoCompleteOption>): AutoCompleteOption? {
-        for (option in options) {
-            when (option.type) {
-                SlashCommandOptionType.SUB_COMMAND_GROUP -> return findFocused(option.options!!)
-                SlashCommandOptionType.SUB_COMMAND       -> return findFocused(option.options!!)
-                else                                     -> if (option.focused == true) return option
-            }
-        }
-        return null
+    private fun hasFocused(option: AutoCompleteOption): Boolean {
+        return if (option.type in subcommandTypes) option.options!!.any { hasFocused(it) }
+        else option.focused == true
     }
-
-    private fun hasFocused(option: AutoCompleteOption): Boolean = findFocused(listOf(option)) != null
 
 }
