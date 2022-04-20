@@ -5,15 +5,15 @@ import bot.myra.diskord.gateway.events.EventListener
 data class DoubleKey<F, S>(val first: F, val second: S)
 
 abstract class GenericCachePolicy<K, V>(
-    internal var view: (() -> List<V>)? = null,
-    internal var get: ((K) -> V?)? = null,
-    internal var update: ((V) -> Unit)? = null,
+    internal var view: ViewCache<V>? = null,
+    internal var get: GetCache<K, V>? = null,
+    internal var update: UpdateCache<V>? = null,
     internal var remove: ((K) -> Unit)? = null
 ) : EventListener {
-    fun view(action: () -> List<V>) = run { view = action }
-    fun get(action: (K) -> V?) = run { get = action }
-    fun update(action: (V) -> Unit) = run { update = action }
-    fun remove(action: (K) -> Unit) = run { remove = action }
+    fun view(action: ViewCache<V>) = run { view = action }
+    fun get(action: GetCache<K, V>) = run { get = action }
+    fun update(action: UpdateCache<V>) = run { update = action }
+    fun remove(action: RemoveCache<K>) = run { remove = action }
 
     fun view() = view?.invoke() ?: emptyList()
     fun get(key: K): V? = get?.invoke(key)
