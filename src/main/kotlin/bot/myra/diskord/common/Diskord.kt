@@ -76,30 +76,28 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
-    suspend fun getBotUser():User = EntityProvider.getUserNonNull(this.id)
-    suspend fun getUser(id: String):User? = EntityProvider.getUser(id)
+    suspend fun getBotUser(): User = EntityProvider.getUserNonNull(this.id)
+    suspend fun getUser(id: String): User? = EntityProvider.getUser(id)
 
     fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
         when (cachePolicy.guildCache.update === null) {
-            true -> copiedIds.forEach { id -> emitGuildFromCache(id) }
+            true  -> copiedIds.forEach { id -> emitGuildFromCache(id) }
             false -> copiedIds.forEach { id -> this@Diskord.getGuild(id)?.let { emit(it) } }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
         val guild: Guild? = cachePolicy.guildCache.get(id) ?: run {
-            if (unavailableGuilds.contains(id)) {
-                pendingGuilds[id]!!.await()
-            } else EntityProvider.getGuild(id)
+            pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id)
         }
         guild?.let { emit(it) }
     }
 
-    suspend fun getGuild(id: String):Guild? = EntityProvider.getGuild(id)
-    suspend fun fetchGuild(id: String):Guild? = EntityProvider.fetchGuild(id)
+    suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
+    suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
 
-    suspend fun getMessage(channel: String, message: String):Message? {
+    suspend fun getMessage(channel: String, message: String): Message? {
         return RestClient.executeNullable(Endpoints.getChannelMessage) {
             arguments {
                 arg("channel.id", channel)
