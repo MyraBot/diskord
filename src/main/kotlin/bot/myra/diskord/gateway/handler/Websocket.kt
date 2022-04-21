@@ -17,6 +17,8 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.int
@@ -65,10 +67,10 @@ class Websocket(
                 connection = this
                 waitingCalls.forEach { send(it.toJson()) }
 
-                while (true) {
-                    val data = incoming.receive() as? Frame.Text
-                    kDebug(this::class) { "Gateway << ${data?.readText()}" }
-                    val income = JSON.decodeFromString<OptCode>(data!!.readText())
+                incoming.receiveAsFlow().collect {
+                    val data = it as Frame.Text
+                    kDebug(this::class) { "Gateway << ${data.readText()}" }
+                    val income = JSON.decodeFromString<OptCode>(data.readText())
                     handleIncome(income, resume)
                 }
             })
@@ -83,12 +85,12 @@ class Websocket(
     private suspend fun handleIncome(income: OptCode, resume: Boolean) {
         when (income.op) {
             // 	An event was dispatched
-            0 -> {
+            0  -> {
                 Events.resolve(income)
                 s = income.s ?: s
             }
             // 	Fired periodically by the client to keep the connection alive
-            1 -> {
+            1  -> {
                 debug(this::class) { "Received Heartbeat attack!" }
                 sendHeartbeat()
             }
