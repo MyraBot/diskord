@@ -22,7 +22,7 @@ object Events {
     val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
 
     fun resolve(income: OptCode) {
-        val json = income.d!!
+        val json = income.d ?: return
         when (income.t!!) {
             "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
             "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
