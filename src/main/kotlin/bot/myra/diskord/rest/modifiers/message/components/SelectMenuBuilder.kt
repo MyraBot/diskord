@@ -6,6 +6,7 @@ import bot.myra.diskord.common.entities.applicationCommands.components.items.sel
 /**
  * Builder for [SelectMenu]s.
  */
+@Suppress("unused")
 class SelectMenuBuilder {
 
     var id: String? = null
