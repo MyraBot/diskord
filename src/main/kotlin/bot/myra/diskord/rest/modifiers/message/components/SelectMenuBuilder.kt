@@ -3,6 +3,9 @@ package bot.myra.diskord.rest.modifiers.message.components
 import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
 import bot.myra.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
 
+/**
+ * Builder for [SelectMenu]s.
+ */
 class SelectMenuBuilder {
 
     lateinit var id: String
@@ -18,6 +21,11 @@ class SelectMenuBuilder {
 
     fun addOptions(vararg options: SelectOption) = this.options.addAll(options)
 
+    /**
+     * Create a [SelectMenu] from a builder.
+     *
+     * @return Returns an equal [SelectMenu].
+     */
     fun asSelectMenu(): SelectMenu = SelectMenu(
         id = this.id,
         options = this.options,

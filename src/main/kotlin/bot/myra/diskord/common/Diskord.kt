@@ -1,5 +1,9 @@
 package bot.myra.diskord.common
 
+import bot.myra.diskord.common.Diskord.cachePolicy
+import bot.myra.diskord.common.Diskord.gatewayClient
+import bot.myra.diskord.common.Diskord.intents
+import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.caching.CachePolicy
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.Guild
@@ -31,6 +35,18 @@ import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
+/**
+ * Main Api interface. Can be used as a direct object reference.
+ * **Do not use this object before calling the [diskord] function.**
+ *
+ * With this object you can access the Discord API without the needs of an event.
+ *
+ * Holds gateway information like
+ * - [gatewayClient]
+ * - [listeners]
+ * - [intents]
+ * - [cachePolicy]
+ */
 @Suppress("unused")
 object Diskord : GetTextChannelBehavior {
     lateinit var token: String
