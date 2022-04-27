@@ -13,6 +13,9 @@ class SelectMenuBuilder {
     var disabled: Boolean = false
 
     fun addOption(option: SelectOption) = this.options.add(option)
+    fun addOption(builder: SelectOption.() -> Unit) = this.options.add(SelectOption("", "").apply(builder)
+        .apply { if (label.isEmpty() || value.isEmpty()) throw IllegalArgumentException("Label and value can't be empty") })
+
     fun addOptions(vararg options: SelectOption) = this.options.addAll(options)
 
     fun asSelectMenu(): SelectMenu = SelectMenu(
