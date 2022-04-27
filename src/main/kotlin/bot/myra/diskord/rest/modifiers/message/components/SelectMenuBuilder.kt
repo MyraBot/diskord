@@ -8,7 +8,7 @@ import bot.myra.diskord.common.entities.applicationCommands.components.items.sel
  */
 class SelectMenuBuilder {
 
-    lateinit var id: String
+    var id: String? = null
     val options: MutableList<SelectOption> = mutableListOf()
     var placeholder: String? = null
     var minValues: Int = 1
@@ -26,13 +26,15 @@ class SelectMenuBuilder {
      *
      * @return Returns an equal [SelectMenu].
      */
-    fun asSelectMenu(): SelectMenu = SelectMenu(
-        id = this.id,
-        options = this.options,
-        placeholder = this.placeholder,
-        minValues = this.minValues,
-        maxValues = this.maxValues,
-        disabled = this.disabled
-    )
+    fun asSelectMenu(): SelectMenu = id?.let {
+        SelectMenu(
+            id = it,
+            options = this.options,
+            placeholder = this.placeholder,
+            minValues = this.minValues,
+            maxValues = this.maxValues,
+            disabled = this.disabled
+        )
+    } ?: throw IllegalStateException("Missing id")
 
 }
