@@ -2,7 +2,7 @@ package bot.myra.diskord.rest
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Application
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData

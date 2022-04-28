@@ -1,6 +1,6 @@
 package bot.myra.diskord.rest.behaviors.guild
 
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.request.RestClient

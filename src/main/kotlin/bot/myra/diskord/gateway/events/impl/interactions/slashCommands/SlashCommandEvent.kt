@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.interactions.slashCommands
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.Resolved
@@ -51,8 +51,8 @@ open class SlashCommandEvent(
                 Boolean::class.javaObjectType -> option.value.jsonPrimitive.boolean
                 User::class.java -> resolved.getUser(option.value.jsonPrimitive.content)
                 Member::class.java -> resolved.getMember(option.value.jsonPrimitive.content)
-                ChannelData::class.java -> resolved.getChannel(option.value.jsonPrimitive.content)
-                Role::class.java -> resolved.getRole(option.value.jsonPrimitive.content)
+                ChannelData::class.java    -> resolved.getChannel(option.value.jsonPrimitive.content)
+                Role::class.java           -> resolved.getRole(option.value.jsonPrimitive.content)
                 Unit::class.javaObjectType -> TODO() // TODO type -> Mentionable
                 Long::class.javaObjectType -> option.value.jsonPrimitive.long
                 else -> throw Exception("Couldn't parse ${option.type} to a class")

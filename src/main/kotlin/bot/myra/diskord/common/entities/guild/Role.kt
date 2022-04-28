@@ -1,5 +1,6 @@
-package bot.myra.diskord.common.entities
+package bot.myra.diskord.common.entities.guild
 
+import bot.myra.diskord.common.entities.Permission
 import bot.myra.diskord.common.serializers.SColor
 import bot.myra.diskord.common.utilities.Mention
 import kotlinx.serialization.SerialName

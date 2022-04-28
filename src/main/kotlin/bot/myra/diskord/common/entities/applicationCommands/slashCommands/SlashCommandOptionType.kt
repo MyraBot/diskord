@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.entities.applicationCommands.slashCommands
 
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.channel.ChannelData
 import kotlinx.serialization.KSerializer

@@ -1,7 +1,6 @@
 package bot.myra.diskord.common.entities.guild
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.common.serializers.SInstant

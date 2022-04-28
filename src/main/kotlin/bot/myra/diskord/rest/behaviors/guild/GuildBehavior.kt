@@ -2,7 +2,7 @@
 
 package bot.myra.diskord.rest.behaviors.guild
 
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.rest.Endpoints

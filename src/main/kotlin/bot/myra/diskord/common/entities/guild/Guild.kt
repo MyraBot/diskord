@@ -3,7 +3,6 @@ package bot.myra.diskord.common.entities.guild
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Emoji
 import bot.myra.diskord.common.entities.Locale
-import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Optional

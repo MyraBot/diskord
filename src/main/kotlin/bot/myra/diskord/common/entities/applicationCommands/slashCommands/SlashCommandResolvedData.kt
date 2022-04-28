@@ -1,7 +1,7 @@
 package bot.myra.diskord.common.entities.applicationCommands.slashCommands
 
 import bot.myra.diskord.common.entities.channel.ChannelData
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
@@ -14,11 +14,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ResolvedData(
-        val users: HashMap<String, User> = hashMapOf(),
-        val members: HashMap<String, MemberData> = hashMapOf(),
-        val roles: HashMap<String, Role> = hashMapOf(),
-        val channels: HashMap<String, ChannelData> = hashMapOf(),
-        val messages: HashMap<String, Message> = hashMapOf()
+    val users: HashMap<String, User> = hashMapOf(),
+    val members: HashMap<String, MemberData> = hashMapOf(),
+    val roles: HashMap<String, Role> = hashMapOf(),
+    val channels: HashMap<String, ChannelData> = hashMapOf(),
+    val messages: HashMap<String, Message> = hashMapOf()
 )
 
 data class Resolved(

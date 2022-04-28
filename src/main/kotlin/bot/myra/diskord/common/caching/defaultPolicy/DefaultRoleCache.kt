@@ -1,7 +1,7 @@
 package bot.myra.diskord.common.caching.defaultPolicy
 
 import bot.myra.diskord.common.caching.models.RoleCachePolicy
-import bot.myra.diskord.common.entities.Role
+import bot.myra.diskord.common.entities.guild.Role
 
 class DefaultRoleCache {
 
