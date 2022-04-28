@@ -2,9 +2,9 @@
 
 package bot.myra.diskord.rest.behaviors.guild
 
-import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Member
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.behaviors.Entity
@@ -27,7 +27,7 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         return memberDataList.map { Member.withUserInMember(it, id) }
     }
 
-    suspend fun unbanMember(id: String, reason: String? = null): Unit {
+    suspend fun unbanMember(id: String, reason: String? = null) {
         return RestClient.execute(Endpoints.removeGuildBan) {
             logReason = reason
             arguments {

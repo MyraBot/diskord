@@ -12,7 +12,7 @@ interface MemberBehavior : Entity {
 
     suspend fun addRole(role: Role) = addRole(role.id)
 
-    suspend fun addRole(id: String):Unit {
+    suspend fun addRole(id: String) {
         return RestClient.execute(Endpoints.addMemberRole) {
             arguments {
                 arg("guild.id", guildId)
@@ -24,7 +24,7 @@ interface MemberBehavior : Entity {
 
     suspend fun removeRole(role: Role) = removeRole(role.id)
 
-    suspend fun removeRole(id: String):Unit {
+    suspend fun removeRole(id: String) {
         return RestClient.execute(Endpoints.removeMemberRole) {
             arguments {
                 arg("guild.id", guildId)
