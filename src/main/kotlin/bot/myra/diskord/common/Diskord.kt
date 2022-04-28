@@ -6,6 +6,7 @@ import bot.myra.diskord.common.Diskord.intents
 import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.caching.CachePolicy
 import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.gateway.commands.Presence
@@ -92,6 +93,7 @@ object Diskord : GetTextChannelBehavior {
         websocket.updatePresence(operation)
     }
 
+    suspend fun getApplicationCommands(): List<SlashCommand> = EntityProvider.getApplicationCommands()
     suspend fun getBotUser(): User = EntityProvider.getUserNonNull(this.id)
     suspend fun getUser(id: String): User? = EntityProvider.getUser(id)
 

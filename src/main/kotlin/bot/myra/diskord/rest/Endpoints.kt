@@ -4,6 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Application
 import bot.myra.diskord.common.entities.Role
 import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
@@ -17,11 +18,12 @@ import kotlinx.serialization.builtins.serializer
 object Endpoints {
     const val baseUrl = "https://discord.com/api/v8"
 
+    val getGlobalApplicationCommands = Route(HttpMethod.Get, "/applications/{application.id}/commands", ListSerializer(SlashCommand.serializer()))
     val createMessage = Route(HttpMethod.Post, "/channels/{channel.id}/messages", Message.serializer())
     val getChannel = Route(HttpMethod.Get, "/channels/{channel.id}", ChannelData.serializer()) { channel, args ->
         Diskord.cachePolicy.channelCache.update(channel)
     }
-    val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer())) {channels,args->
+    val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer())) { channels, args ->
         channels.forEach {
             Diskord.cachePolicy.channelCache.update(it)
             Diskord.cachePolicy.channelCache.guildAssociation.update(it)
