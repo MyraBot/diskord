@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events.impl
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.guild.UnavailableGuild
 import bot.myra.diskord.gateway.events.Event
 import kotlinx.serialization.SerialName

@@ -1,8 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.interactions.slashCommands
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.guild.Role
-import bot.myra.diskord.common.entities.User
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.Resolved
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
@@ -12,6 +10,8 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.channel.TextChannel
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
+import bot.myra.diskord.common.entities.guild.Role
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.events.impl.interactions.GenericInteractionCreateEvent
 import bot.myra.diskord.rest.EntityProvider
@@ -49,8 +49,8 @@ open class SlashCommandEvent(
                 String::class.javaObjectType -> option.value.jsonPrimitive.content
                 Int::class.javaObjectType -> option.value.jsonPrimitive.int
                 Boolean::class.javaObjectType -> option.value.jsonPrimitive.boolean
-                User::class.java -> resolved.getUser(option.value.jsonPrimitive.content)
-                Member::class.java -> resolved.getMember(option.value.jsonPrimitive.content)
+                User::class.java              -> resolved.getUser(option.value.jsonPrimitive.content)
+                Member::class.java            -> resolved.getMember(option.value.jsonPrimitive.content)
                 ChannelData::class.java    -> resolved.getChannel(option.value.jsonPrimitive.content)
                 Role::class.java           -> resolved.getRole(option.value.jsonPrimitive.content)
                 Unit::class.javaObjectType -> TODO() // TODO type -> Mentionable

@@ -3,7 +3,7 @@ package bot.myra.diskord.common.entities.applicationCommands
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.common.entities.Locale
-import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.Message

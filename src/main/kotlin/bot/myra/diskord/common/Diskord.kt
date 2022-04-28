@@ -5,7 +5,7 @@ import bot.myra.diskord.common.Diskord.gatewayClient
 import bot.myra.diskord.common.Diskord.intents
 import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.caching.CachePolicy
-import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message

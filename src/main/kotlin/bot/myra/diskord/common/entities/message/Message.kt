@@ -1,7 +1,7 @@
 package bot.myra.diskord.common.entities.message
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild

@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.entities.guild
 
-import bot.myra.diskord.common.entities.User
+import bot.myra.diskord.common.entities.user.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
