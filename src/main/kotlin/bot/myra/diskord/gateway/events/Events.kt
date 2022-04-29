@@ -10,7 +10,6 @@ import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import bot.myra.diskord.gateway.events.impl.interactions.InteractionCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageCreateEvent
 import bot.myra.diskord.gateway.handler.OptCode
-import bot.myra.kommons.error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -47,13 +46,8 @@ object Events {
      */
     fun findListeners(packageName: String) {
         Reflections(packageName).getSubTypesOf(EventListener::class.java)
-            .map { it.kotlin.objectInstance }
-            .forEach {
-                if (it == null) {
-                    error(this::class) { "Found a listener which is not an object, skipping..." }
-                    return@forEach
-                } else it.loadListeners()
-            }
+            .mapNotNull { it.kotlin.objectInstance }
+            .forEach { it.loadListeners() }
     }
 
 }
