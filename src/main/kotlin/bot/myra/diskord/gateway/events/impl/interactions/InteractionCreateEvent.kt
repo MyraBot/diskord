@@ -12,23 +12,21 @@ class InteractionCreateEvent(
     val interaction: Interaction,
 ) : Event() {
 
-    override fun prepareEvent() {
-        when (interaction.type) {
-            InteractionType.PING -> TODO()
-            InteractionType.APPLICATION_COMMAND -> {
-                if (!interaction.guildId.missing) GuildSlashCommandEvent(interaction)
-                SlashCommandEvent(interaction)
-            }
-            InteractionType.MESSAGE_COMPONENT -> {
-                when (interaction.interactionComponentData?.componentType) {
-                    ComponentType.ACTION_ROW -> TODO()
-                    ComponentType.BUTTON -> ButtonClickEvent(interaction)
-                    ComponentType.SELECT_MENU -> SelectMenuEvent(interaction)
-                    null -> TODO()
-                }
-            }
-            InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
+    override fun prepareEvent() = when (interaction.type) {
+        InteractionType.PING                             -> TODO()
+        InteractionType.APPLICATION_COMMAND              -> {
+            if (!interaction.guildId.missing) GuildSlashCommandEvent(interaction)
+            SlashCommandEvent(interaction)
         }
-    }
+        InteractionType.MESSAGE_COMPONENT                -> {
+            when (interaction.interactionComponentData?.componentType) {
+                ComponentType.ACTION_ROW  -> TODO()
+                ComponentType.BUTTON      -> ButtonClickEvent(interaction)
+                ComponentType.SELECT_MENU -> SelectMenuEvent(interaction)
+                null                      -> TODO()
+            }
+        }
+        InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
+    }.call()
 
 }
