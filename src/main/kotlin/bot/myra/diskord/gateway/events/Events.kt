@@ -22,7 +22,7 @@ object Events {
 
     fun resolve(income: OptCode) {
         val json = income.d ?: return
-        when (income.t!!) {
+        val event = when (income.t!!) {
             "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
             "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
             "CHANNEL_UPDATE"      -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
@@ -35,7 +35,8 @@ object Events {
             "MESSAGE_CREATE"      -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
             "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
             "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
-        }
+            else                  -> null
+        }?.call()
     }
 
     /**

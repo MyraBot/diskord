@@ -7,9 +7,9 @@ data class GenericGuildDeleteEvent(
     val guild: UnavailableGuild
 ) : Event() {
 
-    override suspend fun prepareEvent() {
-        if (guild.wasLeft) GuildLeaveEvent(guild)
-        else GuildUnloadEvent(guild)
-    }
+    override fun prepareEvent() = when (guild.wasLeft) {
+        true  -> GuildLeaveEvent(guild)
+        false -> GuildUnloadEvent(guild)
+    }.call()
 
 }

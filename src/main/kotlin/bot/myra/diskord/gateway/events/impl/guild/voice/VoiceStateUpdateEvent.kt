@@ -19,7 +19,7 @@ data class VoiceStateUpdateEvent(
     @SerialName("voice_state") val newVoiceState: VoiceState,
 ) : Event() {
 
-    override suspend fun prepareEvent() {
+    override fun prepareEvent() {
         if (oldVoiceState == null && newVoiceState.channelId != null) VoiceJoinEvent(newVoiceState)
         else if (oldVoiceState?.channelId != null && newVoiceState.channelId == null) VoiceLeaveEvent(newVoiceState, oldVoiceState)
         else if (oldVoiceState != null && oldVoiceState.channelId != newVoiceState.channelId) VoiceMoveEvent(oldVoiceState, newVoiceState)
@@ -32,7 +32,7 @@ data class VoiceStateUpdateEvent(
     }
 
     fun getMember(): Member? = newVoiceState.getMember()
-    suspend fun getGuild():Guild? = newVoiceState.guildId?.let { Diskord.getGuild(it) }
-    val oldVoiceState: VoiceState? = Diskord.cachePolicy.voiceStateCache.view().find {  it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId}
+    suspend fun getGuild(): Guild? = newVoiceState.guildId?.let { Diskord.getGuild(it) }
+    val oldVoiceState: VoiceState? = Diskord.cachePolicy.voiceStateCache.view().find { it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId }
 
 }

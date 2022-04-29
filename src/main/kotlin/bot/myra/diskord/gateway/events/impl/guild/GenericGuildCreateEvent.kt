@@ -18,14 +18,12 @@ data class GenericGuildCreateEvent(
     val guild: Guild
 ) : Event() {
 
-    override suspend fun prepareEvent() {
-        // Guild was unavailable
-        if (Diskord.unavailableGuilds.contains(guild.id)) {
+    override fun prepareEvent() = when (guild.id in Diskord.unavailableGuilds) {
+        true  -> {
             Diskord.unavailableGuilds.remove(guild.id)
             GuildAvailableEvent(guild)
         }
-        // Bot joined guild
-        else GuildCreateEvent(guild)
-    }
+        false -> GuildCreateEvent(guild)
+    }.call()
 
 }

@@ -12,7 +12,7 @@ class InteractionCreateEvent(
     val interaction: Interaction,
 ) : Event() {
 
-    override suspend fun prepareEvent() {
+    override fun prepareEvent() {
         when (interaction.type) {
             InteractionType.PING -> TODO()
             InteractionType.APPLICATION_COMMAND -> {

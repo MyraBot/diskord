@@ -19,20 +19,16 @@ private val scope: CoroutineScope = CoroutineScope(ForkJoinPool().asCoroutineDis
  */
 abstract class Event : DefaultBehavior {
 
-    init {
-        Events.coroutineScope.launch {
-            prepareEvent()
-            call()
-        }
-    }
-
-    open suspend fun prepareEvent() {}
+    open fun prepareEvent() {}
 
     /**
-     * Runs [runFunctions] for caching purpose and for all registered listeners.
+     * Prepares the event to be ready to be called and executes the events for all registered listeners.
      */
-    private suspend fun call() {
-        Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
+    fun call() {
+        Events.coroutineScope.launch {
+            prepareEvent()
+            Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
+        }
     }
 
     /**
@@ -41,7 +37,7 @@ abstract class Event : DefaultBehavior {
      * @param listener Event listener superclass.
      * @param functions Already pre-filtered listener functions.
      */
-    private suspend fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
+    private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
         functions.filter { it.findAnnotation<ListenTo>()?.event == this::class }
             .forEach { scope.launch { runEvent(it, listener) } }
     }
