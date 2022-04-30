@@ -13,15 +13,16 @@ import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.HttpTimeout
-import io.ktor.client.features.defaultRequest
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.header
 import io.ktor.client.request.headers
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.readText
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,18 +82,18 @@ object RestClient {
         debug(this::class) { "Rest >>> ${data.route.httpMethod}: $route - ${data.json}" }
         val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
         else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
-        kDebug(this::class) { "Rest <<< ${response.readText()}" }
+        kDebug(this::class) { "Rest <<< ${response.bodyAsText()}" }
 
         if (response.status.isSuccess()) {
             @Suppress("UNCHECKED_CAST")
             return if (data.route.serializer == Unit.serializer()) Unit as R
             else {
-                val deserialized: R = JSON.decodeFromString(data.route.serializer, response.readText())
+                val deserialized: R = JSON.decodeFromString(data.route.serializer, response.bodyAsText())
                 data.route.cache?.invoke(deserialized, data.arguments)
                 deserialized
             }
         } else {
-            val error = JSON.decodeFromString<JsonObject>(response.readText())
+            val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
             val message = error["message"]?.string ?: "No error message provided"
             return when (response.status) {
                 HttpStatusCode.NotModified      -> throw  ModificationException(message)
@@ -120,7 +121,7 @@ object RestClient {
             reason?.let { headers { header("X-Audit-Log-Reason", it) } }
             json?.let {
                 contentType(ContentType.Application.Json)
-                body = it
+                setBody(it)
             }
         }
     }

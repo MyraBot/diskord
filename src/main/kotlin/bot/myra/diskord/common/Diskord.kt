@@ -5,10 +5,10 @@ import bot.myra.diskord.common.Diskord.gatewayClient
 import bot.myra.diskord.common.Diskord.intents
 import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.caching.CachePolicy
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.gateway.commands.Presence
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.commands.Status
@@ -25,7 +25,7 @@ import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.plugins.websocket.WebSockets
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
