@@ -1,6 +1,5 @@
 package bot.myra.diskord.rest
 
-import bot.myra.diskord.common.Arguments
 import bot.myra.diskord.common.utilities.FileFormats
 
 /**
@@ -17,8 +16,8 @@ object CdnEndpoints {
     val guildBanner = CdnRoute("banners/{guild_id}/{guild_banner}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
     val userBanner = CdnRoute("banners/{user_id}/{user_banner}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
     val defaultUserAvatar = CdnRoute("embed/avatars/{user_discriminator}.png", listOf(FileFormats.PNG))
-    val userAvatar = CdnRoute("avatars/{user_id}/{user_avatar}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
-    val guildMemberAvatar = CdnRoute("guilds/{guild_id}/users/{user_id}/avatars/{member_avatar}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
+    val userAvatar = CdnRoute("avatars/{user_id}/{user_avatar}.png?size=2048", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
+    val guildMemberAvatar = CdnRoute("guilds/{guild_id}/users/{user_id}/avatars/{member_avatar}.png?size=2048", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P, FileFormats.GIF), true)
     val applicationIcon = CdnRoute("app-icons/{application_id}/icon.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
     val applicationCover = CdnRoute("app-icons/{application_id}/{cover_image}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
     val applicationAsset = CdnRoute("app-assets/{application_id}/{asset_id}.png", listOf(FileFormats.PNG, FileFormats.JPEG, FileFormats.WEB_P))
