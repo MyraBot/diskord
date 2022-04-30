@@ -21,8 +21,8 @@ repositories {
     mavenCentral()
     maven(url = "https://systems.myra.bot/releases/") {
         credentials {
-            username = System.getenv("REPO_NAME")
-            password = System.getenv("REPO_SECRET")
+            username = property("REPO_NAME")?.toString()
+            password = property("REPO_SECRET")?.toString()
         }
     }
 }
