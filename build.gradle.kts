@@ -8,8 +8,8 @@ val kotlinx: String by project
 val kotlinxSerialization: String by project
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.serialization") version "1.5.30"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     `maven-publish`
 }
 
@@ -21,8 +21,8 @@ repositories {
     mavenCentral()
     maven(url = "https://systems.myra.bot/releases/") {
         credentials {
-            username = System.getenv("REPO_NAME")
-            password = System.getenv("REPO_SECRET")
+            username = property("REPO_NAME")?.toString()
+            password = property("REPO_SECRET")?.toString()
         }
     }
 }
@@ -37,11 +37,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerialization") // Serializer
 
     // Reflections
-    compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    compileOnly(kotlin("reflect"))
     compileOnly("org.reflections:reflections:0.10.2")
 
     testImplementation("bot.myra:kommons:$kommons")
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")
 }
 
