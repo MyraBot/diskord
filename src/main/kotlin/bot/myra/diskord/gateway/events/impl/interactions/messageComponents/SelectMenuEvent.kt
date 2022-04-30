@@ -1,4 +1,4 @@
-package bot.myra.diskord.gateway.events.impl.interactions
+package bot.myra.diskord.gateway.events.impl.interactions.messageComponents
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
@@ -11,19 +11,19 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 data class SelectMenuEvent(
-    override val data: Interaction,
-) : GenericInteractionCreateEvent(data) {
-    val message: Message = data.message.value!!
-    val member: Member? get() = data.member
+    override val interaction: Interaction,
+) : GenericMessageComponentEvent(interaction) {
+    val message: Message = interaction.message.value!!
+    val member: Member? get() = interaction.member
     val selectMenu: SelectMenu
         get() = message.components
             .asSequence()
             .flatMap { it.components }
-            .first { it.id == data.interactionComponentData?.customId }
+            .first { it.id == component.customId }
             .let { return it.asSelectMenu() }
-    val id: String get() = data.id
-    val values: List<String> get() = data.interactionDataJson.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
+    val id: String get() = interaction.id
+    val values: List<String> get() = interaction.data.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 
-    suspend fun getGuild(): Guild? = data.guildId.value?.let { Diskord.getGuild(it) }
+    suspend fun getGuild(): Guild? = interaction.guildId.value?.let { Diskord.getGuild(it) }
 
 }

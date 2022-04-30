@@ -10,5 +10,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class InteractionComponentData(
         @SerialName("custom_id") val customId: String,
-        @SerialName("component_type") val componentType: ComponentType
+        @SerialName("component_type") val type: ComponentType
 )

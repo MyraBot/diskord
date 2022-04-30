@@ -1,19 +1,17 @@
 package bot.myra.diskord.gateway.events.impl.interactions
 
 import bot.myra.diskord.common.entities.Locale
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.gateway.events.Event
 import bot.myra.diskord.rest.behaviors.InteractionCreateBehavior
 import kotlinx.serialization.Serializable
 
 @Serializable
 abstract class GenericInteractionCreateEvent(
-    open val data: Interaction,
+    override val interaction: Interaction
 ) : Event(), InteractionCreateBehavior {
-    override val interaction: Interaction get() = data
-
-    val user: User get() = data.member?.user ?: data.user.value!!
+    val user: User get() = interaction.member?.user ?: interaction.user.value!!
     val userLocale: Locale? get() = interaction.locale.value
     val guildLocale: Locale? get() = interaction.guildLocale.value
 }
