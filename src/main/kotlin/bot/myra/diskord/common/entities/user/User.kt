@@ -61,6 +61,7 @@ class User(
 
     suspend fun openDms(): DmChannel? {
         val channel: ChannelData = RestClient.executeNullable(Endpoints.createDm) {
+            ignoreBadRequest = true
             json = DmCreation(id).toJson()
         } ?: return null
         return DmChannel(channel)

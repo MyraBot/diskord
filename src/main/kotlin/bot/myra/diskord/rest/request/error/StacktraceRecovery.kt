@@ -28,7 +28,7 @@ object StacktraceRecovery {
             return when (e) {
                 is MissingPermissionsException -> null
                 is NotFoundException           -> null
-                else                           -> throw   dummyException.apply { initCause(e) }
+                else                           -> if (request.ignoreBadRequest && e is BadReqException) return null else throw   dummyException.apply { initCause(e) }
             }
         }
     }

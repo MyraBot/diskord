@@ -9,7 +9,8 @@ data class HttpRequest<T>(
     var json: String? = null,
     var logReason: String? = null,
     var attachments: List<File> = emptyList(),
-    val arguments: Arguments = Arguments()
+    val arguments: Arguments = Arguments(),
+    var ignoreBadRequest: Boolean = false
 ) {
     fun arguments(arguments: Arguments.() -> Unit) {
         this.arguments.apply(arguments)
