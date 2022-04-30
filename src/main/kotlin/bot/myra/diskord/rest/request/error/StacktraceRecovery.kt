@@ -27,8 +27,8 @@ object StacktraceRecovery {
         } catch (e: Exception) {
             return when (e) {
                 is MissingPermissionsException -> null
-                is NotFoundException -> null
-                else             -> throw   dummyException.apply { initCause(e) }
+                is NotFoundException           -> null
+                else                           -> throw   dummyException.apply { initCause(e) }
             }
         }
     }
