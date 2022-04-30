@@ -8,7 +8,7 @@ import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.rest.EntityProvider
 import kotlinx.coroutines.runBlocking
 
-data class ButtonClickEvent(
+class ButtonClickEvent(
     override val interaction: Interaction
 ) : GenericMessageComponentEvent(interaction) {
     val message: Message = interaction.message.value!!

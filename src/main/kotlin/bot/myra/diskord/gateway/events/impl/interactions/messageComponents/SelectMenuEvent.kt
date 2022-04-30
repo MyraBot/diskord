@@ -10,7 +10,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-data class SelectMenuEvent(
+class SelectMenuEvent(
     override val interaction: Interaction,
 ) : GenericMessageComponentEvent(interaction) {
     val message: Message = interaction.message.value!!

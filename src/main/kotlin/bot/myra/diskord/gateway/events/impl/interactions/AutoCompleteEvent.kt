@@ -9,7 +9,7 @@ import bot.myra.diskord.rest.behaviors.AutoCompleteBehavior
 import kotlinx.serialization.json.decodeFromJsonElement
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-data class AutoCompleteEvent(
+class AutoCompleteEvent(
     override val interaction: Interaction,
 ) : GenericInteractionCreateEvent(interaction), AutoCompleteBehavior {
     val autoCompletion: AutoCompleteOption get() = JSON.decodeFromJsonElement(interaction.data.value!!)
