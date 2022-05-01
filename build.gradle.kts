@@ -30,10 +30,9 @@ repositories {
 dependencies {
     compileOnly("bot.myra:kommons:$kommons")
 
-    implementation("io.ktor:ktor-websockets:$ktor")
-    implementation("io.ktor:ktor-server-netty:$ktor")
     implementation("io.ktor:ktor-client-core:$ktor")
     implementation("io.ktor:ktor-client-okhttp:$ktor")
+    implementation("io.ktor:ktor-client-websockets:$ktor")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerialization") // Serializer
 
     // Reflections
