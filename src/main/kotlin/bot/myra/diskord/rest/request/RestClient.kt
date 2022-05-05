@@ -43,7 +43,10 @@ object RestClient {
             requestTimeoutMillis = 5000
         }
         expectSuccess = false // Disables throwing exceptions
-        defaultRequest { header("Authorization", "Bot ${Diskord.token}") }
+        defaultRequest {
+            url { protocol = URLProtocol.HTTPS }
+            header("Authorization", "Bot ${Diskord.token}")
+        }
     }
 
     /**
