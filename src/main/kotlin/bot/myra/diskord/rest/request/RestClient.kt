@@ -12,7 +12,7 @@ import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.forms.formData
@@ -37,7 +37,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 object RestClient {
     //val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
     val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private val httpClient: HttpClient = HttpClient(OkHttp) {
+    private val httpClient: HttpClient = HttpClient(CIO) {
         install(HttpTimeout) {
             connectTimeoutMillis = 5000
             requestTimeoutMillis = 5000
