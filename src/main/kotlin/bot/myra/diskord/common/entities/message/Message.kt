@@ -1,13 +1,13 @@
 package bot.myra.diskord.common.entities.message
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.embed.Embed
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.common.utilities.MessageLink
 import bot.myra.diskord.rest.Optional
@@ -65,5 +65,6 @@ data class Message(
             tts = this@Message.tts
             embeds = this@Message.embeds
             components = this@Message.components
+            attachments = this@Message.attachments.toMutableList()
         }
 }

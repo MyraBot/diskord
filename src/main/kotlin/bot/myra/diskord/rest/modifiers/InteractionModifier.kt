@@ -2,7 +2,6 @@ package bot.myra.diskord.rest.modifiers
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.message.MessageFlag
 import bot.myra.diskord.common.entities.message.MessageFlags
 import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
@@ -15,8 +14,7 @@ data class InteractionModifier(
     @Transient val interaction: Interaction? = null,
 
     @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
-    var flags: MessageFlags = MessageFlags(),
-    var attachments: MutableList<Attachment> = mutableListOf()
+    var flags: MessageFlags = MessageFlags()
 ) : GenericMessageModifier() {
 
     fun ephemeral() = flags.add(MessageFlag.EPHEMERAL)
