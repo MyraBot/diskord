@@ -32,7 +32,9 @@ data class Interaction(
 ) {
     val member: Member? get() = memberData.value?.let { Member.withUserInMember(it, guildId.value!!) }
 
-    fun asModifier(): InteractionModifier = InteractionModifier(interaction = this).apply {
+    fun asModifier(): InteractionModifier = InteractionModifier(interaction = this)
+
+    fun asFollowupModifier(): InteractionModifier = InteractionModifier(interaction = this).apply {
         this@Interaction.message.value?.let { message ->
             content = message.content
             tts = message.tts
