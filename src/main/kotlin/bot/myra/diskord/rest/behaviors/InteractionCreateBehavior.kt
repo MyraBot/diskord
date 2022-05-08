@@ -41,7 +41,7 @@ interface InteractionCreateBehavior {
     }
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) {
-        return acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
+        return acknowledge(files = files, message = InteractionModifier(null).apply { message.invoke(this) })
     }
 
     /**
