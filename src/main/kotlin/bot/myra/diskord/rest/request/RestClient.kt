@@ -96,7 +96,6 @@ object RestClient {
                 deserialized
             }
         } else {
-            println("error occured")
             val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
             val message = error["message"]?.string ?: "No error message provided"
             return when (response.status) {
