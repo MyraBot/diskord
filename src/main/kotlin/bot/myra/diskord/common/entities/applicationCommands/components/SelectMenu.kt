@@ -13,10 +13,10 @@ package bot.myra.diskord.common.entities.applicationCommands.components
  */
 data class SelectMenu(
     override val type: ComponentType = ComponentType.SELECT_MENU,
-    override var id: String?,
-    override var options: MutableList<SelectOption> = mutableListOf(),
-    override var placeholder: String? = null,
-    override var minValues: Int = 1,
-    override var maxValues: Int = 1,
-    override var disabled: Boolean = false
+    public override var id: String?,
+    public override var options: MutableList<SelectOption> = mutableListOf(),
+    public override var placeholder: String? = null,
+    public override var minValues: Int = 1,
+    public override var maxValues: Int = 1,
+    public override var disabled: Boolean = false
 ) : Component(type)

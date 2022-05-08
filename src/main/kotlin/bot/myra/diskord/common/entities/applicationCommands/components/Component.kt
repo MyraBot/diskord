@@ -16,8 +16,8 @@ open class Component(
     @SerialName("custom_id") internal open var id: String? = null,
     internal open var url: String? = null,
     internal open var disabled: Boolean = false,
-    internal open var options:MutableList<SelectOption> = mutableListOf(),
-    open var placeholder: String? = null,
+    internal open var options: MutableList<SelectOption> = mutableListOf(),
+    internal open var placeholder: String? = null,
     @SerialName("min_values") internal open val minValues: Int? = null,
     @SerialName("max_values") internal open val maxValues: Int? = null,
     internal open val components: MutableList<Component> = mutableListOf()

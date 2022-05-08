@@ -15,10 +15,10 @@ import bot.myra.diskord.common.entities.Emoji
  */
 data class Button(
     override val type: ComponentType = ComponentType.BUTTON,
-    override var style: ButtonStyle? = null,
-    override var label: String? = null,
-    override var emoji: Emoji? = null,
-    override var id: String? = null,
-    override var url: String? = null,
-    override var disabled: Boolean = false
+    public override var style: ButtonStyle? = null,
+    public override var label: String? = null,
+    public override var emoji: Emoji? = null,
+    public override var id: String? = null,
+    public override var url: String? = null,
+    public override var disabled: Boolean = false
 ) : Component(type)
