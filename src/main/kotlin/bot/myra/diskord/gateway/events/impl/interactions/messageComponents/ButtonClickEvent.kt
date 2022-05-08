@@ -19,5 +19,5 @@ class ButtonClickEvent(
             .asSequence()
             .flatMap { it.components }
             .first { it.id == component.customId }
-            .let { return it as Button }
+            .let { return it.asButton() }
 }

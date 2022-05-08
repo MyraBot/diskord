@@ -20,7 +20,7 @@ class SelectMenuEvent(
             .asSequence()
             .flatMap { it.components }
             .first { it.id == component.customId }
-            .let { return it as SelectMenu }
+            .let { return it.asSelectMenu() }
     val id: String get() = interaction.id
     val values: List<String> get() = interaction.data.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 

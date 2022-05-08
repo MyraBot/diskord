@@ -32,7 +32,7 @@ open class Component(
     open var placeholder: String? = null,
     @SerialName("min_values") open var minValues: Int? = null,
     @SerialName("max_values") open var maxValues: Int? = null,
-    open val components: MutableList<Component> = mutableListOf()
+    open var components: MutableList<Component> = mutableListOf()
 ) {
     /**
      * @return Return a boolean whether the last [components] entry is full or not.
@@ -45,4 +45,33 @@ open class Component(
             else                                                                                               -> false
         }
     }
+
+    fun asActionRow(): ActionRow {
+        val row = ActionRow()
+        row.components = components
+        return row
+    }
+
+    fun asButton(): Button {
+        if (id == null && url == null) throw IllegalStateException("A button needs an id or a url")
+        val button = style?.let { Button(style = it) } ?: throw IllegalStateException("The button style can't be null")
+        button.label = label
+        button.emoji = emoji
+        button.id = id
+        button.url = url
+        button.disabled = disabled
+        return button
+    }
+
+    fun asSelectMenu(): SelectMenu {
+        val menu = SelectMenu()
+        menu.id = id
+        menu.options = options
+        menu.placeholder = placeholder
+        menu.minValues = minValues
+        menu.maxValues = maxValues
+        menu.disabled = disabled
+        return menu
+    }
+
 }
