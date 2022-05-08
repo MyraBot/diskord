@@ -5,5 +5,4 @@ package bot.myra.diskord.common.entities.applicationCommands.components
  */
 data class ActionRow(
     override val type: ComponentType = ComponentType.ACTION_ROW,
-    public override val components: MutableList<Component> = mutableListOf()
 ) : Component(type)

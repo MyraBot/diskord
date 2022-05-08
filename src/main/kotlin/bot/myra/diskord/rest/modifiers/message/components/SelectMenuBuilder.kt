@@ -28,14 +28,14 @@ class SelectMenuBuilder {
      * @return Returns an equal [SelectMenu].
      */
     fun asSelectMenu(): SelectMenu = id?.let {
-        SelectMenu(
-            id = it,
-            options = this.options,
-            placeholder = this.placeholder,
-            minValues = this.minValues,
-            maxValues = this.maxValues,
-            disabled = this.disabled
-        )
+        val menu = SelectMenu()
+        menu.id = it
+        menu.options = options
+        menu.placeholder = this.placeholder
+        menu.minValues = this.minValues
+        menu.maxValues = this.maxValues
+        menu.disabled = this.disabled
+        menu
     } ?: throw IllegalStateException("Missing id")
 
 }
