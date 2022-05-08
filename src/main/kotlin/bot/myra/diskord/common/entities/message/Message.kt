@@ -59,12 +59,11 @@ data class Message(
         Member.withUser(memberData, guildId.value!!, user)
     } else null
 
-    fun asBuilder(): MessageModifier =
-        MessageModifier().apply {
-            content = this@Message.content
-            tts = this@Message.tts
-            embeds = this@Message.embeds
-            components = this@Message.components
-            attachments = this@Message.attachments.toMutableList()
-        }
+    fun asModifier(): MessageModifier = MessageModifier().apply {
+        content = this@Message.content
+        tts = this@Message.tts
+        embeds = this@Message.embeds
+        components = this@Message.components
+        attachments = this@Message.attachments.toMutableList()
+    }
 }
