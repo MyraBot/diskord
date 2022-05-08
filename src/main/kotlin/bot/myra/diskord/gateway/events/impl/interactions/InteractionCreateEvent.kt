@@ -3,7 +3,7 @@ package bot.myra.diskord.gateway.events.impl.interactions
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionType
 import bot.myra.diskord.gateway.events.Event
-import bot.myra.diskord.gateway.events.impl.interactions.messageComponents.GenericMessageComponentEvent
+import bot.myra.diskord.gateway.events.impl.interactions.messageComponents.MessageComponentEvent
 import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.GuildSlashCommandEvent
 import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.SlashCommandEvent
 
@@ -18,7 +18,7 @@ class InteractionCreateEvent(
             true  -> SlashCommandEvent(interaction)
             false -> GuildSlashCommandEvent(interaction)
         }
-        InteractionType.MESSAGE_COMPONENT                -> GenericMessageComponentEvent(interaction)
+        InteractionType.MESSAGE_COMPONENT                -> MessageComponentEvent(interaction)
         InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
     }.call()
 

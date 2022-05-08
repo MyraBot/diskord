@@ -51,6 +51,9 @@ interface InteractionCreateBehavior {
      * @param message The new interaction.
      */
     suspend fun edit(message: InteractionModifier) {
+        println("I want to edit the msg")
+        return
+
         val responseData = InteractionResponseData(
             InteractionCallbackType.UPDATE_MESSAGE,
             message.apply { transform() }
