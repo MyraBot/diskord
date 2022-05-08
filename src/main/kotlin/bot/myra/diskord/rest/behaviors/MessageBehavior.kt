@@ -19,34 +19,28 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * @param messageModifier The new message.
      * @return Returns the new message.
      */
-    suspend fun edit(messageModifier: MessageModifier): Message {
-        return RestClient.execute(Endpoints.editMessage) {
-            json = messageModifier.toJson()
-            arguments {
-                arg("channel.id", message.channelId)
-                arg("message.id", message.id)
-            }
+    suspend fun edit(messageModifier: MessageModifier): Message = RestClient.execute(Endpoints.editMessage) {
+        json = messageModifier.toJson()
+        arguments {
+            arg("channel.id", message.channelId)
+            arg("message.id", message.id)
         }
     }
 
     suspend fun edit(messageModifier: MessageModifier.() -> Unit): Message = edit(message.asModifier().apply(messageModifier))
 
-    suspend fun delete() {
-        RestClient.execute(Endpoints.deleteMessage) {
-            arguments {
-                arg("channel.id", message.channelId)
-                arg("message.id", message.id)
-            }
+    suspend fun delete() = RestClient.execute(Endpoints.deleteMessage) {
+        arguments {
+            arg("channel.id", message.channelId)
+            arg("message.id", message.id)
         }
     }
 
-    suspend fun addReaction(emoji: String) {
-        return RestClient.execute(Endpoints.addReaction) {
-            arguments {
-                arg("channel.id", message.channelId)
-                arg("message.id", id)
-                arg("emoji", URLEncoder.encode(emoji, "utf-8"))
-            }
+    suspend fun addReaction(emoji: String) = RestClient.execute(Endpoints.addReaction) {
+        arguments {
+            arg("channel.id", message.channelId)
+            arg("message.id", id)
+            arg("emoji", URLEncoder.encode(emoji, "utf-8"))
         }
     }
 
