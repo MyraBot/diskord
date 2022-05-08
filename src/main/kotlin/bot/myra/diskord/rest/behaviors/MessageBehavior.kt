@@ -9,6 +9,7 @@ import java.net.URLEncoder
 
 @Suppress("unused")
 interface MessageBehavior : GetTextChannelBehavior, Entity {
+
     val message: Message
 
     /**
@@ -39,7 +40,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    suspend fun addReaction(emoji: String): Unit {
+    suspend fun addReaction(emoji: String) {
         return RestClient.execute(Endpoints.addReaction) {
             arguments {
                 arg("channel.id", message.channelId)
