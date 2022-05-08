@@ -1,15 +1,6 @@
 # TODO
-- [x] Rename `listeners` package to `events`
 - [ ] Make all events `open` classes
-- [ ] Add documentation to everything
-- [x] Use `Deferred` instead of custom `Promise` class
-- [ ] Maybe make behaviors abstract classes with `@Contextual` 
+- [ ] Maybe make behaviors abstract classes with `@Contextual`
 - [ ] Name function `fetchX` to show that rest is being used
-- [x] Make caching functions not in constructor
-- [x] Redo builders -> `XModifiers`
-- [x] Delete `DefaultBehavior#diskord`
-- [x] Redo event calling
-- [x] add cache#getnonnull
 - [ ] Do not put `Interaction` in `InteractionModifier.kt` - but still make it available to use in myra for finding out the language
 - [ ] Use normal Instant class instead of custom time class
-- [ ] Make caching use external service to let the website access it easier (trying redis???)
