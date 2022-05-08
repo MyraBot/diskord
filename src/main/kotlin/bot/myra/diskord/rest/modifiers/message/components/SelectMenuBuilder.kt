@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest.modifiers.message.components
 
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
-import bot.myra.diskord.common.entities.applicationCommands.components.items.selectMenu.SelectOption
+import bot.myra.diskord.common.entities.applicationCommands.components.SelectMenu
+import bot.myra.diskord.common.entities.applicationCommands.components.SelectOption
 
 /**
  * Builder for [SelectMenu]s.

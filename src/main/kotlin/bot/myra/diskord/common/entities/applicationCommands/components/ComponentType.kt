@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.entities.applicationCommands.components.items
+package bot.myra.diskord.common.entities.applicationCommands.components
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

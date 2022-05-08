@@ -1,8 +1,6 @@
-package bot.myra.diskord.common.entities.applicationCommands.components.items.button
+package bot.myra.diskord.common.entities.applicationCommands.components
 
 import bot.myra.diskord.common.entities.Emoji
-import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
-import kotlinx.serialization.SerialName
 
 /**
  * [Documentation](https://discord.com/developers/docs/interactions/message-components#button-object)
@@ -16,11 +14,11 @@ import kotlinx.serialization.SerialName
  * @property disabled Whether the button is disabled.
  */
 data class Button(
-        val type: ComponentType = ComponentType.BUTTON,
-        var style: ButtonStyle,
-        var label: String? = null,
-        var emoji: Emoji? = null,
-        @SerialName("custom_id") var id: String? = null,
-        var url: String? = null,
-        var disabled: Boolean = false
-)
+    override val type: ComponentType = ComponentType.BUTTON,
+    override var style: ButtonStyle? = null,
+    override var label: String? = null,
+    override var emoji: Emoji? = null,
+    override var id: String? = null,
+    override var url: String? = null,
+    override var disabled: Boolean = false
+) : Component(type)

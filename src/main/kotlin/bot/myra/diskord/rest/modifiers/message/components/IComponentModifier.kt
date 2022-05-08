@@ -1,11 +1,7 @@
 package bot.myra.diskord.rest.modifiers.message.components
 
-import bot.myra.diskord.common.entities.applicationCommands.components.Component
-import bot.myra.diskord.common.entities.applicationCommands.components.asComponent
-import bot.myra.diskord.common.entities.applicationCommands.components.items.ActionRowData
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
+import bot.myra.diskord.common.entities.applicationCommands.components.*
+import bot.myra.diskord.common.entities.applicationCommands.components.Button
 
 interface IComponentModifier {
     val components: MutableList<Component>
@@ -20,10 +16,10 @@ interface IComponentModifier {
      * @param button The button to add as a component.
      */
     fun addButton(button: Button) {
-        if (components.size == 0) components.add(ActionRowData().asComponent())
-        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRow())
+        else if (components.last().isFull()) components.add(ActionRow())
 
-        this.components.last().components.add(button.asComponent())
+        this.components.last().components.add(button)
     }
 
     suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
@@ -31,20 +27,19 @@ interface IComponentModifier {
     fun addButtons(buttons: List<Button>) = buttons.forEach { addButton(it) }
 
     suspend fun addSelectMenu(selectMenu: suspend SelectMenuBuilder.() -> Unit) {
-        if (components.size == 0) components.add(ActionRowData().asComponent())
-        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRow())
+        else if (components.last().isFull()) components.add(ActionRow())
 
         this.components.last().components.add(SelectMenuBuilder()
             .apply { selectMenu.invoke(this) }
-            .asSelectMenu()
-            .asComponent())
+            .asSelectMenu())
     }
 
     fun addSelectMenu(selectMenu: SelectMenu) {
-        if (components.size == 0) components.add(ActionRowData().asComponent())
-        else if (components.last().isFull()) components.add(ActionRowData().asComponent())
+        if (components.size == 0) components.add(ActionRow())
+        else if (components.last().isFull()) components.add(ActionRow())
 
-        this.components.last().components.add(selectMenu.asComponent())
+        this.components.last().components.add(selectMenu)
     }
 
     fun addSelectMenus(vararg selectMenus: SelectMenu) = selectMenus.forEach { addSelectMenu(it) }

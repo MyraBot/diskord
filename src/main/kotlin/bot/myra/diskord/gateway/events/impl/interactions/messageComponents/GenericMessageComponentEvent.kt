@@ -2,7 +2,7 @@ package bot.myra.diskord.gateway.events.impl.interactions.messageComponents
 
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionComponentData
-import bot.myra.diskord.common.entities.applicationCommands.components.items.ComponentType
+import bot.myra.diskord.common.entities.applicationCommands.components.ComponentType
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.events.impl.interactions.GenericInteractionCreateEvent
 import kotlinx.serialization.json.decodeFromJsonElement

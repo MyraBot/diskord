@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest.modifiers.message.components
 
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.Button
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.ButtonStyle
+import bot.myra.diskord.common.entities.applicationCommands.components.Button
+import bot.myra.diskord.common.entities.applicationCommands.components.ButtonStyle
 
 @Suppress("unused")
 object Button {

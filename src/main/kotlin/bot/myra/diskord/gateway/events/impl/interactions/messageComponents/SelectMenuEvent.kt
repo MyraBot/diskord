@@ -2,7 +2,7 @@ package bot.myra.diskord.gateway.events.impl.interactions.messageComponents
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.applicationCommands.components.items.button.SelectMenu
+import bot.myra.diskord.common.entities.applicationCommands.components.SelectMenu
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.message.Message
@@ -20,7 +20,7 @@ class SelectMenuEvent(
             .asSequence()
             .flatMap { it.components }
             .first { it.id == component.customId }
-            .let { return it.asSelectMenu() }
+            .let { return it as SelectMenu }
     val id: String get() = interaction.id
     val values: List<String> get() = interaction.data.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 
