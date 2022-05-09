@@ -64,7 +64,7 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun edit(modifier: InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply(modifier))
+    suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply { modifier.invoke(this) })
 
     suspend fun getInteractionResponse(): Message {
         return RestClient.execute(Endpoints.getOriginalInteractionResponse) {
