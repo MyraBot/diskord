@@ -5,7 +5,6 @@ import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.utilities.FileFormats
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.string
-import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Route
 import bot.myra.diskord.rest.request.error.*
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
@@ -15,12 +14,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.header
-import io.ktor.client.request.headers
-import io.ktor.client.request.request
-import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
@@ -74,25 +70,22 @@ object RestClient {
     suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = StacktraceRecovery.handleNullable(HttpRequest(route).apply(request))
 
     /**
-     * Executes a http request to the saved path of [data].
+     * Executes a http request to the saved path of [req].
      *
-     * @param data information about the to be executed [HttpRequest].
+     * @param req information about the to be executed [HttpRequest].
      */
-    suspend fun <R> executeRequest(data: HttpRequest<R>): R? {
-        var route = Endpoints.baseUrl + data.route.path
-        data.arguments.entries.forEach { route = route.replace("{${it.key}}", it.value.toString()) }
-
-        debug(this::class) { "Rest >>> ${data.route.httpMethod}: $route - ${data.json}" }
-        val response = if (data.attachments.isEmpty()) bodyRequest(route, data.route.httpMethod, data.json, data.logReason) // Request doesn't contain files
-        else formDataRequest(route, data.json!!, data.attachments) // Request needs to send files
+    suspend fun <R> executeRequest(req: HttpRequest<R>): R? {
+        debug(this::class) { "Rest >>> ${req.route.httpMethod}: ${req.getFullPath()} - ${req.json}" }
+        val response = if (req.attachments.isEmpty()) bodyRequest(req) // Request doesn't contain files
+        else formDataRequest(req.getFullPath(), req.json!!, req.attachments) // Request needs to send files
         kDebug(this::class) { "Rest <<< ${response.bodyAsText()}" }
 
         if (response.status.isSuccess()) {
             @Suppress("UNCHECKED_CAST")
-            return if (data.route.serializer == Unit.serializer()) Unit as R
+            return if (req.route.serializer == Unit.serializer()) Unit as R
             else {
-                val deserialized: R = JSON.decodeFromString(data.route.serializer, response.bodyAsText())
-                data.route.cache?.invoke(deserialized, data.arguments)
+                val deserialized: R = JSON.decodeFromString(req.route.serializer, response.bodyAsText())
+                req.route.cache?.invoke(deserialized, req.arguments)
                 deserialized
             }
         } else {
@@ -105,7 +98,7 @@ object RestClient {
                 HttpStatusCode.Forbidden        -> throw MissingPermissionsException(message)
                 HttpStatusCode.NotFound         -> throw NotFoundException(message)
                 HttpStatusCode.MethodNotAllowed -> throw Exception("Method not allowed") // Internal exception
-                HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(data, JSON.decodeFromJsonElement(error))
+                HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(req, JSON.decodeFromJsonElement(error))
                 else                            -> throw UnknownError()
             }
         }
@@ -118,11 +111,12 @@ object RestClient {
      * @param json Optional json body.
      * @return Returns the response as a [HttpResponse].
      */
-    private suspend fun bodyRequest(route: String, httpMethod: HttpMethod, json: String?, reason: String?): HttpResponse {
-        return httpClient.request(route) {
-            method = httpMethod
-            reason?.let { headers { header("X-Audit-Log-Reason", it) } }
-            json?.let {
+    private suspend fun bodyRequest(req: HttpRequest<*>): HttpResponse {
+        return httpClient.request(req.getFullPath()) {
+            method = req.route.httpMethod
+            req.queryParameter.forEach { parameter(it.first, it.second) }
+            req.logReason?.let { headers { header("X-Audit-Log-Reason", it) } }
+            req.json?.let {
                 contentType(ContentType.Application.Json)
                 setBody(it)
             }
