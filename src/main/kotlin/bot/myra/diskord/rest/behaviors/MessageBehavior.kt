@@ -27,7 +27,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    suspend fun edit(messageModifier: MessageModifier.() -> Unit): Message = edit(message.asModifier().apply(messageModifier))
+    suspend fun edit(messageModifier: suspend MessageModifier.() -> Unit): Message = edit(message.asModifier().apply { messageModifier.invoke(this) })
 
     suspend fun delete() = RestClient.execute(Endpoints.deleteMessage) {
         arguments {
