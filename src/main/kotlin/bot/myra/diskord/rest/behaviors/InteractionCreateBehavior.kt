@@ -15,13 +15,11 @@ interface InteractionCreateBehavior {
 
     val interaction: Interaction
 
-    suspend fun acknowledge() {
-        return RestClient.execute(Endpoints.acknowledgeInteraction) {
-            json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
-            arguments {
-                arg("interaction.id", interaction.id)
-                arg("interaction.token", interaction.token)
-            }
+    suspend fun acknowledge() = RestClient.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
+        arguments {
+            arg("interaction.id", interaction.id)
+            arg("interaction.token", interaction.token)
         }
     }
 
@@ -40,9 +38,8 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) {
-        return acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
-    }
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
+        acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
 
     /**
      * Edits the original [Interaction.message].
@@ -66,12 +63,10 @@ interface InteractionCreateBehavior {
 
     suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply { modifier.invoke(this) })
 
-    suspend fun getInteractionResponse(): Message {
-        return RestClient.execute(Endpoints.getOriginalInteractionResponse) {
-            arguments {
-                arg("application.id", Diskord.id)
-                arg("interaction.token", interaction.token)
-            }
+    suspend fun getInteractionResponse(): Message = RestClient.execute(Endpoints.getOriginalInteractionResponse) {
+        arguments {
+            arg("application.id", Diskord.id)
+            arg("interaction.token", interaction.token)
         }
     }
 

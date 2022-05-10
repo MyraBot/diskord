@@ -13,17 +13,14 @@ interface AutoCompleteBehavior {
 
     val interaction: Interaction
 
-    suspend fun suggestChoices(choices: List<SlashCommandChoice>) {
-        val responseData = InteractionChoiceResponseData(
+    suspend fun suggestChoices(choices: List<SlashCommandChoice>) = RestClient.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionChoiceResponseData(
             InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
             ChoiceResponses(choices)
-        )
-        return RestClient.execute(Endpoints.acknowledgeInteraction) {
-            json = responseData.toJson()
-            arguments {
-                arg("interaction.id", interaction.id)
-                arg("interaction.token", interaction.token)
-            }
+        ).toJson()
+        arguments {
+            arg("interaction.id", interaction.id)
+            arg("interaction.token", interaction.token)
         }
     }
 
