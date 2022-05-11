@@ -124,6 +124,12 @@ object Diskord : GetTextChannelBehavior {
         }
     }
 
+    suspend fun getMessages(channel: String, before: String?): List<Message> = RestClient.execute(Endpoints.getChannelMessages) {
+        arguments { arg("channel.id", channel) }
+        queryParameter.add("limit" to 100)
+        before?.let { queryParameter.add("before" to before) }
+    }
+
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {

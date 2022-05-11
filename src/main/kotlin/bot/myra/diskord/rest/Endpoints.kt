@@ -2,14 +2,14 @@ package bot.myra.diskord.rest
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Application
-import bot.myra.diskord.common.entities.guild.Role
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.message.Message
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.ListSerializer
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.builtins.serializer
@@ -62,4 +62,5 @@ object Endpoints {
     val createGuildBan = Route(HttpMethod.Put, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val removeGuildBan = Route(HttpMethod.Delete, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val getChannelMessage = Route(HttpMethod.Get, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
+    val getChannelMessages = Route(HttpMethod.Get,"/channels/{channel.id}/messages", ListSerializer(Message.serializer()))
 }

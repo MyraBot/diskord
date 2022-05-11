@@ -2,12 +2,12 @@ package bot.myra.diskord.rest
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.caching.DoubleKey
-import bot.myra.diskord.common.entities.guild.Role
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
+import bot.myra.diskord.common.entities.guild.Role
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.rest.request.RestClient
 
 object EntityProvider {
