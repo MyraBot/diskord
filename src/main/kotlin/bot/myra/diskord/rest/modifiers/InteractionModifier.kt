@@ -2,16 +2,10 @@ package bot.myra.diskord.rest.modifiers
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.message.MessageFlag
-import bot.myra.diskord.common.entities.message.MessageFlags
 import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
- * Modifier for interactions. This is used in any interaction based events
- * for acknowledgements.
+ * Wrapper for interaction modifiers.
  * You do not create an object of this class. Instead, use modifiers for explicit
  * interactions, like [bot.myra.diskord.rest.modifiers.message.components.MessageModifier]
  * for editing messages.
@@ -21,15 +15,7 @@ import kotlinx.serialization.Transient
  * @property flags
  * @constructor Create empty Interaction modifier
  */
-@Serializable
-class InteractionModifier internal constructor(
-    @Transient val interaction: Interaction? = null,
-
-    @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
-    var flags: MessageFlags = MessageFlags()
-) : GenericMessageModifier() {
-
-    fun ephemeral() = flags.add(MessageFlag.EPHEMERAL)
+class InteractionModifier(val interaction: Interaction? = null) : GenericMessageModifier() {
 
     suspend fun transform() {
         val transform = Diskord.transformer
