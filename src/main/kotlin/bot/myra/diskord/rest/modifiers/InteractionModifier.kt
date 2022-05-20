@@ -9,8 +9,20 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Modifier for interactions. This is used in any interaction based events
+ * for acknowledgements.
+ * You do not create an object of this class. Instead, use modifiers for explicit
+ * interactions, like [bot.myra.diskord.rest.modifiers.message.components.MessageModifier]
+ * for editing messages.
+ *
+ * @property interaction Received interaction, wich the response belongs to.
+ * @property allowedMentions
+ * @property flags
+ * @constructor Create empty Interaction modifier
+ */
 @Serializable
-data class InteractionModifier(
+class InteractionModifier internal constructor(
     @Transient val interaction: Interaction? = null,
 
     @SerialName("allowed_mentions") var allowedMentions: MutableList<String> = mutableListOf(),
