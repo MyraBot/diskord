@@ -106,10 +106,9 @@ object RestClient {
     }
 
     /**
-     * Executes a normal http request. The http method is determined by [httpMethod].
+     * Executes a http request with an optional body.
      *
-     * @param route The route to execute.
-     * @param json Optional json body.
+     * @param req Holding all information about the requets.
      * @return Returns the response as a [HttpResponse].
      */
     private suspend fun bodyRequest(req: HttpRequest<*>): HttpResponse {
