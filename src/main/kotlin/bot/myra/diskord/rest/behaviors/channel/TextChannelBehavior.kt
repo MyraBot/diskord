@@ -33,6 +33,6 @@ interface TextChannelBehavior {
 
     suspend fun getMessage(id: String): Message? = Diskord.getMessage(data.id, id)
 
-    suspend fun getMessages(before: String? = null): List<Message> = Diskord.getMessages(data.id, before)
+    suspend fun getMessages(before: String? = null, max: Int = 100): List<Message> = Diskord.getMessages(data.id, before, max)
 
 }

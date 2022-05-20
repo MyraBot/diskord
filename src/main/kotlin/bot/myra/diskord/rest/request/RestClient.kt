@@ -12,6 +12,7 @@ import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.*
@@ -35,8 +36,8 @@ object RestClient {
     val coroutineScope = CoroutineScope(Dispatchers.IO)
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(HttpTimeout) {
-            connectTimeoutMillis = 5000
-            requestTimeoutMillis = 5000
+            connectTimeoutMillis = 10000
+            requestTimeoutMillis = 10000
         }
         expectSuccess = false // Disables throwing exceptions
         defaultRequest {
@@ -99,7 +100,7 @@ object RestClient {
                 HttpStatusCode.NotFound         -> throw NotFoundException(message)
                 HttpStatusCode.MethodNotAllowed -> throw Exception("Method not allowed") // Internal exception
                 HttpStatusCode.TooManyRequests  -> RateLimitWorker.queue(req, JSON.decodeFromJsonElement(error))
-                else                            -> throw UnknownError()
+                else                            -> return executeRequest(req)
             }
         }
     }
@@ -112,14 +113,19 @@ object RestClient {
      * @return Returns the response as a [HttpResponse].
      */
     private suspend fun bodyRequest(req: HttpRequest<*>): HttpResponse {
-        return httpClient.request(req.getFullPath()) {
-            method = req.route.httpMethod
-            req.queryParameter.forEach { parameter(it.first, it.second) }
-            req.logReason?.let { headers { header("X-Audit-Log-Reason", it) } }
-            req.json?.let {
-                contentType(ContentType.Application.Json)
-                setBody(it)
+        try {
+            return httpClient.request(req.getFullPath()) {
+                method = req.route.httpMethod
+                req.queryParameter.forEach { parameter(it.first, it.second) }
+                req.logReason?.let { headers { header("X-Audit-Log-Reason", it) } }
+                req.json?.let {
+                    contentType(ContentType.Application.Json)
+                    setBody(it)
+                }
             }
+        } catch (e: HttpRequestTimeoutException) {
+            debug(RestClient::class) {"Retrying"}
+            return bodyRequest(req)
         }
     }
 
