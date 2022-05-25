@@ -19,7 +19,7 @@ import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
 
 class VoiceGateway(
-    private val endpoint: String,
+    endpoint: String,
     private val token: String,
     private val session: String,
     private val guildId: String
