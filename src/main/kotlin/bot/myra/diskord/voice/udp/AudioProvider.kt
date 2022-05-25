@@ -7,7 +7,7 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.math.max
 
 class AudioProvider(
     private val gateway: VoiceGateway,
@@ -25,9 +25,13 @@ class AudioProvider(
 
     fun provide(bytes: () -> ByteArray?) {
         scope.launch {
+            var idealFrameTimestamp = System.currentTimeMillis()
             while (isActive) {
                 queuedFrames.send(bytes.invoke())
-                delay(20.milliseconds)
+                idealFrameTimestamp += config.millisPerPacket.toLong()
+                val durationToWaitToReachIdealTime = idealFrameTimestamp - System.currentTimeMillis() // Calculate the theory millis to wait to reach the ideal frame timestamp
+                val wait = max(0, durationToWaitToReachIdealTime) // We don't want negative delay
+                delay(wait)
             }
         }
     }
