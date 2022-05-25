@@ -7,8 +7,8 @@ import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.gateway.events.impl.VoiceServerUpdateEvent
-import bot.myra.diskord.gateway.handler.Opcode
-import bot.myra.diskord.gateway.handler.intents.GatewayIntent
+import bot.myra.diskord.gateway.Opcode
+import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.kommons.debug
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter

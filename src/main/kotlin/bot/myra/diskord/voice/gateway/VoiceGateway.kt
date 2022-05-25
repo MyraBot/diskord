@@ -3,7 +3,7 @@ package bot.myra.diskord.voice.gateway
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.JSON
-import bot.myra.diskord.gateway.handler.Opcode
+import bot.myra.diskord.gateway.Opcode
 import bot.myra.diskord.voice.gateway.commands.Identify
 import bot.myra.diskord.voice.gateway.commands.Resume
 import bot.myra.diskord.voice.gateway.commands.VoiceCommand

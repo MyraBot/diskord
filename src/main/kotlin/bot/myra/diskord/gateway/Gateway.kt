@@ -1,11 +1,10 @@
-package bot.myra.diskord.gateway.handler
+package bot.myra.diskord.gateway
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
-import bot.myra.diskord.gateway.handler.intents.GatewayIntent
 import bot.myra.kommons.debug
 import bot.myra.kommons.info
 import bot.myra.kommons.kInfo

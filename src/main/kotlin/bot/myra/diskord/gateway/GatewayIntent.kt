@@ -1,4 +1,4 @@
-package bot.myra.diskord.gateway.handler.intents
+package bot.myra.diskord.gateway
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateway-intents)

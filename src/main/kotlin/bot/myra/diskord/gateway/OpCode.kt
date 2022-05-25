@@ -1,4 +1,4 @@
-package bot.myra.diskord.gateway.handler
+package bot.myra.diskord.gateway
 
 import bot.myra.diskord.common.utilities.JSON
 import kotlinx.serialization.SerialName

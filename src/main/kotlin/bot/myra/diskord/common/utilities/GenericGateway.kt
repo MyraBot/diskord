@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.utilities
 
-import bot.myra.diskord.gateway.handler.Opcode
+import bot.myra.diskord.gateway.Opcode
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
