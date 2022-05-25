@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -43,12 +44,15 @@ class Websocket(
     private val waitingCalls: MutableList<OptCode> = mutableListOf()
     val connected get() = connection != null
 
+    val eventDispatcher = MutableSharedFlow<OptCode>()
+
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
      *
      * Calls [openWebsocketConnection] to connect to the websocket first time.
      */
     suspend fun connect() {
+        Events.startResolver()
         openWebsocketConnection(url, false)
     }
 
@@ -85,7 +89,7 @@ class Websocket(
         when (income.op) {
             // 	An event was dispatched
             0  -> {
-                Events.resolve(income)
+                eventDispatcher.emit(income)
                 s = income.s ?: s
             }
             // 	Fired periodically by the client to keep the connection alive
@@ -115,7 +119,7 @@ class Websocket(
      *
      * @param optCode Opt-code to send.
      */
-    private suspend fun send(optCode: OptCode) {
+    internal suspend fun send(optCode: OptCode) {
         debug(this::class) { "Gateway >> ${optCode.toJson()}" }
         connection?.send(optCode.toJson()) ?: waitingCalls.add(optCode)
     }

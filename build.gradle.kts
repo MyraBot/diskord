@@ -19,12 +19,14 @@ version = "2.39"
 
 repositories {
     mavenCentral()
-    maven(url = "https://systems.myra.bot/releases/") {
+    maven("https://systems.myra.bot/releases/") {
         credentials {
             username = property("REPO_NAME")?.toString()
             password = property("REPO_SECRET")?.toString()
         }
     }
+    maven("https://m2.dv8tion.net/releases")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -39,9 +41,13 @@ dependencies {
     compileOnly(kotlin("reflect"))
     compileOnly("org.reflections:reflections:0.10.2")
 
+    // Voice encryption
+    implementation("com.codahale:xsalsa20poly1305:0.11.0")
+
     testImplementation("bot.myra:kommons:$kommons")
     testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")
+    testImplementation("com.github.walkyst:lavaplayer-fork:original-SNAPSHOT")
 }
 
 // Publishing
