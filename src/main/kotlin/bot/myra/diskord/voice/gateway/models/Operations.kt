@@ -26,7 +26,8 @@ enum class Operations(val code: Int) {
     HELLO(8),
     RESUMED(9),
     CLIENT_DISCONNECT(10),
-    SOMEBODY_CONNECT(14),
+    USER_DISCONNECT(13),
+    USER_CONNECT(14),
     INVALID(-1);
 
     internal object Serializer : KSerializer<Operations> {
