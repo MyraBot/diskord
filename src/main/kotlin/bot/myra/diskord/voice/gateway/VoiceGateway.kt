@@ -9,52 +9,33 @@ import bot.myra.diskord.voice.gateway.commands.Resume
 import bot.myra.diskord.voice.gateway.commands.VoiceCommand
 import bot.myra.diskord.voice.gateway.models.HelloPayload
 import bot.myra.diskord.voice.gateway.models.Operations
-import io.ktor.client.plugins.websocket.webSocketSession
-import io.ktor.websocket.Frame
-import io.ktor.websocket.readText
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.serialization.decodeFromString
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
-import kotlin.time.Duration.Companion.seconds
 
 class VoiceGateway(
     private val endpoint: String,
     private val token: String,
     private val session: String,
     private val guildId: String
-) : GenericGateway(endpoint, LoggerFactory.getLogger(VoiceGateway::class.java)) {
+) : GenericGateway(
+    url = "wss://$endpoint/?v=4",
+    logger = LoggerFactory.getLogger(VoiceGateway::class.java)
+) {
     private val scope = CoroutineScope(Dispatchers.Default)
     val eventDispatcher = MutableSharedFlow<OptCode>()
     private var lastTimestamp: Long = System.currentTimeMillis()
-    private var firstConnection = true
 
-    suspend fun connect() {
-        scope.launch {
-            while (true) {
-                socket = client.webSocketSession("wss://$endpoint/?v=4")
-
-                identify()
-                try {
-                    socket.incoming.receiveAsFlow().collect { handleIncome(it) }
-                } catch (e: ClosedReceiveChannelException) {
-
-                }
-                val reason = withTimeoutOrNull(5.seconds) { socket.closeReason.await() }
-                logger.warn("Socket closed with reason $reason - attempting reconnection")
-            }
-        }
+    suspend fun connect() = scope.launch {
+        openGatewayConnection()
     }
 
-    private suspend fun handleIncome(frame: Frame) {
-        val data = frame as Frame.Text
-        logger.debug("<<< ${data.readText()}")
-
-        val opcode: OptCode = JSON.decodeFromString(data.readText())
+    override suspend fun handleIncome(opcode: OptCode, resume: Boolean) {
         val op = opcode.op
         when (Operations.from(op)) {
             Operations.READY                 -> eventDispatcher.emit(opcode)
@@ -67,11 +48,9 @@ class VoiceGateway(
         }
     }
 
-    private suspend fun identify() {
-        if (firstConnection) {
-            send(Identify(guildId, Diskord.id, session, token))
-            firstConnection = false
-        } else send(Resume(guildId, session, token))
+    override suspend fun onConnectionOpened(resumed: Boolean) {
+        if (resumed) send(Identify(guildId, Diskord.id, session, token))
+        else send(Resume(guildId, session, token))
     }
 
     private fun startHeartbeat(hello: OptCode) = scope.launch {
