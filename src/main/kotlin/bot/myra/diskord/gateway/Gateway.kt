@@ -77,12 +77,12 @@ class Gateway(
         send(Opcode(null, null, 6, op.toJsonObj()))
     }
 
-    override suspend fun handleIncome(income: Opcode, resume: Boolean) {
-        when (income.op) {
+    override suspend fun handleIncome(opcode: Opcode, resumed: Boolean) {
+        when (opcode.op) {
             // 	An event was dispatched
             0  -> {
-                eventDispatcher.emit(income)
-                s = income.s ?: s
+                eventDispatcher.emit(opcode)
+                s = opcode.s ?: s
             }
             // 	Fired periodically by the client to keep the connection alive
             1  -> {
@@ -91,8 +91,8 @@ class Gateway(
             }
             // 	Sent immediately after connecting
             10 -> {
-                startHeartbeat(income)
-                if (resume) resume()
+                startHeartbeat(opcode)
+                if (resumed) resume()
                 else identify()
                 ready()
                 info(this::class) { "Successfully connected to Discord" }

@@ -35,7 +35,7 @@ class VoiceGateway(
         openGatewayConnection()
     }
 
-    override suspend fun handleIncome(opcode: Opcode, resume: Boolean) {
+    override suspend fun handleIncome(opcode: Opcode, resumed: Boolean) {
         val op = opcode.op
         when (Operations.from(op)) {
             Operations.READY                 -> eventDispatcher.emit(opcode)

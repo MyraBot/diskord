@@ -66,7 +66,7 @@ abstract class GenericGateway(
         openGatewayConnection(true)
     }
 
-    open suspend fun onConnectionOpened(resume: Boolean) {}
+    open suspend fun onConnectionOpened(resumed: Boolean) {}
 
     suspend fun ready() {
         // Send queued calls
@@ -76,7 +76,7 @@ abstract class GenericGateway(
         }
     }
 
-    abstract suspend fun handleIncome(opcode: Opcode, resume: Boolean)
+    abstract suspend fun handleIncome(opcode: Opcode, resumed: Boolean)
 
     /**
      * Sends the provided [Opcode] to the websocket.
