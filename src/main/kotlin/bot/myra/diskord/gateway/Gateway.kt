@@ -35,7 +35,7 @@ class Gateway(
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
     lateinit var session: String
     private var s: Int = 0
-    val eventDispatcher = MutableSharedFlow<Opcode>()
+    val eventDispatcher = MutableSharedFlow<OpPacket>()
 
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
@@ -60,7 +60,7 @@ class Gateway(
             intents = GatewayIntent.getID(intents),
             properties = Properties()
         )
-        send(Opcode(null, null, 2, op.toJsonObj()))
+        send(OpPacket(null, null, 2, op.toJsonObj()))
     }
 
     /**
@@ -74,15 +74,15 @@ class Gateway(
             sessionId = session,
             seq = s
         )
-        send(Opcode(null, null, 6, op.toJsonObj()))
+        send(OpPacket(null, null, 6, op.toJsonObj()))
     }
 
-    override suspend fun handleIncome(opcode: Opcode, resumed: Boolean) {
-        when (opcode.op) {
+    override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
+        when (packet.op) {
             // 	An event was dispatched
             0  -> {
-                eventDispatcher.emit(opcode)
-                s = opcode.s ?: s
+                eventDispatcher.emit(packet)
+                s = packet.s ?: s
             }
             // 	Fired periodically by the client to keep the connection alive
             1  -> {
@@ -91,7 +91,7 @@ class Gateway(
             }
             // 	Sent immediately after connecting
             10 -> {
-                startHeartbeat(opcode)
+                startHeartbeat(packet)
                 if (resumed) resume()
                 else identify()
                 ready()
@@ -107,9 +107,9 @@ class Gateway(
     /**
      * Starts the heartbeat loop.
      *
-     * @param income The received [Opcode].
+     * @param income The received [OpPacket].
      */
-    private fun startHeartbeat(income: Opcode) {
+    private fun startHeartbeat(income: OpPacket) {
         val heartbeatInterval = income.d!!.jsonObject["heartbeat_interval"]!!.jsonPrimitive.int
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
             coroutineScope.launch {
@@ -122,7 +122,7 @@ class Gateway(
      * Sends a heartbeat response to Discord.
      */
     private suspend fun sendHeartbeat() {
-        val heartbeat = Opcode(null, null, 1, s)
+        val heartbeat = OpPacket(null, null, 1, s)
         send(heartbeat)
         trace(this::class) { "Sent heartbeat!" }
     }
@@ -134,7 +134,7 @@ class Gateway(
      * @param presence New presence / status.
      */
     suspend fun updatePresence(presence: PresenceUpdate) {
-        send(Opcode(null, null, 3, presence.toJsonObj(true)))
+        send(OpPacket(null, null, 3, presence.toJsonObj(true)))
     }
 
 }

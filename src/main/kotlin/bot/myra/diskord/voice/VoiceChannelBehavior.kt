@@ -7,7 +7,7 @@ import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.gateway.events.impl.VoiceServerUpdateEvent
-import bot.myra.diskord.gateway.Opcode
+import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.kommons.debug
 import kotlinx.coroutines.*
@@ -26,8 +26,8 @@ interface VoiceChannelBehavior {
         val guildId = data.guildId.value ?: throw Exception("A bot can only join guild channels")
         val state = VoiceUpdate(guildId, data.id, mute, deaf)
         debug(this::class) { "Requesting connection for guild ${state.guildId}" }
-        val opcode = Opcode(op = 4, d = state.toJsonObj(), s = null, t = null)
-        Diskord.gateway.send(opcode)
+        val packet = OpPacket(op = 4, d = state.toJsonObj(), s = null, t = null)
+        Diskord.gateway.send(packet)
 
         val voiceStateUpdateAwait = asDeferredAsync {
             Diskord.gateway.eventDispatcher

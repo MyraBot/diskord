@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 
 @Serializable
-data class Opcode(
+data class OpPacket(
     val t: String?,
     val s: Int?,
     val op: Int,

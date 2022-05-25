@@ -1,6 +1,6 @@
 package bot.myra.diskord.common.utilities
 
-import bot.myra.diskord.gateway.Opcode
+import bot.myra.diskord.gateway.OpPacket
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
@@ -27,7 +27,7 @@ abstract class GenericGateway(
      * This mostly happened when trying to send an opcode while the
      * websocket isn't connected.
      */
-    private val waitingCalls = mutableListOf<Opcode>()
+    private val waitingCalls = mutableListOf<OpPacket>()
 
     val client = HttpClient(CIO) {
         install(WebSockets)
@@ -48,7 +48,7 @@ abstract class GenericGateway(
                 incoming.receiveAsFlow().collect {
                     val data = it as Frame.Text
                     logger.debug("<< ${data.readText()}")
-                    val income = JSON.decodeFromString<Opcode>(data.readText())
+                    val income = JSON.decodeFromString<OpPacket>(data.readText())
                     handleIncome(income, resumed)
                 }
             } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
@@ -76,18 +76,18 @@ abstract class GenericGateway(
         }
     }
 
-    abstract suspend fun handleIncome(opcode: Opcode, resumed: Boolean)
+    abstract suspend fun handleIncome(packet: OpPacket, resumed: Boolean)
 
     /**
-     * Sends the provided [Opcode] to the websocket.
+     * Sends the provided [OpPacket] to the websocket.
      * If the websocket isn't connected, the opt-code will get added to [waitingCalls].
      * All waiting calls get executed as soon as the websocket is connected again.
      *
-     * @param opcode Opcode to send.
+     * @param packet Opcode to send.
      */
-    suspend fun send(opcode: Opcode) {
-        logger.debug(">> ${opcode.toJson()}")
-        socket?.send(opcode.toJson()) ?: waitingCalls.add(opcode)
+    suspend fun send(packet: OpPacket) {
+        logger.debug(">> ${packet.toJson()}")
+        socket?.send(packet.toJson()) ?: waitingCalls.add(packet)
     }
 
 }
