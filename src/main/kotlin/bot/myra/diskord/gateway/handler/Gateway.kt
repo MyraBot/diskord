@@ -36,7 +36,7 @@ class Gateway(
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
     lateinit var session: String
     private var s: Int = 0
-    val eventDispatcher = MutableSharedFlow<OptCode>()
+    val eventDispatcher = MutableSharedFlow<Opcode>()
 
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
@@ -61,7 +61,7 @@ class Gateway(
             intents = GatewayIntent.getID(intents),
             properties = Properties()
         )
-        send(OptCode(null, null, 2, op.toJsonObj()))
+        send(Opcode(null, null, 2, op.toJsonObj()))
     }
 
     /**
@@ -75,10 +75,10 @@ class Gateway(
             sessionId = session,
             seq = s
         )
-        send(OptCode(null, null, 6, op.toJsonObj()))
+        send(Opcode(null, null, 6, op.toJsonObj()))
     }
 
-    override suspend fun handleIncome(income: OptCode, resume: Boolean) {
+    override suspend fun handleIncome(income: Opcode, resume: Boolean) {
         when (income.op) {
             // 	An event was dispatched
             0  -> {
@@ -108,9 +108,9 @@ class Gateway(
     /**
      * Starts the heartbeat loop.
      *
-     * @param income The received [OptCode].
+     * @param income The received [Opcode].
      */
-    private fun startHeartbeat(income: OptCode) {
+    private fun startHeartbeat(income: Opcode) {
         val heartbeatInterval = income.d!!.jsonObject["heartbeat_interval"]!!.jsonPrimitive.int
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
             coroutineScope.launch {
@@ -123,7 +123,7 @@ class Gateway(
      * Sends a heartbeat response to Discord.
      */
     private suspend fun sendHeartbeat() {
-        val heartbeat = OptCode(null, null, 1, s)
+        val heartbeat = Opcode(null, null, 1, s)
         send(heartbeat)
         trace(this::class) { "Sent heartbeat!" }
     }
@@ -135,7 +135,7 @@ class Gateway(
      * @param presence New presence / status.
      */
     suspend fun updatePresence(presence: PresenceUpdate) {
-        send(OptCode(null, null, 3, presence.toJsonObj(true)))
+        send(Opcode(null, null, 3, presence.toJsonObj(true)))
     }
 
 }
