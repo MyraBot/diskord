@@ -49,8 +49,8 @@ class VoiceGateway(
     }
 
     override suspend fun onConnectionOpened(resumed: Boolean) {
-        if (resumed) send(Identify(guildId, Diskord.id, session, token))
-        else send(Resume(guildId, session, token))
+        if (resumed) send(Resume(guildId, session, token))
+        else send(Identify(guildId, Diskord.id, session, token))
     }
 
     private fun startHeartbeat(hello: OptCode) = scope.launch {
