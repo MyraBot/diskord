@@ -17,7 +17,7 @@ data class ReadyEvent(
 
     override fun prepareEvent() {
         Diskord.apply {
-            websocket.session = sessionId
+            gateway.session = sessionId
             id = botUser.id
             guildIds.addAll(guilds.map(UnavailableGuild::id))
             unavailableGuilds.addAll(guilds.map(UnavailableGuild::id))

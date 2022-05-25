@@ -23,7 +23,7 @@ object Events {
 
     fun startResolver() {
         coroutineScope.launch {
-            Diskord.websocket.eventDispatcher.collect { income ->
+            Diskord.gateway.eventDispatcher.collect { income ->
                 val json = income.d ?: return@collect
                 when (income.t!!) {
                     "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))

@@ -13,7 +13,7 @@ import bot.myra.diskord.gateway.commands.Presence
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.commands.Status
 import bot.myra.diskord.gateway.events.EventListener
-import bot.myra.diskord.gateway.handler.Websocket
+import bot.myra.diskord.gateway.handler.Gateway
 import bot.myra.diskord.gateway.handler.intents.GatewayIntent
 import bot.myra.diskord.rest.DefaultTransformer
 import bot.myra.diskord.rest.Endpoints
@@ -51,7 +51,7 @@ import kotlin.system.exitProcess
 @Suppress("unused")
 object Diskord : GetTextChannelBehavior {
     lateinit var token: String
-    internal lateinit var websocket: Websocket
+    internal lateinit var gateway: Gateway
     lateinit var id: String
 
     var gatewayClient = HttpClient(CIO) { install(WebSockets) }
@@ -80,7 +80,7 @@ object Diskord : GetTextChannelBehavior {
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
     fun cachePolicy(builder: CachePolicy.() -> Unit) = run { cachePolicy = CachePolicy().apply(builder) }
-    fun hasWebsocketConnection(): Boolean = ::websocket.isInitialized && websocket.connected
+    fun hasWebsocketConnection(): Boolean = ::gateway.isInitialized && gateway.connected
 
     suspend fun updatePresence(status: Status, presence: Presence.() -> Unit) {
         val newPresence = Presence(status = status).apply(presence)
@@ -90,7 +90,7 @@ object Diskord : GetTextChannelBehavior {
             newPresence.status,
             newPresence.afk
         )
-        websocket.updatePresence(operation)
+        gateway.updatePresence(operation)
     }
 
     suspend fun getApplicationCommands(): List<SlashCommand> = EntityProvider.getApplicationCommands()

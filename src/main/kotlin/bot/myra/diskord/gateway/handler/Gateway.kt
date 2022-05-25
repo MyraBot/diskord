@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
  *
  * The Gateway websocket to listen to discord events.
  */
-class Websocket(
+class Gateway(
     private val intents: MutableSet<GatewayIntent> = mutableSetOf()
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
@@ -200,7 +200,7 @@ suspend fun Diskord.connectGateway() {
     listenersPackage.forEach { Events.findListeners(it) }
 
     if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
-    val ws = Websocket(this.intents) // Create websocket
-    Diskord.apply { websocket = ws }
+    val ws = Gateway(this.intents) // Create websocket
+    Diskord.apply { gateway = ws }
     ws.connect() // Open websocket connection
 }

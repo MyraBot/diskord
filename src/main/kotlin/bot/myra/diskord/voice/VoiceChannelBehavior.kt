@@ -27,17 +27,17 @@ interface VoiceChannelBehavior {
         val state = VoiceUpdate(guildId, data.id, mute, deaf)
         debug(this::class) { "Requesting connection for guild ${state.guildId}" }
         val opcode = OptCode(op = 4, d = state.toJsonObj(), s = null, t = null)
-        Diskord.websocket.send(opcode)
+        Diskord.gateway.send(opcode)
 
         val voiceStateUpdateAwait = asDeferredAsync {
-            Diskord.websocket.eventDispatcher
+            Diskord.gateway.eventDispatcher
                 .filter { it.t == "VOICE_STATE_UPDATE" }
                 .mapNotNull { it.d }
                 .map { JSON.decodeFromJsonElement<VoiceState>(it) }
                 .first { it.guildId == state.guildId }
         }
         val voiceServerUpdateAwait = asDeferredAsync {
-            Diskord.websocket.eventDispatcher
+            Diskord.gateway.eventDispatcher
                 .filter { it.t == "VOICE_SERVER_UPDATE" }
                 .mapNotNull { it.d }
                 .map { JSON.decodeFromJsonElement<VoiceServerUpdateEvent>(it) }
