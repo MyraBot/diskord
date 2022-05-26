@@ -10,6 +10,7 @@ import bot.myra.diskord.voice.gateway.models.SessionDescriptionPayload
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory
  * @property connectDetails Information to connect.
  */
 class UdpSocket(
+    private val scope: CoroutineScope,
     val gateway: VoiceGateway,
     val connectDetails: ConnectionReadyPayload,
 ) {
@@ -45,8 +47,8 @@ class UdpSocket(
         audioProvider = AudioProvider(
             gateway = gateway,
             socket = this,
-            secretKey = secretKey.toUByteArray().toByteArray()
-        )
+            secretKey = secretKey.toUByteArray().toByteArray(),
+            scope = scope)
         audioProvider.start()
     }
 

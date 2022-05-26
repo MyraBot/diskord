@@ -14,7 +14,7 @@ class AudioProvider(
     private val socket: UdpSocket,
     private val config: AudioProvidingConfiguration = AudioProvidingConfiguration(),
     secretKey: ByteArray,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    private val scope: CoroutineScope
 ) {
     private var provider: Job? = null
     private val queuedFrames = Channel<ByteArray?>()

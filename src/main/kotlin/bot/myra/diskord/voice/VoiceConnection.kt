@@ -10,6 +10,10 @@ import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
 import bot.myra.diskord.voice.gateway.models.Operations
 import bot.myra.diskord.voice.udp.UdpSocket
 import bot.myra.kommons.debug
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.decodeFromJsonElement
 
@@ -27,7 +31,8 @@ class VoiceConnection(
     val token: String,
     val guildId: String
 ) {
-    private val gateway = VoiceGateway(endpoint, token, session, guildId)
+    private val scope = CoroutineScope(Dispatchers.Default + CoroutineName("VoiceConnection($guildId)"))
+    private val gateway = VoiceGateway(scope, endpoint, token, session, guildId)
     var udp: UdpSocket? = null
 
     suspend fun openConnection() {
@@ -36,7 +41,7 @@ class VoiceConnection(
             .first { it.op == Operations.READY.code }
             .let { it.d ?: throw IllegalStateException("Invalid voice ready payload") }
             .let { JSON.decodeFromJsonElement<ConnectionReadyPayload>(it) }
-        udp = UdpSocket(gateway, connectionDetails).apply { openSocketConnection() }
+        udp = UdpSocket(scope, gateway, connectionDetails).apply { openSocketConnection() }
         debug(this::class) { "Successfully created voice connection for $guildId" }
     }
 
@@ -47,6 +52,7 @@ class VoiceConnection(
     suspend fun disconnect() {
         gateway.disconnect()
         udp?.disconnect()
+        scope.cancel("Requested disconnect by the user")
     }
 
     suspend fun leave() {

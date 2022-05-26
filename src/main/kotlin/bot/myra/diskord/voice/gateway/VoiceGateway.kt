@@ -14,7 +14,6 @@ import bot.myra.diskord.voice.gateway.models.VoiceSocketClosedReason
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.close
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -23,6 +22,7 @@ import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
 
 class VoiceGateway(
+    private val scope: CoroutineScope,
     endpoint: String,
     private val token: String,
     private val session: String,
@@ -31,7 +31,6 @@ class VoiceGateway(
     url = "wss://$endpoint/?v=4",
     logger = LoggerFactory.getLogger(VoiceGateway::class.java)
 ) {
-    private val scope = CoroutineScope(Dispatchers.Default)
     val eventDispatcher = MutableSharedFlow<OpPacket>()
     private var lastTimestamp: Long = System.currentTimeMillis()
 
