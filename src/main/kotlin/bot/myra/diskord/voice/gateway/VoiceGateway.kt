@@ -3,12 +3,14 @@ package bot.myra.diskord.voice.gateway
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.JSON
+import bot.myra.diskord.common.utilities.ReconnectMethod
 import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.voice.gateway.commands.Identify
 import bot.myra.diskord.voice.gateway.commands.Resume
 import bot.myra.diskord.voice.gateway.commands.VoiceCommand
 import bot.myra.diskord.voice.gateway.models.HelloPayload
 import bot.myra.diskord.voice.gateway.models.Operations
+import bot.myra.diskord.voice.gateway.models.VoiceSocketClosedReason
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.close
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +73,21 @@ class VoiceGateway(
     private fun handleHeartbeat(packet: OpPacket) {
         if (packet.d?.jsonPrimitive?.long != lastTimestamp) logger.warn("Received non matching heartbeat")
         else logger.debug("Acknowledged heartbeat")
+    }
+
+    override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (VoiceSocketClosedReason.fromCode(reason.code)) {
+        VoiceSocketClosedReason.UNKNOWN_OPCODE          -> ReconnectMethod.STOP
+        VoiceSocketClosedReason.FAILED_PAYLOAD_DECODING -> ReconnectMethod.RETRY
+        VoiceSocketClosedReason.NOT_AUTHENTICATED       -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.AUTHENTICATION_FAILED   -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.ALREADY_AUTHENTICATED   -> ReconnectMethod.STOP
+        VoiceSocketClosedReason.SESSION_INVALID         -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.SESSION_TIMEOUT         -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.SERVER_NOT_FOUND        -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.UNKNOWN_PROTOCOL        -> ReconnectMethod.STOP
+        VoiceSocketClosedReason.DISCONNECTED            -> ReconnectMethod.STOP
+        VoiceSocketClosedReason.VOICE_SERVER_CRASHED    -> ReconnectMethod.RETRY
+        VoiceSocketClosedReason.UNKNOWN_ENCRYPTION_MODE -> ReconnectMethod.STOP
     }
 
     suspend fun disconnect() {

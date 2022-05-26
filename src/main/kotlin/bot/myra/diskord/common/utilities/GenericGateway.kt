@@ -6,6 +6,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
@@ -53,20 +54,35 @@ abstract class GenericGateway(
                 }
             } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
         }
-        // Manage disconnects ➜ try reconnecting
+        // On disconnect
         catch (e: ClosedReceiveChannelException) {
-            logger.info("Lost connection...")
+            logger.warn("Lost connection...")
+            handleDisconnect()
         }
+    }
+
+    private suspend fun handleDisconnect() {
         val reasonSocket = socket
         socket = null
-        reasonSocket?.let {
-            val reason = withTimeoutOrNull(5.seconds) { reasonSocket.closeReason.await() }
-            logger.warn("Socket closed with reason $reason - attempting reconnection")
+        val reason = reasonSocket?.let {
+            withTimeoutOrNull(5.seconds) {
+                reasonSocket.closeReason.await()
+            }
+        }?.also { logger.warn("Socket closed with reason $it") }
+
+        if (reason == null) openGatewayConnection(true)
+        else {
+            when (chooseReconnectMethod(reason)) {
+                ReconnectMethod.CONNECT -> openGatewayConnection(false)
+                ReconnectMethod.RETRY   -> openGatewayConnection(true)
+                ReconnectMethod.STOP    -> return
+            }
         }
-        openGatewayConnection(true)
     }
 
     open suspend fun onConnectionOpened(resumed: Boolean) {}
+
+    open suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = ReconnectMethod.RETRY
 
     suspend fun ready() {
         // Send queued calls
@@ -91,3 +107,4 @@ abstract class GenericGateway(
     }
 
 }
+

@@ -2,6 +2,7 @@ package bot.myra.diskord.gateway
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
+import bot.myra.diskord.common.utilities.ReconnectMethod
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
@@ -9,6 +10,7 @@ import bot.myra.kommons.debug
 import bot.myra.kommons.info
 import bot.myra.kommons.kInfo
 import bot.myra.kommons.trace
+import io.ktor.websocket.CloseReason
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +63,23 @@ class Gateway(
             properties = Properties()
         )
         send(OpPacket(null, null, 2, op.toJsonObj()))
+    }
+
+    override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (GatewaySocketClosedReason.fromCode(reason.code)) {
+        GatewaySocketClosedReason.UNKNOWN_ERROR         -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.UNKNOWN_OPCODE        -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.DECODE_ERROR          -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.NOT_AUTHENTICATED     -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.ALREADY_AUTHENTICATED -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
+        GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.SESSION_TIMED_OUT     -> ReconnectMethod.CONNECT
+        GatewaySocketClosedReason.INVALID_SHARD         -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.SHARDING_REQUIRED     -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.INVALID_API_VERSION   -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> ReconnectMethod.STOP
     }
 
     /**
