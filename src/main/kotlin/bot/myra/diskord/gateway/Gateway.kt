@@ -75,11 +75,11 @@ class Gateway(
         GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
         GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
         GatewaySocketClosedReason.SESSION_TIMED_OUT     -> ReconnectMethod.CONNECT
-        GatewaySocketClosedReason.INVALID_SHARD         -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.INVALID_SHARD         -> throw Exception("Invalid shard")
         GatewaySocketClosedReason.SHARDING_REQUIRED     -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.INVALID_API_VERSION   -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.INVALID_API_VERSION   -> throw Exception("Invalid gateway version")
         GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> throw Exception("You may have tried to specify an intent that you have not enabled or are not approved for.")
     }
 
     /**
