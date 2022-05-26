@@ -78,30 +78,25 @@ class Gateway(
     }
 
     override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
-        when (packet.op) {
-            // 	An event was dispatched
-            0  -> {
-                eventDispatcher.emit(packet)
-                s = packet.s ?: s
-            }
-            // 	Fired periodically by the client to keep the connection alive
-            1  -> {
-                debug(this::class) { "Received Heartbeat attack!" }
-                sendHeartbeat()
-            }
-            // 	Sent immediately after connecting
-            10 -> {
-                startHeartbeat(packet)
-                if (resumed) resume()
-                else identify()
-                ready()
-                info(this::class) { "Successfully connected to Discord" }
-            }
-            // 	Sent in response to receiving a heartbeat to acknowledge that it has been received
-            11 -> {
-                debug(this::class) { "Heartbeat acknowledged!" }
-            }
+        when (OpCode.from(packet.op)) {
+            OpCode.DISPATCH              -> fireEvent(packet)
+            OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
+            OpCode.HELLO                 -> hello(packet, resumed)
+            OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
         }
+    }
+
+    private suspend fun fireEvent(packet: OpPacket) {
+        eventDispatcher.emit(packet)
+        s = packet.s ?: s
+    }
+
+    private suspend fun hello(packet: OpPacket, resumed: Boolean) {
+        startHeartbeat(packet)
+        if (resumed) resume()
+        else identify()
+        ready()
+        info(this::class) { "Successfully connected to Discord" }
     }
 
     /**
