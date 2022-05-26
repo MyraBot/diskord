@@ -65,6 +65,11 @@ class UdpSocket(
         }
     }
 
+    fun disconnect() {
+        audioProvider.stop()
+        socket.close()
+    }
+
     suspend fun send(builder: BytePacketBuilder.() -> Unit) {
         val datagram = Datagram(buildPacket(block = builder), voiceServer)
         socket.send(datagram)

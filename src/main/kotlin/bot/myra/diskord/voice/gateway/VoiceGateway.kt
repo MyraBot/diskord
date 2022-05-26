@@ -9,6 +9,8 @@ import bot.myra.diskord.voice.gateway.commands.Resume
 import bot.myra.diskord.voice.gateway.commands.VoiceCommand
 import bot.myra.diskord.voice.gateway.models.HelloPayload
 import bot.myra.diskord.voice.gateway.models.Operations
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.close
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -69,6 +71,11 @@ class VoiceGateway(
     private fun handleHeartbeat(packet: OpPacket) {
         if (packet.d?.jsonPrimitive?.long != lastTimestamp) logger.warn("Received non matching heartbeat")
         else logger.debug("Acknowledged heartbeat")
+    }
+
+    suspend fun disconnect() {
+        socket?.close(CloseReason(5479, "Closed by user"))
+        socket = null
     }
 
     /**

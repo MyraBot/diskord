@@ -1,6 +1,10 @@
 package bot.myra.diskord.voice
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.JSON
+import bot.myra.diskord.common.utilities.toJsonObj
+import bot.myra.diskord.gateway.OpPacket
+import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.voice.gateway.VoiceGateway
 import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
 import bot.myra.diskord.voice.gateway.models.Operations
@@ -34,6 +38,31 @@ class VoiceConnection(
             .let { JSON.decodeFromJsonElement<ConnectionReadyPayload>(it) }
         udp = UdpSocket(gateway, connectionDetails).apply { openSocketConnection() }
         debug(this::class) { "Successfully created voice connection for $guildId" }
+    }
+
+    /**
+     * Disconnects form all connections.
+     * This does not change the voice state.
+     */
+    suspend fun disconnect() {
+        gateway.disconnect()
+        udp?.disconnect()
+    }
+
+    suspend fun leave() {
+        val state = VoiceUpdate(
+            guildId = guildId,
+            channelId = null,
+            selfMute = false,
+            selfDeaf = false
+        )
+        val op = OpPacket(
+            op = 4,
+            d = state.toJsonObj(true),
+            s = null,
+            t = null
+        )
+        Diskord.gateway.send(op)
     }
 
 }

@@ -16,6 +16,7 @@ class AudioProvider(
     secretKey: ByteArray,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
 ) {
+    private var provider: Job? = null
     private val queuedFrames = Channel<ByteArray?>()
     private var encryption: SecretBox = SecretBox(secretKey)
     private var sentPackets: Short = 0
@@ -23,8 +24,13 @@ class AudioProvider(
     private var speaking = false
     private var silenceFrames = 5
 
+    fun stop() {
+        provider?.cancel("Closed by user")
+        provider = null
+    }
+
     fun provide(bytes: () -> ByteArray?) {
-        scope.launch {
+        this.provider = scope.launch {
             var idealFrameTimestamp = System.currentTimeMillis()
             while (isActive) {
                 queuedFrames.send(bytes.invoke())
