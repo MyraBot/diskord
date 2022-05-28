@@ -56,7 +56,7 @@ object RestClient {
      * @param request Detailed information about the request.
      * @return Returns the response as [R].
      */
-    suspend fun <R> execute(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R = StacktraceRecovery.handle(HttpRequest(route).apply(request))
+    suspend fun <R> execute(route: Route<R>, request: suspend HttpRequest<R>.() -> Unit = {}): R = StacktraceRecovery.handle(HttpRequest(route).apply { request.invoke(this) })
 
     /**
      * Executes a nullable http request using the [StacktraceRecovery].
@@ -68,7 +68,7 @@ object RestClient {
      * @param request Detailed information about the request.
      * @return Returns the response as a nullable [R].
      */
-    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = StacktraceRecovery.handleNullable(HttpRequest(route).apply(request))
+    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = StacktraceRecovery.handleNullable(HttpRequest(route).apply { request.invoke(this) })
 
     /**
      * Executes a http request to the saved path of [req].
@@ -123,7 +123,7 @@ object RestClient {
                 }
             }
         } catch (e: HttpRequestTimeoutException) {
-            debug(RestClient::class) {"Retrying"}
+            debug(RestClient::class) { "Retrying" }
             return bodyRequest(req)
         }
     }
