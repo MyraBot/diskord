@@ -44,6 +44,7 @@ object Endpoints {
     }
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
+    val acknowledgeOriginalResponse = Route(HttpMethod.Patch, "/webhooks/{application.id}/{interaction.token}/messages/@original", Unit.serializer())
     val getOriginalInteractionResponse = Route(HttpMethod.Get, "/webhooks/{application.id}/{interaction.token}/messages/@original", Message.serializer())
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}?with_counts=true", Guild.serializer()) { guild, args ->
         Diskord.cachePolicy.guildCache.update(guild)
@@ -62,5 +63,5 @@ object Endpoints {
     val createGuildBan = Route(HttpMethod.Put, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val removeGuildBan = Route(HttpMethod.Delete, "/guilds/{guild.id}/bans/{user.id}", Unit.serializer())
     val getChannelMessage = Route(HttpMethod.Get, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
-    val getChannelMessages = Route(HttpMethod.Get,"/channels/{channel.id}/messages", ListSerializer(Message.serializer()))
+    val getChannelMessages = Route(HttpMethod.Get, "/channels/{channel.id}/messages", ListSerializer(Message.serializer()))
 }

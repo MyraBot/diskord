@@ -41,6 +41,27 @@ interface InteractionCreateBehavior {
     suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
         acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
 
+    suspend fun thinking() = RestClient.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE).toJson()
+        arguments {
+            arg("interaction.id", interaction.id)
+            arg("interaction.token", interaction.token)
+        }
+    }
+
+    suspend fun editOriginal(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
+        editOriginal(files.asList(), interaction.asModifier().apply { message.invoke(this) })
+
+    suspend fun editOriginal(files: List<File>, message: InteractionModifier) =
+        RestClient.execute(Endpoints.acknowledgeOriginalResponse) {
+            println(Endpoints.acknowledgeOriginalResponse.httpMethod.value)
+            json = message.toJson()
+            arguments {
+                arg("application.id", Diskord.id)
+                arg("interaction.token", interaction.token)
+            }
+        }
+
     /**
      * Edits the original [Interaction.message].
      * Overwrites the old message entirely.
