@@ -23,18 +23,12 @@ interface InteractionCreateBehavior {
         }
     }
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) {
-        val responseData = InteractionResponseData(
-            InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            message.apply { transform() }
-        )
-        return RestClient.execute(Endpoints.acknowledgeInteraction) {
-            json = responseData.toJson()
-            attachments = files.toList()
-            arguments {
-                arg("interaction.id", interaction.id)
-                arg("interaction.token", interaction.token)
-            }
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, message.apply { transform() }).toJson()
+        attachments = files.toList()
+        arguments {
+            arg("interaction.id", interaction.id)
+            arg("interaction.token", interaction.token)
         }
     }
 
@@ -67,17 +61,11 @@ interface InteractionCreateBehavior {
      *
      * @param message The new interaction.
      */
-    suspend fun edit(message: InteractionModifier) {
-        val responseData = InteractionResponseData(
-            InteractionCallbackType.UPDATE_MESSAGE,
-            message.apply { transform() }
-        )
-        return RestClient.execute(Endpoints.acknowledgeInteraction) {
-            json = responseData.toJson()
-            arguments {
-                arg("interaction.id", interaction.id)
-                arg("interaction.token", interaction.token)
-            }
+    suspend fun edit(message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.UPDATE_MESSAGE, message.apply { transform() }).toJson()
+        arguments {
+            arg("interaction.id", interaction.id)
+            arg("interaction.token", interaction.token)
         }
     }
 
