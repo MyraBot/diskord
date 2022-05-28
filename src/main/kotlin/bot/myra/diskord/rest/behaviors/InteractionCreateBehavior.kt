@@ -47,7 +47,6 @@ interface InteractionCreateBehavior {
         editOriginal(files.asList(), interaction.asModifier().apply { message.invoke(this) })
 
     suspend fun editOriginal(files: List<File>, message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeOriginalResponse) {
-        println(Endpoints.acknowledgeOriginalResponse.httpMethod.value)
         json = message.apply { transform() }.toJson()
         arguments {
             arg("application.id", Diskord.id)
