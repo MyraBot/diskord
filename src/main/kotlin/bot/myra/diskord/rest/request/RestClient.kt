@@ -108,7 +108,7 @@ object RestClient {
     /**
      * Executes a http request with an optional body.
      *
-     * @param req Holding all information about the requets.
+     * @param req Holding all information about the request.
      * @return Returns the response as a [HttpResponse].
      */
     private suspend fun bodyRequest(req: HttpRequest<*>): HttpResponse {
