@@ -52,15 +52,14 @@ interface InteractionCreateBehavior {
     suspend fun editOriginal(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
         editOriginal(files.asList(), interaction.asModifier().apply { message.invoke(this) })
 
-    suspend fun editOriginal(files: List<File>, message: InteractionModifier) =
-        RestClient.execute(Endpoints.acknowledgeOriginalResponse) {
-            println(Endpoints.acknowledgeOriginalResponse.httpMethod.value)
-            json = message.toJson()
-            arguments {
-                arg("application.id", Diskord.id)
-                arg("interaction.token", interaction.token)
-            }
+    suspend fun editOriginal(files: List<File>, message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeOriginalResponse) {
+        println(Endpoints.acknowledgeOriginalResponse.httpMethod.value)
+        json = message.apply { transform() }.toJson()
+        arguments {
+            arg("application.id", Diskord.id)
+            arg("interaction.token", interaction.token)
         }
+    }
 
     /**
      * Edits the original [Interaction.message].
