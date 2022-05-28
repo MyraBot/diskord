@@ -15,14 +15,20 @@ interface IComponentModifier {
      *
      * @param button The button to add as a component.
      */
-    fun addButton(button: Button) {
-        if (components.size == 0) components.add(ActionRow())
-        else if (components.last().isFull()) components.add(ActionRow())
-
-        this.components.last().components.add(button)
+    fun addButton(button: Button, row: Int? = null) {
+        if (row == null) {
+            if (components.size == 0) components.add(ActionRow())
+            else if (components.last().isFull()) components.add(ActionRow())
+            this.components.last().components.add(button)
+        } else {
+            while(components.size <= row) {
+                components.add(ActionRow())
+            }
+            components[row].components.add(button)
+        }
     }
 
-    suspend fun addButton(style: ButtonStyle, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) })
+    suspend fun addButton(style: ButtonStyle, row: Int? = null, builder: suspend Button.() -> Unit) = addButton(Button(style = style).apply { builder.invoke(this) }, row)
     fun addButtons(vararg button: Button) = button.forEach { addButton(it) }
     fun addButtons(buttons: List<Button>) = buttons.forEach { addButton(it) }
 
