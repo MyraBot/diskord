@@ -10,16 +10,12 @@ import bot.myra.diskord.rest.request.error.*
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import bot.myra.kommons.debug
 import bot.myra.kommons.kDebug
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,6 +152,7 @@ object RestClient {
             FileFormats.JPEG -> ContentType.Image.JPEG
             FileFormats.PNG  -> ContentType.Image.PNG
             FileFormats.GIF  -> ContentType.Image.GIF
+            FileFormats.TXT  -> ContentType.Text.Plain
             else             -> throw Exception("The provided file type isn't registered as a content type")
         }
     }
