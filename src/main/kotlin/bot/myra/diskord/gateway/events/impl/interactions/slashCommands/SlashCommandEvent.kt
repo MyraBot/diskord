@@ -1,26 +1,23 @@
 package bot.myra.diskord.gateway.events.impl.interactions.slashCommands
 
-import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.Resolved
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionData
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
 import bot.myra.diskord.common.entities.channel.ChannelData
-import bot.myra.diskord.common.entities.channel.TextChannel
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.JSON
-import bot.myra.diskord.gateway.events.impl.interactions.GenericInteractionCreateEvent
+import bot.myra.diskord.gateway.events.impl.interactions.NonModalInteractionEvent
 import bot.myra.diskord.rest.EntityProvider
-import bot.myra.diskord.rest.behaviors.getChannel
 import kotlinx.serialization.json.*
 
 open class SlashCommandEvent(
     override val interaction: Interaction
-) : GenericInteractionCreateEvent(interaction) {
+) : NonModalInteractionEvent(interaction) {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.data.value!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId.value!!)
     open val member: Member? get() = interaction.member
@@ -40,7 +37,6 @@ open class SlashCommandEvent(
         }
 
     open suspend fun getGuild(): Guild? = EntityProvider.getGuild(interaction.guildId.value!!)
-    suspend fun getChannel(): TextChannel? = Diskord.getChannel(interaction.channelId.value!!)
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.find { it.name == name }
