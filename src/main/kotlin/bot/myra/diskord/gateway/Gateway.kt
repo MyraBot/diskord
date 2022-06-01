@@ -4,13 +4,16 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.ReconnectMethod
 import bot.myra.diskord.common.utilities.toJsonObj
+import bot.myra.diskord.gateway.commands.GatewayCommand
+import bot.myra.diskord.gateway.commands.GatewayResume
+import bot.myra.diskord.gateway.commands.IdentifyResponse
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.kommons.debug
 import bot.myra.kommons.info
 import bot.myra.kommons.kInfo
 import bot.myra.kommons.trace
-import io.ktor.websocket.CloseReason
+import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,12 +60,7 @@ class Gateway(
      */
     private suspend fun identify() {
         kInfo(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
-        val op = IdentifyResponse(
-            token = Diskord.token,
-            intents = GatewayIntent.getID(intents),
-            properties = Properties()
-        )
-        send(OpPacket(null, null, 2, op.toJsonObj()))
+        send(IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), IdentifyResponse.Properties()))
     }
 
     override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (GatewaySocketClosedReason.fromCode(reason.code)) {
@@ -88,12 +86,7 @@ class Gateway(
      */
     private suspend fun resume() {
         kInfo(this::class) { "Reconnecting to Discord" }
-        val op = GatewayResume(
-            token = Diskord.token,
-            sessionId = session,
-            seq = s
-        )
-        send(OpPacket(null, null, 6, op.toJsonObj()))
+        send(GatewayResume(Diskord.token, session, s))
     }
 
     override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
@@ -147,8 +140,15 @@ class Gateway(
      *
      * @param presence New presence / status.
      */
-    suspend fun updatePresence(presence: PresenceUpdate) {
-        send(OpPacket(null, null, 3, presence.toJsonObj(true)))
+    suspend fun updatePresence(presence: PresenceUpdate) = send(presence)
+
+    private suspend inline fun <reified T : GatewayCommand> send(command: T) {
+        send(OpPacket(
+            t = null,
+            s = null,
+            op = command.operation?.code ?: throw Exception("No opcode provided by operation ${T::class.simpleName}"),
+            d = command.toJsonObj(true)
+        ))
     }
 
 }

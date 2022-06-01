@@ -9,12 +9,10 @@ import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashC
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
-import bot.myra.diskord.gateway.commands.Presence
-import bot.myra.diskord.gateway.commands.PresenceUpdate
-import bot.myra.diskord.gateway.commands.Status
-import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.Gateway
 import bot.myra.diskord.gateway.GatewayIntent
+import bot.myra.diskord.gateway.commands.PresenceUpdate
+import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.rest.DefaultTransformer
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.EntityProvider
@@ -23,9 +21,9 @@ import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -82,15 +80,9 @@ object Diskord : GetTextChannelBehavior {
     fun cachePolicy(builder: CachePolicy.() -> Unit) = run { cachePolicy = CachePolicy().apply(builder) }
     fun hasWebsocketConnection(): Boolean = ::gateway.isInitialized && gateway.connected
 
-    suspend fun updatePresence(status: Status, presence: Presence.() -> Unit) {
-        val newPresence = Presence(status = status).apply(presence)
-        val operation = PresenceUpdate(
-            newPresence.since,
-            newPresence.activity?.let { listOf(it) } ?: emptyList(),
-            newPresence.status,
-            newPresence.afk
-        )
-        gateway.updatePresence(operation)
+    suspend fun updatePresence(status: PresenceUpdate.Status, presence: PresenceUpdate.() -> Unit) {
+        val newPresence = PresenceUpdate(status = status).apply(presence)
+        gateway.updatePresence(newPresence)
     }
 
     suspend fun getApplicationCommands(): List<SlashCommand> = EntityProvider.getApplicationCommands()
