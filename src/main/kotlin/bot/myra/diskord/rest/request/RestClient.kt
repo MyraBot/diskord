@@ -89,7 +89,7 @@ object RestClient {
             val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
             val message = error["message"]?.string ?: "No error message provided"
             return when (response.status) {
-                HttpStatusCode.NotModified      -> throw  ModificationException(message)
+                HttpStatusCode.NotModified      -> throw ModificationException(message)
                 HttpStatusCode.BadRequest       -> throw BadReqException(message)
                 HttpStatusCode.Unauthorized     -> throw Exception("Unauthorized") // Internal exception
                 HttpStatusCode.Forbidden        -> throw MissingPermissionsException(message)
