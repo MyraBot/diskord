@@ -6,5 +6,5 @@ enum class FileFormats(val extension: String) {
     PNG("png"),
     WEB_P("webp"),
     GIF("gif"),
-    LOTTIE(".lottie")
+    LOTTIE("lottie")
 }
