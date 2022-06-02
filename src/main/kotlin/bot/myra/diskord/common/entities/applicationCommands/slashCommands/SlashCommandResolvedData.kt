@@ -15,24 +15,24 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ResolvedData(
-    val users: HashMap<String, User> = hashMapOf(),
-    val members: HashMap<String, MemberData> = hashMapOf(),
-    val roles: HashMap<String, Role> = hashMapOf(),
-    val channels: HashMap<String, ChannelData> = hashMapOf(),
-    val messages: HashMap<String, Message> = hashMapOf(),
-    val attachments: HashMap<String, Attachment> = hashMapOf()
+    val users: MutableMap<String, User> = mutableMapOf(),
+    val members: MutableMap<String, MemberData> = mutableMapOf(),
+    val roles: MutableMap<String, Role> = mutableMapOf(),
+    val channels: MutableMap<String, ChannelData> = mutableMapOf(),
+    val messages: MutableMap<String, Message> = mutableMapOf(),
+    val attachments: MutableMap<String, Attachment> = mutableMapOf()
 )
 
 data class Resolved(
     private val data: ResolvedData,
     val guildId: String
 ) {
-    val users: HashMap<String, User> = data.users
-    val members: HashMap<String, MemberData> = data.members
-    val roles: HashMap<String, Role> = data.roles
-    val channels: HashMap<String, ChannelData> = data.channels
-    val messages: HashMap<String, Message> = data.messages
-    val attachments: HashMap<String, Attachment> = data.attachments
+    val users: MutableMap<String, User> = data.users
+    val members: MutableMap<String, MemberData> = data.members
+    val roles: MutableMap<String, Role> = data.roles
+    val channels: MutableMap<String, ChannelData> = data.channels
+    val messages: MutableMap<String, Message> = data.messages
+    val attachments: MutableMap<String, Attachment> = data.attachments
 
     fun getUser(id: String): User? = data.users[id]
     fun getMember(id: String): Member? = data.members[id]?.let { Member.withUser(it, guildId, getUser(id)!!) }
