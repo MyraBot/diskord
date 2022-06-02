@@ -98,7 +98,7 @@ abstract class GenericGateway(
      */
     suspend fun send(packet: OpPacket) {
         logger.debug(">> ${packet.toJson()}")
-        socket?.send(packet.toJson()) ?: waitingCalls.add(packet)
+        socket?.send(packet.toJson(true)) ?: waitingCalls.add(packet)
     }
 
     suspend fun send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
