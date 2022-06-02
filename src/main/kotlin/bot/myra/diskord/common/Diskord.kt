@@ -116,7 +116,7 @@ object Diskord : GetTextChannelBehavior {
         }
     }
 
-    suspend fun getMessages(channel: String, before: String?, max: Int): List<Message> = RestClient.execute(Endpoints.getChannelMessages) {
+    suspend fun getMessages(channel: String, before: String? = null, max: Int = 100): List<Message> = RestClient.execute(Endpoints.getChannelMessages) {
         arguments { arg("channel.id", channel) }
         queryParameter.add("limit" to max)
         before?.let { queryParameter.add("before" to before) }
