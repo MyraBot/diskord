@@ -9,6 +9,7 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
+import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.events.impl.interactions.NonModalInteractionEvent
@@ -42,16 +43,17 @@ open class SlashCommandEvent(
         val option: SlashCommandOptionData? = arguments.find { it.name == name }
         return option?.value?.let {
             when (T::class.java) {
-                String::class.javaObjectType  -> option.value.jsonPrimitive.content
-                Int::class.javaObjectType     -> option.value.jsonPrimitive.int
-                Boolean::class.javaObjectType -> option.value.jsonPrimitive.boolean
-                User::class.java              -> resolved.getUser(option.value.jsonPrimitive.content)
-                Member::class.java            -> resolved.getMember(option.value.jsonPrimitive.content)
-                ChannelData::class.java       -> resolved.getChannel(option.value.jsonPrimitive.content)
-                Role::class.java              -> resolved.getRole(option.value.jsonPrimitive.content)
-                Unit::class.javaObjectType    -> TODO() // TODO type -> Mentionable
-                Long::class.javaObjectType    -> option.value.jsonPrimitive.long
-                else                          -> throw Exception("Couldn't parse ${option.type} to a class")
+                String::class.javaObjectType     -> option.value.jsonPrimitive.content
+                Int::class.javaObjectType        -> option.value.jsonPrimitive.int
+                Boolean::class.javaObjectType    -> option.value.jsonPrimitive.boolean
+                User::class.java                 -> resolved.getUser(option.value.jsonPrimitive.content)
+                Member::class.java               -> resolved.getMember(option.value.jsonPrimitive.content)
+                ChannelData::class.java          -> resolved.getChannel(option.value.jsonPrimitive.content)
+                Role::class.java                 -> resolved.getRole(option.value.jsonPrimitive.content)
+                Unit::class.javaObjectType       -> TODO() // TODO type -> Mentionable
+                Long::class.javaObjectType       -> option.value.jsonPrimitive.long
+                Attachment::class.javaObjectType -> resolved.getAttachment(option.value.jsonPrimitive.content)
+                else                             -> throw Exception("Couldn't parse ${option.type} to a class")
             } as T
         }
     }

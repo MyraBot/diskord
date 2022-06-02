@@ -1,8 +1,9 @@
 package bot.myra.diskord.common.entities.applicationCommands.slashCommands
 
-import bot.myra.diskord.common.entities.guild.Role
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.channel.ChannelData
+import bot.myra.diskord.common.entities.guild.Role
+import bot.myra.diskord.common.entities.message.Attachment
+import bot.myra.diskord.common.entities.user.User
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -29,7 +30,8 @@ enum class SlashCommandOptionType(val value: Int, val clazz: KClass<*> = Unit::c
     CHANNEL(7, ChannelData::class),
     ROLE(8, Role::class),
     MENTIONABLE(9),
-    NUMBER(10, Long::class);
+    NUMBER(10, Long::class),
+    ATTACHMENT(11, Attachment::class);
 
     internal object Serializer : KSerializer<SlashCommandOptionType> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SlashCommandOptionType", PrimitiveKind.INT)
@@ -39,7 +41,7 @@ enum class SlashCommandOptionType(val value: Int, val clazz: KClass<*> = Unit::c
 
     companion object {
         fun isArgument(optionType: SlashCommandOptionType): Boolean =
-            listOf(STRING, INTEGER, BOOLEAN, USER, CHANNEL, ROLE, MENTIONABLE, NUMBER)
+            listOf(STRING, INTEGER, BOOLEAN, USER, CHANNEL, ROLE, MENTIONABLE, NUMBER, ATTACHMENT)
                 .map { it.value }
                 .contains(optionType.value)
 
