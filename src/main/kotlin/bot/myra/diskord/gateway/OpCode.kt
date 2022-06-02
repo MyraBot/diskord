@@ -20,7 +20,8 @@ enum class OpCode(val code: Int) {
     REQUEST_GUILD_MEMBERS(8),
     INVALID_SESSION(9),
     HELLO(10),
-    HEARTBEAT_ACKNOWLEDGE(11);
+    HEARTBEAT_ACKNOWLEDGE(11),
+    INVALID(-1);
 
     internal object Serializer : KSerializer<OpCode> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("gateway_operations", PrimitiveKind.INT)
