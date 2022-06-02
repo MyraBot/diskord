@@ -6,6 +6,7 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
+import bot.myra.diskord.rest.bodies.DeleteMessagesBody
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient
 
@@ -34,5 +35,13 @@ interface TextChannelBehavior {
     suspend fun getMessage(id: String): Message? = Diskord.getMessage(data.id, id)
 
     suspend fun getMessages(before: String? = null, max: Int = 100): List<Message> = Diskord.getMessages(data.id, before, max)
+
+    suspend fun deleteMessages(ids: List<String>, reason: String? = null) = RestClient.execute(Endpoints.bulkDeleteMessages) {
+        if (ids.size < 2) throw IllegalArgumentException("There must be at least 2 messages to delete")
+        if (ids.size > 100) throw IllegalArgumentException("You can't delete more than 100 messages")
+        json = DeleteMessagesBody(ids).toJson()
+        logReason = reason
+        arguments { arg("channel.id", data.id) }
+    }
 
 }
