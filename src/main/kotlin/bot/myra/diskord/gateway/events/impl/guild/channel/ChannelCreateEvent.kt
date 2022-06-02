@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChannelCreateEvent(
-        val channelData: ChannelData
+    val channelData: ChannelData
 ) : Event()
