@@ -8,10 +8,10 @@ import kotlinx.serialization.json.encodeToJsonElement
 
 @Serializable
 data class OpPacket(
-    val t: String?,
-    val s: Int?,
-    val op: Int,
-    val d: JsonElement? = null
+    var t: String? = null,
+    var s: Int? = null,
+    var op: Int,
+    var d: JsonElement? = null
 ) {
     constructor(t: String?, s: Int?, op: Int, d: String)
             : this(t, s, op, JSON.encodeToJsonElement(d))

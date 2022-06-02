@@ -39,7 +39,7 @@ class Gateway(
 ) {
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
     lateinit var session: String
-    private var s: Int = 0
+    private var sequence: Int = 0
     val eventDispatcher = MutableSharedFlow<OpPacket>()
 
     /**
@@ -86,7 +86,7 @@ class Gateway(
      */
     private suspend fun resume() {
         kInfo(this::class) { "Reconnecting to Discord" }
-        send(GatewayResume(Diskord.token, session, s))
+        send(GatewayResume(Diskord.token, session, sequence))
     }
 
     override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
@@ -100,7 +100,7 @@ class Gateway(
 
     private suspend fun fireEvent(packet: OpPacket) {
         eventDispatcher.emit(packet)
-        s = packet.s ?: s
+        sequence = packet.s ?: sequence
     }
 
     private suspend fun hello(packet: OpPacket, resumed: Boolean) {
@@ -129,8 +129,10 @@ class Gateway(
      * Sends a heartbeat response to Discord.
      */
     private suspend fun sendHeartbeat() {
-        val heartbeat = OpPacket(null, null, 1, s)
-        send(heartbeat)
+        send {
+            op = OpCode.HEARTBEAT.code
+            s = sequence
+        }
         trace(this::class) { "Sent heartbeat!" }
     }
 
@@ -142,13 +144,9 @@ class Gateway(
      */
     suspend fun updatePresence(presence: PresenceUpdate) = send(presence)
 
-    private suspend inline fun <reified T : GatewayCommand> send(command: T) {
-        send(OpPacket(
-            t = null,
-            s = null,
-            op = command.operation?.code ?: throw Exception("No opcode provided by operation ${T::class.simpleName}"),
-            d = command.toJsonObj(true)
-        ))
+    private suspend inline fun <reified T : GatewayCommand> send(command: T) = send {
+        op = command.operation?.code ?: throw Exception("No opcode provided by operation ${T::class.simpleName}")
+        d = command.toJsonObj(true)
     }
 
 }

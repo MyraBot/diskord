@@ -1,15 +1,10 @@
 package bot.myra.diskord.common.utilities
 
 import bot.myra.diskord.gateway.OpPacket
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocketSession
-import io.ktor.websocket.CloseReason
-import io.ktor.websocket.Frame
-import io.ktor.websocket.readText
-import io.ktor.websocket.send
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withTimeoutOrNull
@@ -105,6 +100,8 @@ abstract class GenericGateway(
         logger.debug(">> ${packet.toJson()}")
         socket?.send(packet.toJson()) ?: waitingCalls.add(packet)
     }
+
+    suspend fun send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
 
 }
 

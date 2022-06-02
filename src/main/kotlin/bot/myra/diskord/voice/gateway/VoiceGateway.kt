@@ -11,8 +11,7 @@ import bot.myra.diskord.voice.gateway.commands.VoiceCommand
 import bot.myra.diskord.voice.gateway.models.HelloPayload
 import bot.myra.diskord.voice.gateway.models.Operations
 import bot.myra.diskord.voice.gateway.models.VoiceSocketClosedReason
-import io.ktor.websocket.CloseReason
-import io.ktor.websocket.close
+import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -64,7 +63,10 @@ class VoiceGateway(
 
         while (true) {
             lastTimestamp = System.currentTimeMillis() - timestamp
-            send(OpPacket(op = Operations.HEARTBEAT.code, d = JsonPrimitive(lastTimestamp), s = null, t = null))
+            send {
+                op = Operations.HEARTBEAT.code
+                d = JsonPrimitive(lastTimestamp)
+            }
             delay(interval)
         }
     }
@@ -99,11 +101,9 @@ class VoiceGateway(
      *
      * @param command The command to send.
      */
-    internal suspend inline fun <reified T : VoiceCommand> send(command: T) = send(OpPacket(
-        op = command.operation.code,
-        d = JSON.encodeToJsonElement(command),
-        s = null,
-        t = null
-    ))
+    internal suspend inline fun <reified T : VoiceCommand> send(command: T) = send {
+        op = command.operation.code
+        d = JSON.encodeToJsonElement(command)
+    }
 
 }
