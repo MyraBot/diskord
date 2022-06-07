@@ -2,16 +2,11 @@ package bot.myra.diskord.gateway.events
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import java.util.concurrent.ForkJoinPool
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.valueParameters
-
-private val scope: CoroutineScope = CoroutineScope(ForkJoinPool().asCoroutineDispatcher())
 
 /**
  * Superclass of every listener, used to invoke events.
@@ -39,7 +34,7 @@ abstract class Event : DefaultBehavior {
      */
     private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
         functions.filter { it.findAnnotation<ListenTo>()?.event == this::class }
-            .forEach { scope.launch { runEvent(it, listener) } }
+            .forEach { Events.coroutineScope.launch { runEvent(it, listener) } }
     }
 
     /**
