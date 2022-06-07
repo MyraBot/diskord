@@ -17,6 +17,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.int
@@ -93,6 +94,10 @@ class Gateway(
         when (OpCode.from(packet.op)) {
             OpCode.DISPATCH              -> fireEvent(packet)
             OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
+            OpCode.RECONNECT             -> {
+                logger.info("Received reconnect from discord -> closing connection")
+                throw ClosedReceiveChannelException("Received reconnect from discord")
+            }
             OpCode.HELLO                 -> hello(packet, resumed)
             OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
         }
