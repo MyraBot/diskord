@@ -14,17 +14,15 @@ import bot.myra.kommons.info
 import bot.myra.kommons.kInfo
 import bot.myra.kommons.trace
 import io.ktor.websocket.*
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
+import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 
 /**
@@ -38,7 +36,7 @@ class Gateway(
     url = "wss://gateway.discord.gg/?v=9&encoding=json",
     logger = LoggerFactory.getLogger(Gateway::class.java)
 ) {
-    private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("Websocket"))
+    private val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Websocket"))
     lateinit var session: String
     private var sequence: Int = 0
     val eventDispatcher = MutableSharedFlow<OpPacket>()

@@ -18,18 +18,18 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
+import java.util.concurrent.ForkJoinPool
 
 /**
  * Http client for executing rest requests.
  */
 object RestClient {
-    //val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
-    val coroutineScope = CoroutineScope(Dispatchers.IO)
+    val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(HttpTimeout) {
             connectTimeoutMillis = 10000
