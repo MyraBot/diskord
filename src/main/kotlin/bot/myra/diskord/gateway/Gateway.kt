@@ -17,13 +17,11 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import org.slf4j.LoggerFactory
-import java.util.concurrent.Executors
 import java.util.concurrent.ForkJoinPool
-import java.util.concurrent.TimeUnit
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
@@ -120,19 +118,21 @@ class Gateway(
      * @param income The received [OpPacket].
      */
     private fun startHeartbeat(income: OpPacket) {
-        val heartbeatInterval = income.d!!.jsonObject["heartbeat_interval"]!!.jsonPrimitive.int
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
-            coroutineScope.launch {
+        val heartbeatInterval = income.d!!.jsonObject["heartbeat_interval"]!!.jsonPrimitive.long
+        coroutineScope.launch {
+            while (isActive) {
                 sendHeartbeat()
+                delay(heartbeatInterval)
             }
-        }, 0, heartbeatInterval.toLong() - 2500, TimeUnit.MILLISECONDS)
+        }
     }
 
     /**
      * Sends a heartbeat response to Discord.
      */
     private suspend fun sendHeartbeat() {
-        send {
+        // Using the second send function to avoid queueing the call if the socket is null
+        socket?.send {
             op = OpCode.HEARTBEAT.code
             s = sequence
         }

@@ -103,5 +103,12 @@ abstract class GenericGateway(
 
     suspend fun send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
 
+    /**
+     * Sends an opcode to a non-nullable websocket connection. With this, calls don't get queued.
+     *
+     * @param builder An opcode packet builder to easily create a packet.
+     */
+    suspend fun DefaultClientWebSocketSession.send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
+
 }
 
