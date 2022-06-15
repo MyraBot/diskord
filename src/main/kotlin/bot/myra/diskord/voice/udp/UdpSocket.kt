@@ -7,12 +7,16 @@ import bot.myra.diskord.voice.gateway.commands.SelectProtocol
 import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
 import bot.myra.diskord.voice.gateway.models.Operations
 import bot.myra.diskord.voice.gateway.models.SessionDescriptionPayload
-import io.ktor.network.selector.ActorSelectorManager
+import bot.myra.diskord.voice.udp.packets.PayloadType
+import com.codahale.xsalsa20poly1305.SecretBox
+import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,14 +33,19 @@ class UdpSocket(
     val connectDetails: ConnectionReadyPayload,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(UdpSocket::class.java)
+
     private lateinit var socket: ConnectedDatagramSocket
+    lateinit var remoteAddress: InetSocketAddress
     private val voiceServer: SocketAddress = InetSocketAddress(connectDetails.ip, connectDetails.port)
+
+    private lateinit var encryption: SecretBox
     lateinit var audioProvider: AudioProvider
+    val audioReceiver: Channel<ByteArray> = Channel()
 
     suspend fun openSocketConnection() {
         socket = aSocket(ActorSelectorManager(Dispatchers.IO)).udp().connect(remoteAddress = voiceServer)
-        val ip = discoverIp()
-        val selectProtocol = SelectProtocol("udp", ProtocolDetails(ip.hostname, ip.port, "xsalsa20_poly1305_suffix"))
+        remoteAddress = discoverIp()
+        val selectProtocol = SelectProtocol("udp", ProtocolDetails(remoteAddress.hostname, remoteAddress.port, "xsalsa20_poly1305"))
         gateway.send(selectProtocol)
 
         val secretKey = gateway.eventDispatcher
@@ -44,12 +53,24 @@ class UdpSocket(
             .let { it.d ?: throw IllegalStateException() }
             .let { JSON.decodeFromJsonElement<SessionDescriptionPayload>(it) }
             .secretKey
+        encryption = SecretBox(secretKey.toUByteArray().toByteArray())
+
         audioProvider = AudioProvider(
             gateway = gateway,
             socket = this,
-            secretKey = secretKey.toUByteArray().toByteArray(),
-            scope = scope)
+            encryption = encryption,
+            scope = scope
+        )
         audioProvider.start()
+
+        scope.launch {
+            socket.incoming.consumeAsFlow()
+                .filter { voiceServer == it.address }
+                .mapNotNull { RtpPacket.fromPacket(it.packet, encryption) }
+                .filter { it.payloadType == PayloadType.Audio }
+                .map { it.payload }
+                .collect { audioReceiver.send(it) }
+        }
     }
 
     private suspend fun discoverIp(): InetSocketAddress {

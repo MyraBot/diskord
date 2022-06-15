@@ -2,23 +2,24 @@ package bot.myra.diskord.voice.udp
 
 import bot.myra.diskord.voice.gateway.VoiceGateway
 import bot.myra.diskord.voice.gateway.models.SpeakingPayload
+import bot.myra.diskord.voice.udp.packets.PayloadType
 import com.codahale.xsalsa20poly1305.SecretBox
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import java.nio.ByteBuffer
 import kotlin.math.max
 
 class AudioProvider(
     private val gateway: VoiceGateway,
     private val socket: UdpSocket,
     private val config: AudioProvidingConfiguration = AudioProvidingConfiguration(),
-    secretKey: ByteArray,
+    private val encryption: SecretBox,
     private val scope: CoroutineScope
 ) {
     private var provider: Job? = null
     private val queuedFrames = Channel<ByteArray?>()
-    private var encryption: SecretBox = SecretBox(secretKey)
     private var sentPackets: Short = 0
 
     private var speaking = false
@@ -89,23 +90,25 @@ class AudioProvider(
     }
 
     private suspend fun sendAudioPacket(frame: AudioFrame) {
-        val nonce = generateNonce()
         socket.send {
-            writeHeader() // Rtp header
+            val header = writeHeader() // Rtp header
+            val nonce = ByteBuffer.allocate(24).apply { put(header) }.array()
             writeFully(encryptBytes(frame.bytes, nonce)) // Encrypted opus audio
-            writeFully(nonce) // Generated nonce
         }
     }
 
-    private fun BytePacketBuilder.writeHeader() {
-        writeByte(0x80.toByte()) // Version + Flags
-        writeByte(0x78.toByte()) // Payload type
-        writeShort(sentPackets) // Sequence, the count on how many packets have been sent yet
-        writeUInt(sentPackets.toUInt() * config.timestampPerPacket) // Timestamp
-        writeInt(socket.connectDetails.ssrc) // SSRC
+    private fun BytePacketBuilder.writeHeader(): ByteArray {
+        val header = ByteBuffer.allocate(12).apply {
+            put(0x80.toByte()) // Version + Flags
+            put(PayloadType.Audio.raw) // Payload type
+            putShort(sentPackets) // Sequence, the count on how many packets have been sent yet
+            putInt(sentPackets.toInt() * config.timestampPerPacket.toInt()) // Timestamp
+            putInt(socket.connectDetails.ssrc) // SSRC
+        }
+        writeFully(header.array())
+        return header.array()
     }
 
-    private fun generateNonce(): ByteArray = encryption.nonce()
     private fun encryptBytes(bytes: ByteArray, nonce: ByteArray) = encryption.seal(nonce, bytes)
 
 }
