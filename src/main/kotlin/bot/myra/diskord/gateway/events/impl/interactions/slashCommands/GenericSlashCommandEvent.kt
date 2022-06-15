@@ -37,7 +37,7 @@ open class GenericSlashCommandEvent(
             }
         }
 
-    open suspend fun getGuild(): Guild? = EntityProvider.getGuild(interaction.guildId.value!!)
+    open suspend fun getGuild(): Guild? = interaction.guildId.value?.let { EntityProvider.getGuild(it) }
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.find { it.name == name }
