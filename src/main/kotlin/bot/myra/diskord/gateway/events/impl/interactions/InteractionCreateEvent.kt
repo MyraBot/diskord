@@ -4,8 +4,7 @@ import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionType
 import bot.myra.diskord.gateway.events.Event
 import bot.myra.diskord.gateway.events.impl.interactions.messageComponents.MessageComponentEvent
-import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.GuildSlashCommandEvent
-import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.SlashCommandEvent
+import bot.myra.diskord.gateway.events.impl.interactions.slashCommands.RawSlashCommandEvent
 
 @kotlinx.serialization.Serializable
 class InteractionCreateEvent(
@@ -14,10 +13,7 @@ class InteractionCreateEvent(
 
     override fun prepareEvent() = when (interaction.type) {
         InteractionType.PING                             -> TODO()
-        InteractionType.APPLICATION_COMMAND              -> when (interaction.guildId.missing) {
-            true  -> SlashCommandEvent(interaction)
-            false -> GuildSlashCommandEvent(interaction)
-        }
+        InteractionType.APPLICATION_COMMAND              -> RawSlashCommandEvent(interaction)
         InteractionType.MESSAGE_COMPONENT                -> MessageComponentEvent(interaction)
         InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
     }.call()

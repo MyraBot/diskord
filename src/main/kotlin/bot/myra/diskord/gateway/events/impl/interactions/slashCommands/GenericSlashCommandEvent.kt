@@ -16,7 +16,7 @@ import bot.myra.diskord.gateway.events.impl.interactions.NonModalInteractionEven
 import bot.myra.diskord.rest.EntityProvider
 import kotlinx.serialization.json.*
 
-open class SlashCommandEvent(
+open class GenericSlashCommandEvent(
     override val interaction: Interaction
 ) : NonModalInteractionEvent(interaction) {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.data.value!!)
