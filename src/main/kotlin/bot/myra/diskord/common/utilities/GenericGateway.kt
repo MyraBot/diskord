@@ -50,7 +50,7 @@ abstract class GenericGateway(
             } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
         }
         // On disconnect
-        catch (e: ClosedReceiveChannelException) {
+        catch (e: Exception) {
             logger.warn("Lost connection...")
             handleDisconnect()
         }
