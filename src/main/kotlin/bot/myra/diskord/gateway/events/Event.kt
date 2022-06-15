@@ -34,9 +34,13 @@ abstract class Event : DefaultBehavior {
      * @param functions Already pre-filtered listener functions.
      */
     private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
+        val triggeredEvents = this::class.superclasses.toMutableList()
+            .filter { !it.java.isInterface }
+            .toMutableList()
+        triggeredEvents.add(this::class)
         functions.filter { function ->
             val eventTarget = function.findAnnotation<ListenTo>()?.event ?: return@filter false
-            eventTarget in this::class.superclasses
+            eventTarget in triggeredEvents
         }.forEach { Events.coroutineScope.launch { runEvent(it, listener) } }
     }
 
