@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.superclasses
 import kotlin.reflect.full.valueParameters
 
 /**
@@ -33,8 +34,10 @@ abstract class Event : DefaultBehavior {
      * @param functions Already pre-filtered listener functions.
      */
     private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
-        functions.filter { it.findAnnotation<ListenTo>()?.event == this::class }
-            .forEach { Events.coroutineScope.launch { runEvent(it, listener) } }
+        functions.filter { function ->
+            val eventTarget = function.findAnnotation<ListenTo>()?.event ?: return@filter false
+            eventTarget in this::class.superclasses
+        }.forEach { Events.coroutineScope.launch { runEvent(it, listener) } }
     }
 
     /**
