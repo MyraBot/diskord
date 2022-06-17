@@ -3,6 +3,7 @@ package bot.myra.diskord.common.utilities
 import bot.myra.diskord.gateway.OpPacket
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
@@ -27,6 +28,7 @@ abstract class GenericGateway(
 
     val client = HttpClient(CIO) {
         install(WebSockets)
+        install(HttpTimeout) { requestTimeoutMillis= HttpTimeout.INFINITE_TIMEOUT_MS }
         expectSuccess = true
     }
 
@@ -51,7 +53,7 @@ abstract class GenericGateway(
         }
         // On disconnect
         catch (e: Exception) {
-            logger.warn("Lost connection...")
+            logger.warn("Lost connection: ${e.message}")
             handleDisconnect()
         }
     }
