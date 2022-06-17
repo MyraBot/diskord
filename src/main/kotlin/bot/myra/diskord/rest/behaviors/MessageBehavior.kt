@@ -44,4 +44,11 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
+    suspend fun clearReactions() = RestClient.execute(Endpoints.deleteAllReactions) {
+        arguments {
+            arg("channel.id", message.channelId)
+            arg("message.id", id)
+        }
+    }
+
 }

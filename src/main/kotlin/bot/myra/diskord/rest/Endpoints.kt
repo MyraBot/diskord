@@ -57,6 +57,7 @@ object Endpoints {
         }
     }
     val addReaction = Route(HttpMethod.Put, "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me", Unit.serializer())
+    val deleteAllReactions = Route(HttpMethod.Delete, "/channels/{channel.id}/messages/{message.id}/reactions", Unit.serializer())
     val addMemberRole = Route(HttpMethod.Put, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
     val removeMemberRole = Route(HttpMethod.Delete, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
     val createDm = Route(HttpMethod.Post, "/users/@me/channels", ChannelData.serializer())
