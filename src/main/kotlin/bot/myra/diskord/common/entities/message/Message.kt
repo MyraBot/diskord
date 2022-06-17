@@ -39,6 +39,7 @@ data class Message(
     @SerialName("mention_channels") val mentionedChannels: List<ChannelData> = emptyList(),
     val attachments: List<Attachment>,
     var embeds: MutableList<Embed>,
+    val reactions: List<Reaction> = emptyList(),
     val pinned: Boolean,
     @SerialName("webhook_id") internal val webhookId: String? = null,
     val type: MessageType,
