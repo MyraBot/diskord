@@ -27,13 +27,11 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         return memberDataList.map { Member.withUserInMember(it, id) }
     }
 
-    suspend fun unbanMember(id: String, reason: String? = null) {
-        return RestClient.execute(Endpoints.removeGuildBan) {
-            logReason = reason
-            arguments {
-                arg("guild.id", this@GuildBehavior.id)
-                arg("user.id", id)
-            }
+    suspend fun unbanMember(id: String, reason: String? = null) = RestClient.executeNullable(Endpoints.removeGuildBan) {
+        logReason = reason
+        arguments {
+            arg("guild.id", this@GuildBehavior.id)
+            arg("user.id", id)
         }
     }
 
