@@ -13,9 +13,9 @@ data class IdentifyResponse(
 
     @Serializable
     data class Properties(
-        @SerialName("\$os") val os: String = "linux",
-        @SerialName("\$browser") val browser: String = "chrome",
-        @SerialName("\$device") val device: String = "chrome"
+        @SerialName("os") val os: String = "linux",
+        @SerialName("browser") val browser: String = "chrome",
+        @SerialName("device") val device: String = "chrome"
     )
 
 }
