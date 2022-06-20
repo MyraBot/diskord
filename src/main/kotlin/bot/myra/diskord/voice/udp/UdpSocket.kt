@@ -91,6 +91,7 @@ class UdpSocket(
     fun disconnect() {
         audioProvider.stop()
         socket.close()
+        logger.debug("Closed udp socket")
     }
 
     suspend fun send(builder: BytePacketBuilder.() -> Unit) {
