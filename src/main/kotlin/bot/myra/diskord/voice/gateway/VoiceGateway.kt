@@ -92,8 +92,9 @@ class VoiceGateway(
     }
 
     suspend fun disconnect() {
-        socket?.close(CloseReason(5479, "Closed by user"))
+        socket?.close()
         socket = null
+        logger.debug("Disconnected from socket")
     }
 
     /**

@@ -28,7 +28,7 @@ abstract class GenericGateway(
 
     val client = HttpClient(CIO) {
         install(WebSockets)
-        install(HttpTimeout) { requestTimeoutMillis= HttpTimeout.INFINITE_TIMEOUT_MS }
+        install(HttpTimeout) { requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS }
         expectSuccess = true
     }
 
@@ -49,6 +49,7 @@ abstract class GenericGateway(
                     val income = JSON.decodeFromString<OpPacket>(data.readText())
                     handleIncome(income, resumed)
                 }
+                logger.debug("Reached end of socket")
             } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
         }
         // On disconnect
@@ -59,12 +60,10 @@ abstract class GenericGateway(
     }
 
     private suspend fun handleDisconnect() {
-        val reasonSocket = socket
+        val reasonSocket = socket ?: return
         socket = null
-        val reason = reasonSocket?.let {
-            withTimeoutOrNull(5.seconds) {
-                reasonSocket.closeReason.await()
-            }
+        val reason = withTimeoutOrNull(5.seconds) {
+            reasonSocket.closeReason.await()
         }?.also { logger.warn("Socket closed with reason $it") }
 
         if (reason == null) openGatewayConnection(true)

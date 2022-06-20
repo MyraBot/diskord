@@ -13,7 +13,6 @@ import bot.myra.kommons.debug
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.decodeFromJsonElement
 
@@ -52,7 +51,6 @@ class VoiceConnection(
     suspend fun disconnect() {
         gateway.disconnect()
         udp?.disconnect()
-        scope.cancel("Requested disconnect by the user")
     }
 
     suspend fun leave() {
