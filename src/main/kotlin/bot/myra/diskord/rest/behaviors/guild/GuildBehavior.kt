@@ -14,18 +14,8 @@ import bot.myra.diskord.rest.request.RestClient
 interface GuildBehavior : Entity, GetTextChannelBehavior {
 
     suspend fun getMember(id: String): Member? = EntityProvider.getMember(this.id, id)
-
     suspend fun getBotMember(): Member? = getMember(getApplication().id)
-
-    suspend fun getMembers(limit: Int = 1000): List<Member> {
-        val memberDataList = RestClient.execute(Endpoints.listGuildMembers) {
-            arguments {
-                arg("guild.id", this@GuildBehavior.id)
-                arg("limit", limit)
-            }
-        }
-        return memberDataList.map { Member.withUserInMember(it, id) }
-    }
+    suspend fun getMembers(limit: Int = 1000): List<Member> = EntityProvider.fetchGuildMembers(this@GuildBehavior.id, limit)
 
     suspend fun unbanMember(id: String, reason: String? = null) = RestClient.executeNullable(Endpoints.removeGuildBan) {
         logReason = reason
@@ -35,12 +25,8 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         }
     }
 
-    suspend fun getRoles(): List<Role> = RestClient.execute(Endpoints.getRoles) {
-        arguments { arg("guild.id", this@GuildBehavior.id) }
-    }
-
-    suspend fun getRole(id: String): Role? = EntityProvider.getRole(this.id, id)
-
+    suspend fun getRoles(): List<Role> =EntityProvider.fetchRoles(this@GuildBehavior.id)
+    suspend fun getRole(id: String): Role? = EntityProvider.getRole(this@GuildBehavior.id, id)
     suspend fun getChannels(): List<ChannelData> = EntityProvider.getGuildChannels(this.id)
 
 }

@@ -14,11 +14,9 @@ import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.rest.DefaultTransformer
-import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.MessageTransformer
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
-import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
 import io.ktor.client.*
@@ -106,21 +104,8 @@ object Diskord : GetTextChannelBehavior {
 
     suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
     suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
-
-    suspend fun getMessage(channel: String, message: String): Message? {
-        return RestClient.executeNullable(Endpoints.getChannelMessage) {
-            arguments {
-                arg("channel.id", channel)
-                arg("message.id", message)
-            }
-        }
-    }
-
-    suspend fun getMessages(channel: String, before: String? = null, max: Int = 100): List<Message> = RestClient.execute(Endpoints.getChannelMessages) {
-        arguments { arg("channel.id", channel) }
-        queryParameter.add("limit" to max)
-        before?.let { queryParameter.add("before" to before) }
-    }
+    suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
+    suspend fun getMessages(channel: String, max: Int = 100, before: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before)
 
 }
 

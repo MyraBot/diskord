@@ -29,6 +29,20 @@ object EntityProvider {
                 arguments { arg("user.id", id) }
             }?.also { Diskord.cachePolicy.userCache.update(it) }
 
+    suspend fun fetchMessages(channelId: String, max: Int = 100, before: String? = null) = RestClient.execute(Endpoints.getChannelMessages) {
+        arguments { arg("channel.id", channelId) }
+        queryParameter.add("limit" to max)
+        before?.let { queryParameter.add("before" to before) }
+    }
+
+    suspend fun getMessage(channelId: String, messageId: String) =
+        RestClient.executeNullable(Endpoints.getChannelMessage) {
+            arguments {
+                arg("channel.id", channelId)
+                arg("message.id", messageId)
+            }
+        }
+
     suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCache.get(id) ?: fetchGuild(id)
 
     suspend fun fetchGuild(id: String): Guild? =
@@ -60,6 +74,18 @@ object EntityProvider {
             }?.let { Member.withUserInMember(it, guildId) }
                 ?.also { Diskord.cachePolicy.memberCache.update(it) }
     }
+
+    suspend fun fetchGuildMembers(guildId: String, limit: Int = 100) =
+        RestClient.execute(Endpoints.listGuildMembers) {
+            arguments {
+                arg("guild.id", guildId)
+                arg("limit", limit)
+            }
+        }.map { Member.withUserInMember(it, guildId) }
+
+    suspend fun fetchRoles(guildId: String) = RestClient.execute(Endpoints.getRoles) {
+        arguments { arg("guild.id", guildId) }
+    }.onEach { Diskord.cachePolicy.roleCache.update(it) }
 
     suspend fun getRole(guildId: String, roleId: String): Role? =
         Diskord.cachePolicy.roleCache.get(roleId)

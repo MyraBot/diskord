@@ -34,7 +34,7 @@ interface TextChannelBehavior {
 
     suspend fun getMessage(id: String): Message? = Diskord.getMessage(data.id, id)
 
-    suspend fun getMessages(before: String? = null, max: Int = 100): List<Message> = Diskord.getMessages(data.id, before, max)
+    suspend fun getMessages(before: String? = null, max: Int = 100): List<Message> = Diskord.getMessages(data.id, max, before)
 
     suspend fun deleteMessages(ids: List<String>, reason: String? = null) = RestClient.execute(Endpoints.bulkDeleteMessages) {
         if (ids.size < 2) throw IllegalArgumentException("There must be at least 2 messages to delete")

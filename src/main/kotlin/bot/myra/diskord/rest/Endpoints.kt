@@ -37,11 +37,7 @@ object Endpoints {
     val getGuild = Route(HttpMethod.Get, "/guilds/{guild.id}?with_counts=true", Guild.serializer())
     val editMessage = Route(HttpMethod.Patch, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
     val deleteMessage = Route(HttpMethod.Delete, "/channels/{channel.id}/messages/{message.id}", Unit.serializer())
-    val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer())) { roles, args ->
-        roles.forEach {
-            Diskord.cachePolicy.roleCache.update(it)
-        }
-    }
+    val getRoles = Route(HttpMethod.Get, "/guilds/{guild.id}/roles", ListSerializer(Role.serializer()))
     val addReaction = Route(HttpMethod.Put, "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me", Unit.serializer())
     val deleteAllReactions = Route(HttpMethod.Delete, "/channels/{channel.id}/messages/{message.id}/reactions", Unit.serializer())
     val addMemberRole = Route(HttpMethod.Put, "/guilds/{guild.id}/members/{user.id}/roles/{role.id}", Unit.serializer())
