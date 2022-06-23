@@ -17,7 +17,7 @@ class ChannelCachePolicy : GenericCachePolicy<String, ChannelData>() {
     @ListenTo(ChannelUpdateEvent::class)
     fun onChannelUpdate(event: ChannelUpdateEvent) = updateChannel(event.channelData)
 
-    private fun updateChannel(channel: ChannelData) {
+     fun updateChannel(channel: ChannelData) {
         update(channel)
         guildAssociation.update(channel)
     }

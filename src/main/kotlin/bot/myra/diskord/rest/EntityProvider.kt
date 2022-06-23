@@ -12,50 +12,59 @@ import bot.myra.diskord.rest.request.RestClient
 
 object EntityProvider {
 
-    suspend fun getApplicationCommands(): List<SlashCommand> = RestClient.execute(Endpoints.getGlobalApplicationCommands) { arguments { arg("application.id", Diskord.id) } }
+    suspend fun getApplicationCommands(): List<SlashCommand> =
+        RestClient.execute(Endpoints.getGlobalApplicationCommands) {
+            arguments { arg("application.id", Diskord.id) }
+        }
 
     suspend fun getUserNonNull(id: String): User =
         Diskord.cachePolicy.userCache.get(id)
             ?: RestClient.execute(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
-            }
+            }.also { Diskord.cachePolicy.userCache.update(it) }
 
     suspend fun getUser(id: String): User? =
         Diskord.cachePolicy.userCache.get(id)
             ?: RestClient.executeNullable(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
-            }
+            }?.also { Diskord.cachePolicy.userCache.update(it) }
 
     suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCache.get(id) ?: fetchGuild(id)
-    suspend fun fetchGuild(id: String): Guild? = RestClient.executeNullable(Endpoints.getGuild) { arguments { arg("guild.id", id) } }
+
+    suspend fun fetchGuild(id: String): Guild? =
+        RestClient.executeNullable(Endpoints.getGuild) {
+            arguments { arg("guild.id", id) }
+        }?.also { Diskord.cachePolicy.guildCache.update(it) }
 
     suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channelCache.guildAssociation.view(id) ?: fetchGuildChannels(id)
-    suspend fun fetchGuildChannels(id: String): List<ChannelData> = RestClient.execute(Endpoints.getChannels) { arguments { arg("guild.id", id) } }
+
+    suspend fun fetchGuildChannels(id: String): List<ChannelData> =
+        RestClient.execute(Endpoints.getChannels) {
+            arguments { arg("guild.id", id) }
+        }.onEach { Diskord.cachePolicy.channelCache.updateChannel(it) }
 
     suspend fun getChannel(id: String): ChannelData? =
         Diskord.cachePolicy.channelCache.get(id)
             ?: RestClient.executeNullable(Endpoints.getChannel) {
                 arguments { arg("channel.id", id) }
-            }
+            }?.also { Diskord.cachePolicy.channelCache.update(it) }
 
     suspend fun getMember(guildId: String, userId: String): Member? {
         val key = DoubleKey(guildId, userId)
-        return Diskord.cachePolicy.memberCache.get(key) ?: run {
-            val member = RestClient.executeNullable(Endpoints.getGuildMember) {
+        return Diskord.cachePolicy.memberCache.get(key)
+            ?: RestClient.executeNullable(Endpoints.getGuildMember) {
                 arguments {
                     arg("guild.id", guildId)
                     arg("user.id", userId)
                 }
-            }
-            member?.let { Member.withUserInMember(member, guildId) }
-        }
+            }?.let { Member.withUserInMember(it, guildId) }
+                ?.also { Diskord.cachePolicy.memberCache.update(it) }
     }
 
-    suspend fun getRole(guildId: String, roleId: String): Role? = Diskord.cachePolicy.roleCache.get(roleId) ?: run {
-        val roles = RestClient.executeNullable(Endpoints.getRoles) {
-            arguments { arg("guild.id", guildId) }
-        }
-        roles?.let { roles.first { it.id == roleId } }
-    }
+    suspend fun getRole(guildId: String, roleId: String): Role? =
+        Diskord.cachePolicy.roleCache.get(roleId)
+            ?: RestClient.executeNullable(Endpoints.getRoles) {
+                arguments { arg("guild.id", guildId) }
+            }?.let { roles -> roles.first { it.id == roleId } }
 
 }
