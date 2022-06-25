@@ -63,6 +63,7 @@ object Diskord : GetTextChannelBehavior {
             value.memberCache.loadListeners()
             value.voiceStateCache.loadListeners()
             value.channelCache.loadListeners()
+            value.messageCache.loadListeners()
         }
     var rateLimitThreshold = 1000
     var errorHandler: ErrorHandler = ErrorHandler()
