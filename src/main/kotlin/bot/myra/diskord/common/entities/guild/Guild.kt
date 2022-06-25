@@ -22,7 +22,7 @@ data class Guild(
     @SerialName("splash") private val splashHash: String?,
     @SerialName("discovery_splash") private val discoverySplashHash: String?,
     @SerialName("owner_id") internal val ownerId: String,
-    val roles: List<Role>,
+    var roles: List<Role>,
     val emojis: List<Emoji>,
     val features: List<String>,
     @SerialName("voice_states") val voiceStates: List<VoiceState> = emptyList(),
