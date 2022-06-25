@@ -3,40 +3,40 @@ package bot.myra.diskord.common.cache
 import bot.myra.diskord.common.cache.models.*
 
 data class CachePolicy(
-    var userCache: UserCachePolicy = UserCachePolicy(),
-    var guildCache: GuildCachePolicy = GuildCachePolicy(),
-    var memberCache: MemberCachePolicy = MemberCachePolicy(),
-    var voiceStateCache: VoiceStateCachePolicy = VoiceStateCachePolicy(),
-    var channelCache: ChannelCachePolicy = ChannelCachePolicy(),
-    var messageCache: MessageCachePolicy = MessageCachePolicy()
+    var user: UserCachePolicy = UserCachePolicy(),
+    var guild: GuildCachePolicy = GuildCachePolicy(),
+    var member: MemberCachePolicy = MemberCachePolicy(),
+    var voiceState: VoiceStateCachePolicy = VoiceStateCachePolicy(),
+    var channel: ChannelCachePolicy = ChannelCachePolicy(),
+    var message: MessageCachePolicy = MessageCachePolicy()
 ) {
 
     fun all(): List<GenericCachePolicy<*, *>> = listOf(
-        userCache, guildCache, memberCache, voiceStateCache, channelCache
+        user, guild, member, voiceState, channel
     )
 
     fun user(builder: UserCachePolicy.() -> Unit) {
-        userCache = UserCachePolicy().apply(builder)
+        user = UserCachePolicy().apply(builder)
     }
 
     fun guild(builder: GuildCachePolicy.() -> Unit) {
-        guildCache = GuildCachePolicy().apply(builder)
+        guild = GuildCachePolicy().apply(builder)
     }
 
     fun member(builder: MemberCachePolicy.() -> Unit) {
-        memberCache = MemberCachePolicy().apply(builder)
+        member = MemberCachePolicy().apply(builder)
     }
 
     fun voiceState(builder: VoiceStateCachePolicy.() -> Unit) {
-        voiceStateCache = VoiceStateCachePolicy().apply(builder)
+        voiceState = VoiceStateCachePolicy().apply(builder)
     }
 
     fun channel(builder: ChannelCachePolicy.() -> Unit) {
-        channelCache = ChannelCachePolicy().apply(builder)
+        channel = ChannelCachePolicy().apply(builder)
     }
 
     fun message(builder: MessageCachePolicy.() -> Unit) {
-        messageCache = MessageCachePolicy().apply(builder)
+        message = MessageCachePolicy().apply(builder)
     }
 
 }

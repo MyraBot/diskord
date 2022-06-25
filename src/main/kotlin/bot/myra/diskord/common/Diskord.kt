@@ -58,12 +58,12 @@ object Diskord : GetTextChannelBehavior {
         set(value) {
             field = value
 
-            value.userCache.loadListeners()
-            value.guildCache.loadListeners()
-            value.memberCache.loadListeners()
-            value.voiceStateCache.loadListeners()
-            value.channelCache.loadListeners()
-            value.messageCache.loadListeners()
+            value.user.loadListeners()
+            value.guild.loadListeners()
+            value.member.loadListeners()
+            value.voiceState.loadListeners()
+            value.channel.loadListeners()
+            value.message.loadListeners()
         }
     var rateLimitThreshold = 1000
     var errorHandler: ErrorHandler = ErrorHandler()
@@ -89,14 +89,14 @@ object Diskord : GetTextChannelBehavior {
 
     fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
-        when (cachePolicy.guildCache.update === null) {
+        when (cachePolicy.guild.update === null) {
             true  -> copiedIds.forEach { id -> emitGuildFromCache(id) }
             false -> copiedIds.forEach { id -> this@Diskord.getGuild(id)?.let { emit(it) } }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
-        val guild: Guild? = cachePolicy.guildCache.get(id) ?: run {
+        val guild: Guild? = cachePolicy.guild.get(id) ?: run {
             pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id)
         }
         guild?.let { emit(it) }

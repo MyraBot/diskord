@@ -18,16 +18,16 @@ object EntityProvider {
         }
 
     suspend fun getUserNonNull(id: String): User =
-        Diskord.cachePolicy.userCache.get(id)
+        Diskord.cachePolicy.user.get(id)
             ?: RestClient.execute(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
-            }.also { Diskord.cachePolicy.userCache.update(it) }
+            }.also { Diskord.cachePolicy.user.update(it) }
 
     suspend fun getUser(id: String): User? =
-        Diskord.cachePolicy.userCache.get(id)
+        Diskord.cachePolicy.user.get(id)
             ?: RestClient.executeNullable(Endpoints.getUser) {
                 arguments { arg("user.id", id) }
-            }?.also { Diskord.cachePolicy.userCache.update(it) }
+            }?.also { Diskord.cachePolicy.user.update(it) }
 
     suspend fun fetchMessages(channelId: String, max: Int = 100, before: String? = null) = RestClient.execute(Endpoints.getChannelMessages) {
         arguments { arg("channel.id", channelId) }
@@ -43,36 +43,36 @@ object EntityProvider {
             }
         }
 
-    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guildCache.get(id) ?: fetchGuild(id)
+    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guild.get(id) ?: fetchGuild(id)
 
     suspend fun fetchGuild(id: String): Guild? =
         RestClient.executeNullable(Endpoints.getGuild) {
             arguments { arg("guild.id", id) }
-        }?.also { Diskord.cachePolicy.guildCache.update(it) }
+        }?.also { Diskord.cachePolicy.guild.update(it) }
 
-    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channelCache.guildAssociation.view(id) ?: fetchGuildChannels(id)
+    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channel.guildAssociation.view(id) ?: fetchGuildChannels(id)
 
     suspend fun fetchGuildChannels(id: String): List<ChannelData> =
         RestClient.execute(Endpoints.getChannels) {
             arguments { arg("guild.id", id) }
-        }.onEach { Diskord.cachePolicy.channelCache.updateChannel(it) }
+        }.onEach { Diskord.cachePolicy.channel.updateChannel(it) }
 
     suspend fun getChannel(id: String): ChannelData? =
-        Diskord.cachePolicy.channelCache.get(id)
+        Diskord.cachePolicy.channel.get(id)
             ?: RestClient.executeNullable(Endpoints.getChannel) {
                 arguments { arg("channel.id", id) }
-            }?.also { Diskord.cachePolicy.channelCache.update(it) }
+            }?.also { Diskord.cachePolicy.channel.update(it) }
 
     suspend fun getMember(guildId: String, userId: String): Member? {
         val key = DoubleKey(guildId, userId)
-        return Diskord.cachePolicy.memberCache.get(key)
+        return Diskord.cachePolicy.member.get(key)
             ?: RestClient.executeNullable(Endpoints.getGuildMember) {
                 arguments {
                     arg("guild.id", guildId)
                     arg("user.id", userId)
                 }
             }?.let { Member.withUserInMember(it, guildId) }
-                ?.also { Diskord.cachePolicy.memberCache.update(it) }
+                ?.also { Diskord.cachePolicy.member.update(it) }
     }
 
     suspend fun fetchGuildMembers(guildId: String, limit: Int = 100) =
@@ -83,12 +83,12 @@ object EntityProvider {
             }
         }.map { Member.withUserInMember(it, guildId) }
 
-    suspend fun fetchRoles(guildId: String): List<Role>? = Diskord.cachePolicy.guildCache.get(guildId)?.roles ?: RestClient.executeNullable(Endpoints.getGuild) {
+    suspend fun fetchRoles(guildId: String): List<Role>? = Diskord.cachePolicy.guild.get(guildId)?.roles ?: RestClient.executeNullable(Endpoints.getGuild) {
         arguments { arg("guild.id", guildId) }
-    }?.also { Diskord.cachePolicy.guildCache.update(it) }?.roles
+    }?.also { Diskord.cachePolicy.guild.update(it) }?.roles
 
     suspend fun getRole(guildId: String, roleId: String): Role? =
-        Diskord.cachePolicy.guildCache.get(guildId)?.roles?.find { it.id == roleId }
+        Diskord.cachePolicy.guild.get(guildId)?.roles?.find { it.id == roleId }
             ?: fetchRoles(guildId)?.let { roles -> roles.first { it.id == roleId } }
 
 }

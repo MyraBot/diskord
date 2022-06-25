@@ -27,7 +27,7 @@ object Endpoints {
     val listGuildMembers = Route(HttpMethod.Get, "/guilds/{guild.id}/members?limit={limit}&after=0", ListSerializer(MemberData.serializer())) { members, args ->
         members.forEach { data ->
             val member = Member.withUserInMember(data, args["guild.id"].toString())
-            Diskord.cachePolicy.memberCache.update(member)
+            Diskord.cachePolicy.member.update(member)
         }
     }
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())

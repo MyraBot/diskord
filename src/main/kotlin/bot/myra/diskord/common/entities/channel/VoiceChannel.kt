@@ -9,7 +9,7 @@ data class VoiceChannel(
 ) : VoiceChannelBehavior, GuildChannel {
 
     fun getMembers(): List<Member> {
-        val voiceStates = Diskord.cachePolicy.voiceStateCache.view().filter { it.channelId === data.id }
+        val voiceStates = Diskord.cachePolicy.voiceState.view().filter { it.channelId === data.id }
         return voiceStates.mapNotNull { it.getMember() }
     }
 
