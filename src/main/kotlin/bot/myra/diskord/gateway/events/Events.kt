@@ -9,6 +9,7 @@ import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import bot.myra.diskord.gateway.events.impl.interactions.InteractionCreateEvent
+import bot.myra.diskord.gateway.events.impl.message.BulkMessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
@@ -40,6 +41,7 @@ object Events {
                     "MESSAGE_CREATE"      -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
                     "MESSAGE_UPDATE"      -> MessageUpdateEvent(JSON.decodeFromJsonElement(json))
                     "MESSAGE_DELETE"      -> MessageDeleteEvent(JSON.decodeFromJsonElement(json))
+                    "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent(JSON.decodeFromJsonElement(json))
                     "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
                     "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
                     else                  -> null
