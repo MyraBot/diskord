@@ -1,7 +1,7 @@
-package bot.myra.diskord.common.caching.defaultPolicy
+package bot.myra.diskord.common.cache.defaultPolicy
 
-import bot.myra.diskord.common.caching.DoubleKey
-import bot.myra.diskord.common.caching.models.VoiceStateCachePolicy
+import bot.myra.diskord.common.cache.DoubleKey
+import bot.myra.diskord.common.cache.models.VoiceStateCachePolicy
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 
 class DefaultVoiceStateCache {

@@ -1,6 +1,6 @@
-package bot.myra.diskord.common.caching.defaultPolicy
+package bot.myra.diskord.common.cache.defaultPolicy
 
-import bot.myra.diskord.common.caching.models.GuildCachePolicy
+import bot.myra.diskord.common.cache.models.GuildCachePolicy
 import bot.myra.diskord.common.entities.guild.Guild
 
 class DefaultGuildCache {

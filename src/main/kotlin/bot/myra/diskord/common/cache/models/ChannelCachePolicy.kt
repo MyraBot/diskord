@@ -1,7 +1,7 @@
-package bot.myra.diskord.common.caching.models
+package bot.myra.diskord.common.cache.models
 
-import bot.myra.diskord.common.caching.GenericCachePolicy
-import bot.myra.diskord.common.caching.GuildCacheAssociation
+import bot.myra.diskord.common.cache.GenericCachePolicy
+import bot.myra.diskord.common.cache.GuildCacheAssociation
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent

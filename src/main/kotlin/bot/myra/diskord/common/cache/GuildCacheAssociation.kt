@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.caching
+package bot.myra.diskord.common.cache
 
 import bot.myra.diskord.rest.behaviors.Entity
 

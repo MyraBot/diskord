@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.caching
+package bot.myra.diskord.common.cache
 
 typealias ViewCache<V> = () -> List<V>
 typealias GetCache<K, V> = (K) -> V?

@@ -1,6 +1,6 @@
-package bot.myra.diskord.common.caching.defaultPolicy
+package bot.myra.diskord.common.cache.defaultPolicy
 
-import bot.myra.diskord.common.caching.models.UserCachePolicy
+import bot.myra.diskord.common.cache.models.UserCachePolicy
 import bot.myra.diskord.common.entities.user.User
 
 class DefaultUserCache {

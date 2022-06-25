@@ -1,6 +1,6 @@
-package bot.myra.diskord.common.caching
+package bot.myra.diskord.common.cache
 
-import bot.myra.diskord.common.caching.models.*
+import bot.myra.diskord.common.cache.models.*
 
 data class CachePolicy(
     var userCache: UserCachePolicy = UserCachePolicy(),

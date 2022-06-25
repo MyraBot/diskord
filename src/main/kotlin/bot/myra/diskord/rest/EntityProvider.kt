@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.caching.DoubleKey
+import bot.myra.diskord.common.cache.DoubleKey
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
