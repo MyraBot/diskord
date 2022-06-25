@@ -7,6 +7,9 @@ import bot.myra.diskord.gateway.events.impl.guild.*
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
+import bot.myra.diskord.gateway.events.impl.guild.roles.RoleCreateEvent
+import bot.myra.diskord.gateway.events.impl.guild.roles.RoleDeleteEvent
+import bot.myra.diskord.gateway.events.impl.guild.roles.RoleUpdateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import bot.myra.diskord.gateway.events.impl.interactions.InteractionCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.BulkMessageDeleteEvent
@@ -16,6 +19,7 @@ import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
 import java.util.concurrent.ForkJoinPool
@@ -42,6 +46,9 @@ object Events {
                     "MESSAGE_UPDATE"      -> MessageUpdateEvent(JSON.decodeFromJsonElement(json))
                     "MESSAGE_DELETE"      -> MessageDeleteEvent(JSON.decodeFromJsonElement(json))
                     "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent(JSON.decodeFromJsonElement(json))
+                    "GUILD_ROLE_CREATE"   -> json.decode<RoleCreateEvent>()
+                    "GUILD_ROLE_UPDATE"   -> json.decode<RoleUpdateEvent>()
+                    "GUILD_ROLE_DELETE"   -> json.decode<RoleDeleteEvent>()
                     "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
                     "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
                     else                  -> null
@@ -49,6 +56,8 @@ object Events {
             }
         }
     }
+
+    private inline fun <reified T> JsonElement.decode() = JSON.decodeFromJsonElement<T>(this)
 
     /**
      * Load listeners by reflection.
