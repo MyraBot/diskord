@@ -7,7 +7,8 @@ data class CachePolicy(
     var guildCache: GuildCachePolicy = GuildCachePolicy(),
     var memberCache: MemberCachePolicy = MemberCachePolicy(),
     var voiceStateCache: VoiceStateCachePolicy = VoiceStateCachePolicy(),
-    var channelCache: ChannelCachePolicy = ChannelCachePolicy()
+    var channelCache: ChannelCachePolicy = ChannelCachePolicy(),
+    var messageCache: MessageCachePolicy = MessageCachePolicy()
 ) {
 
     fun all(): List<GenericCachePolicy<*, *>> = listOf(
@@ -32,6 +33,10 @@ data class CachePolicy(
 
     fun channel(builder: ChannelCachePolicy.() -> Unit) {
         channelCache = ChannelCachePolicy().apply(builder)
+    }
+
+    fun message(builder: MessageCachePolicy.() -> Unit) {
+        messageCache = MessageCachePolicy().apply(builder)
     }
 
 }
