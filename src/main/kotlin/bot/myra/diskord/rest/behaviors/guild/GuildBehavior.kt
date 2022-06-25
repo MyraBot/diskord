@@ -25,7 +25,6 @@ interface GuildBehavior : Entity, GetTextChannelBehavior {
         }
     }
 
-    suspend fun getRoles(): List<Role> =EntityProvider.fetchRoles(this@GuildBehavior.id)
     suspend fun getRole(id: String): Role? = EntityProvider.getRole(this@GuildBehavior.id, id)
     suspend fun getChannels(): List<ChannelData> = EntityProvider.getGuildChannels(this.id)
 
