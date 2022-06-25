@@ -83,14 +83,12 @@ object EntityProvider {
             }
         }.map { Member.withUserInMember(it, guildId) }
 
-    suspend fun fetchRoles(guildId: String): List<Role> = Diskord.cachePolicy.guildCache.get(guildId)?.roles ?: RestClient.execute(Endpoints.getGuild) {
+    suspend fun fetchRoles(guildId: String): List<Role>? = Diskord.cachePolicy.guildCache.get(guildId)?.roles ?: RestClient.executeNullable(Endpoints.getGuild) {
         arguments { arg("guild.id", guildId) }
-    }.also { Diskord.cachePolicy.guildCache.update(it) }.roles
+    }?.also { Diskord.cachePolicy.guildCache.update(it) }?.roles
 
     suspend fun getRole(guildId: String, roleId: String): Role? =
         Diskord.cachePolicy.guildCache.get(guildId)?.roles?.find { it.id == roleId }
-            ?: RestClient.executeNullable(Endpoints.getRoles) {
-                arguments { arg("guild.id", guildId) }
-            }?.let { roles -> roles.first { it.id == roleId } }
+            ?: fetchRoles(guildId)?.let { roles -> roles.first { it.id == roleId } }
 
 }
