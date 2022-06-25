@@ -10,6 +10,8 @@ import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 import bot.myra.diskord.gateway.events.impl.interactions.InteractionCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageCreateEvent
+import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
+import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -36,6 +38,8 @@ object Events {
                     "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(json))
                     "INTERACTION_CREATE"  -> InteractionCreateEvent(JSON.decodeFromJsonElement(json))
                     "MESSAGE_CREATE"      -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
+                    "MESSAGE_UPDATE"      -> MessageUpdateEvent(JSON.decodeFromJsonElement(json))
+                    "MESSAGE_DELETE"      -> MessageDeleteEvent(JSON.decodeFromJsonElement(json))
                     "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
                     "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
                     else                  -> null
