@@ -68,6 +68,7 @@ abstract class GenericGateway(
 
         if (reason == null) openGatewayConnection(true)
         else {
+            println("Chose ${chooseReconnectMethod(reason).name} method because of reason $reason")
             when (chooseReconnectMethod(reason)) {
                 ReconnectMethod.CONNECT -> openGatewayConnection(false)
                 ReconnectMethod.RETRY   -> openGatewayConnection(true)
