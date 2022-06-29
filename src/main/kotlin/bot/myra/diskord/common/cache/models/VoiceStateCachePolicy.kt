@@ -11,14 +11,10 @@ import bot.myra.diskord.gateway.events.impl.guild.GenericGuildCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 
 class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
+
     init {
         if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) throw MissingIntentException(VoiceStateCachePolicy::class, GatewayIntent.GUILD_VOICE_STATES)
     }
-}
-
-class DisabledVoiceStateCachePolicy : VoiceStateCachePolicy()
-
-abstract class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>() {
 
     @ListenTo(GenericGuildCreateEvent::class)
     fun onGuildCreate(event: GenericGuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
@@ -48,3 +44,7 @@ abstract class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, Str
     }
 
 }
+
+class DisabledVoiceStateCachePolicy : VoiceStateCachePolicy()
+
+abstract class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>()

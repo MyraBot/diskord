@@ -12,14 +12,10 @@ import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
 
 class MutableMessageCachePolicy : MessageCachePolicy() {
+
     init {
         if (GatewayIntent.GUILD_MESSAGES !in Diskord.intents) throw MissingIntentException(MessageCreateEvent::class, GatewayIntent.GUILD_MESSAGES)
     }
-}
-
-class DisabledMessageCachePolicy : MessageCachePolicy()
-
-abstract class MessageCachePolicy : GenericCachePolicy<String, Message>() {
 
     @ListenTo(MessageCreateEvent::class)
     fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
@@ -34,3 +30,7 @@ abstract class MessageCachePolicy : GenericCachePolicy<String, Message>() {
     fun onBulkMessageDelete(event: BulkMessageDeleteEvent) = event.message.ids.onEach { remove(it) }
 
 }
+
+class DisabledMessageCachePolicy : MessageCachePolicy()
+
+abstract class MessageCachePolicy : GenericCachePolicy<String, Message>()

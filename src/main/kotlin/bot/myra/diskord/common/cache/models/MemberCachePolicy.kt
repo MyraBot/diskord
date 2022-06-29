@@ -12,14 +12,10 @@ import bot.myra.diskord.gateway.events.impl.guild.MemberRemoveEvent
 import bot.myra.diskord.gateway.events.impl.guild.MemberUpdateEvent
 
 class MutableMemberCachePolicy : MemberCachePolicy() {
+
     init {
         if (GatewayIntent.GUILD_MEMBERS !in Diskord.intents) throw MissingIntentException(MemberCachePolicy::class, GatewayIntent.GUILD_MEMBERS)
     }
-}
-
-class DisabledMemberCachePolicy : MemberCachePolicy()
-
-abstract class MemberCachePolicy : GenericCachePolicy<DoubleKey<String, String>, Member>() {
 
     @ListenTo(MemberJoinEvent::class)
     fun onMemberJoin(event: MemberJoinEvent) = update(event.member)
@@ -31,4 +27,8 @@ abstract class MemberCachePolicy : GenericCachePolicy<DoubleKey<String, String>,
     fun onMemberRemove(event: MemberRemoveEvent) = remove(DoubleKey(event.removedMember.guildId, event.removedMember.user.id))
 
 }
+
+class DisabledMemberCachePolicy : MemberCachePolicy()
+
+abstract class MemberCachePolicy : GenericCachePolicy<DoubleKey<String, String>, Member>()
 

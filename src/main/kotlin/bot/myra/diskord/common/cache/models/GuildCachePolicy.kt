@@ -12,14 +12,10 @@ import bot.myra.diskord.gateway.events.impl.guild.roles.RoleDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleUpdateEvent
 
 class MutableGuildCachePolicy : GuildCachePolicy() {
+
     init {
         if (GatewayIntent.GUILDS !in Diskord.intents) throw MissingIntentException(GuildCachePolicy::class, GatewayIntent.GUILDS)
     }
-}
-
-class DisabledGuildCachePolicy : GuildCachePolicy()
-
-open class GuildCachePolicy : GenericCachePolicy<String, Guild>() {
 
     @ListenTo(GenericGuildCreateEvent::class)
     fun onGuildCreate(event: GenericGuildCreateEvent) {
@@ -47,3 +43,7 @@ open class GuildCachePolicy : GenericCachePolicy<String, Guild>() {
     }
 
 }
+
+class DisabledGuildCachePolicy : GuildCachePolicy()
+
+abstract class GuildCachePolicy : GenericCachePolicy<String, Guild>()

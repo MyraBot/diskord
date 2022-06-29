@@ -8,11 +8,7 @@ import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
 
-class MutableChannelCachePolicy: ChannelCachePolicy()
-class DisabledChannelCachePolicy: ChannelCachePolicy()
-
-abstract class ChannelCachePolicy : GenericCachePolicy<String, ChannelData>() {
-    val guildAssociation = GuildCacheAssociation<ChannelData>()
+class MutableChannelCachePolicy : ChannelCachePolicy() {
 
     @ListenTo(ChannelCreateEvent::class)
     fun onChannelCreate(event: ChannelCreateEvent) = updateChannel(event.channelData)
@@ -20,16 +16,23 @@ abstract class ChannelCachePolicy : GenericCachePolicy<String, ChannelData>() {
     @ListenTo(ChannelUpdateEvent::class)
     fun onChannelUpdate(event: ChannelUpdateEvent) = updateChannel(event.channelData)
 
-     fun updateChannel(channel: ChannelData) {
-        update(channel)
-        guildAssociation.update(channel)
-    }
-
     @ListenTo(ChannelDeleteEvent::class)
     fun onChannelDelete(event: ChannelDeleteEvent) {
         remove(event.channelData.id)
         val guild = event.channelData.guildId.value ?: return
         guildAssociation.remove(guild, event.channelData.id)
+    }
+
+}
+
+class DisabledChannelCachePolicy : ChannelCachePolicy()
+
+abstract class ChannelCachePolicy : GenericCachePolicy<String, ChannelData>() {
+    val guildAssociation = GuildCacheAssociation<ChannelData>()
+
+    fun updateChannel(channel: ChannelData) {
+        update(channel)
+        guildAssociation.update(channel)
     }
 
 }
