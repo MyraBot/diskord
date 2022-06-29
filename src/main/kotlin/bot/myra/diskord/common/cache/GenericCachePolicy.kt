@@ -1,6 +1,7 @@
 package bot.myra.diskord.common.cache
 
 import bot.myra.diskord.gateway.events.EventListener
+import bot.myra.diskord.gateway.events.loadListeners
 
 data class DoubleKey<F, S>(val first: F, val second: S)
 
@@ -11,6 +12,11 @@ abstract class GenericCachePolicy<K, V>(
     internal var update: UpdateCache<V>? = null,
     internal var remove: ((K) -> Unit)? = null
 ) : EventListener {
+
+    init {
+        loadListeners()
+    }
+
     fun view(action: ViewCache<V>) = run { view = action }
     fun get(action: GetCache<K, V>) = run { get = action }
     fun update(action: UpdateCache<V>) = run { update = action }
