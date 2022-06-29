@@ -16,27 +16,27 @@ data class CachePolicy(
     )
 
     fun user(builder: UserCachePolicy.() -> Unit) {
-        user = UserCachePolicy().apply(builder)
+        user = UserCachePolicy().apply(builder).apply { active = true }
     }
 
     fun guild(builder: GuildCachePolicy.() -> Unit) {
-        guild = GuildCachePolicy().apply(builder)
+        guild = GuildCachePolicy().apply(builder).apply { active = true }
     }
 
     fun member(builder: MemberCachePolicy.() -> Unit) {
-        member = MemberCachePolicy().apply(builder)
+        member = MemberCachePolicy().apply(builder).apply { active = true }
     }
 
     fun voiceState(builder: VoiceStateCachePolicy.() -> Unit) {
-        voiceState = VoiceStateCachePolicy().apply(builder)
+        voiceState = VoiceStateCachePolicy().apply(builder).apply { active = true }
     }
 
     fun channel(builder: ChannelCachePolicy.() -> Unit) {
-        channel = ChannelCachePolicy().apply(builder)
+        channel = ChannelCachePolicy().apply(builder).apply { active = true }
     }
 
     fun message(builder: MessageCachePolicy.() -> Unit) {
-        message = MessageCachePolicy().apply(builder)
+        message = MessageCachePolicy().apply(builder).apply { active = true }
     }
 
 }

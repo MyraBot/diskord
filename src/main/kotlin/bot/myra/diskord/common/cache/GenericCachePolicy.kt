@@ -5,6 +5,7 @@ import bot.myra.diskord.gateway.events.EventListener
 data class DoubleKey<F, S>(val first: F, val second: S)
 
 abstract class GenericCachePolicy<K, V>(
+    var active: Boolean = false,
     internal var view: ViewCache<V>? = null,
     internal var get: GetCache<K, V>? = null,
     internal var update: UpdateCache<V>? = null,
