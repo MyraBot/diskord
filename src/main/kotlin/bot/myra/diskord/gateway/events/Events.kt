@@ -16,9 +16,11 @@ import bot.myra.diskord.gateway.events.impl.message.BulkMessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
+import bot.myra.kommons.error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
@@ -32,27 +34,32 @@ object Events {
         coroutineScope.launch {
             Diskord.gateway.eventDispatcher.collect { income ->
                 val json = income.d ?: return@collect
-                when (income.t!!) {
-                    "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
-                    "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
-                    "CHANNEL_UPDATE"      -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_CREATE"        -> GenericGuildCreateEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_DELETE"        -> GuildLeaveEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_MEMBER_ADD"    -> MemberJoinEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(json))
-                    "INTERACTION_CREATE"  -> InteractionCreateEvent(JSON.decodeFromJsonElement(json))
-                    "MESSAGE_CREATE"      -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
-                    "MESSAGE_UPDATE"      -> MessageUpdateEvent(JSON.decodeFromJsonElement(json))
-                    "MESSAGE_DELETE"      -> MessageDeleteEvent(JSON.decodeFromJsonElement(json))
-                    "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent(JSON.decodeFromJsonElement(json))
-                    "GUILD_ROLE_CREATE"   -> json.decode<RoleCreateEvent>()
-                    "GUILD_ROLE_UPDATE"   -> json.decode<RoleUpdateEvent>()
-                    "GUILD_ROLE_DELETE"   -> json.decode<RoleDeleteEvent>()
-                    "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
-                    "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
-                    else                  -> null
-                }?.call()
+                try {
+                    when (income.t!!) {
+                        "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
+                        "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
+                        "CHANNEL_UPDATE"      -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_CREATE"        -> GenericGuildCreateEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_DELETE"        -> GuildLeaveEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_MEMBER_ADD"    -> MemberJoinEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(json))
+                        "INTERACTION_CREATE"  -> InteractionCreateEvent(JSON.decodeFromJsonElement(json))
+                        "MESSAGE_CREATE"      -> MessageCreateEvent(JSON.decodeFromJsonElement(json))
+                        "MESSAGE_UPDATE"      -> MessageUpdateEvent(JSON.decodeFromJsonElement(json))
+                        "MESSAGE_DELETE"      -> MessageDeleteEvent(JSON.decodeFromJsonElement(json))
+                        "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_ROLE_CREATE"   -> json.decode<RoleCreateEvent>()
+                        "GUILD_ROLE_UPDATE"   -> json.decode<RoleUpdateEvent>()
+                        "GUILD_ROLE_DELETE"   -> json.decode<RoleDeleteEvent>()
+                        "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
+                        "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
+                        else                  -> null
+                    }?.call()
+                } catch (e: SerializationException) {
+                    error(this::class) { "Failed to deserialize income = ${json.decode<String>()}" }
+                    e.printStackTrace()
+                }
             }
         }
     }
