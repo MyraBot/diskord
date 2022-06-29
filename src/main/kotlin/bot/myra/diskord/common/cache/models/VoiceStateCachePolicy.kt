@@ -12,9 +12,7 @@ import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 
 class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
     init {
-        if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) {
-            throw MissingIntentException(Diskord.cachePolicy.voiceState, GatewayIntent.GUILD_VOICE_STATES)
-        }
+        if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) throw MissingIntentException(VoiceStateCachePolicy::class, GatewayIntent.GUILD_VOICE_STATES)
     }
 }
 

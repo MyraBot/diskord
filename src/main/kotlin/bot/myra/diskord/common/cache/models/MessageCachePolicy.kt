@@ -13,9 +13,7 @@ import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
 
 class MutableMessageCachePolicy : MessageCachePolicy() {
     init {
-        if (GatewayIntent.GUILD_MESSAGES !in Diskord.intents) {
-            throw MissingIntentException(Diskord.cachePolicy.message, GatewayIntent.GUILD_MESSAGES)
-        }
+        if (GatewayIntent.GUILD_MESSAGES !in Diskord.intents) throw MissingIntentException(MessageCreateEvent::class, GatewayIntent.GUILD_MESSAGES)
     }
 }
 

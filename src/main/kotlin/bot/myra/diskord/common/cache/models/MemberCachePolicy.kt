@@ -13,9 +13,7 @@ import bot.myra.diskord.gateway.events.impl.guild.MemberUpdateEvent
 
 class MutableMemberCachePolicy : MemberCachePolicy() {
     init {
-        if (GatewayIntent.GUILD_MEMBERS !in Diskord.intents) {
-            throw MissingIntentException(Diskord.cachePolicy.member, GatewayIntent.GUILD_MEMBERS)
-        }
+        if (GatewayIntent.GUILD_MEMBERS !in Diskord.intents) throw MissingIntentException(MemberCachePolicy::class, GatewayIntent.GUILD_MEMBERS)
     }
 }
 

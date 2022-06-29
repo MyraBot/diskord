@@ -13,9 +13,7 @@ import bot.myra.diskord.gateway.events.impl.guild.roles.RoleUpdateEvent
 
 class MutableGuildCachePolicy : GuildCachePolicy() {
     init {
-        if (GatewayIntent.GUILDS !in Diskord.intents) {
-            throw MissingIntentException(Diskord.cachePolicy.guild, GatewayIntent.GUILDS)
-        }
+        if (GatewayIntent.GUILDS !in Diskord.intents) throw MissingIntentException(GuildCachePolicy::class, GatewayIntent.GUILDS)
     }
 }
 
