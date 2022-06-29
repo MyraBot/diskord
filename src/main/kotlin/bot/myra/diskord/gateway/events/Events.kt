@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.reflections.Reflections
@@ -57,7 +58,7 @@ object Events {
                         else                  -> null
                     }?.call()
                 } catch (e: SerializationException) {
-                    error(this::class) { "Failed to deserialize income = ${json.decode<String>()}" }
+                    error(this::class) { "Failed to deserialize income = ${JSON.encodeToString(json)}" }
                     e.printStackTrace()
                 }
             }
