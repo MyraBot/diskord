@@ -46,7 +46,7 @@ class Gateway(
      */
     suspend fun connect() {
         Events.startResolver()
-        openGatewayConnection()
+        coroutineScope.launch { openGatewayConnection() }
     }
 
     /**
