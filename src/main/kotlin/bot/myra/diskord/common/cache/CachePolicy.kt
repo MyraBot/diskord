@@ -11,33 +11,14 @@ data class CachePolicy(
     var message: MessageCachePolicy = DisabledMessageCachePolicy()
 ) {
 
-    fun all(): List<GenericCachePolicy<*, *>> = listOf(
-        user, guild, member, voiceState, channel
-    )
+    fun all(): List<GenericCachePolicy<*, *>> = listOf(user, guild, member, voiceState, channel)
 
-    fun user(builder: UserCachePolicy.() -> Unit) {
-        user = MutableUserCachePolicy().apply(builder)
-    }
-
-    fun guild(builder: MutableGuildCachePolicy.() -> Unit) {
-        guild = MutableGuildCachePolicy().apply(builder)
-    }
-
-    fun member(builder: MemberCachePolicy.() -> Unit) {
-        member = MutableMemberCachePolicy().apply(builder)
-    }
-
-    fun voiceState(builder: VoiceStateCachePolicy.() -> Unit) {
-        voiceState = MutableVoiceStateCachePolicy().apply(builder)
-    }
-
-    fun channel(builder: ChannelCachePolicy.() -> Unit) {
-        channel = MutableChannelCachePolicy().apply(builder)
-    }
-
-    fun message(builder: MessageCachePolicy.() -> Unit) {
-        message = MutableMessageCachePolicy().apply(builder)
-    }
+    fun user(builder: UserCachePolicy.() -> Unit) = run { user = MutableUserCachePolicy().apply(builder) }
+    fun guild(builder: MutableGuildCachePolicy.() -> Unit) = run { guild = MutableGuildCachePolicy().apply(builder) }
+    fun member(builder: MemberCachePolicy.() -> Unit) = run { member = MutableMemberCachePolicy().apply(builder) }
+    fun voiceState(builder: VoiceStateCachePolicy.() -> Unit) = run { voiceState = MutableVoiceStateCachePolicy().apply(builder) }
+    fun channel(builder: ChannelCachePolicy.() -> Unit) = run { channel = MutableChannelCachePolicy().apply(builder) }
+    fun message(builder: MessageCachePolicy.() -> Unit) = run { message = MutableMessageCachePolicy().apply(builder) }
 
 }
 
