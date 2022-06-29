@@ -13,6 +13,7 @@ import bot.myra.diskord.gateway.Gateway
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.EventListener
+import bot.myra.diskord.gateway.events.loadListeners
 import bot.myra.diskord.rest.DefaultTransformer
 import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.MessageTransformer
