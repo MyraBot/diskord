@@ -1,13 +1,26 @@
 package bot.myra.diskord.common.cache.models
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.cache.DoubleKey
 import bot.myra.diskord.common.cache.GenericCachePolicy
+import bot.myra.diskord.common.cache.MissingIntentException
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.guild.GenericGuildCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 
-class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>() {
+class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
+    init {
+        if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) {
+            throw MissingIntentException(Diskord.cachePolicy.voiceState, GatewayIntent.GUILD_VOICE_STATES)
+        }
+    }
+}
+
+class DisabledVoiceStateCachePolicy : VoiceStateCachePolicy()
+
+abstract class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>() {
 
     @ListenTo(GenericGuildCreateEvent::class)
     fun onGuildCreate(event: GenericGuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }

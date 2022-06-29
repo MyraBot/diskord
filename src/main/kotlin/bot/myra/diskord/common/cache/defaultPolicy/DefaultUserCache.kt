@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.cache.defaultPolicy
 
+import bot.myra.diskord.common.cache.models.MutableUserCachePolicy
 import bot.myra.diskord.common.cache.models.UserCachePolicy
 import bot.myra.diskord.common.entities.user.User
 
@@ -7,7 +8,7 @@ class DefaultUserCache {
 
     private val map = mutableMapOf<String, User>()
 
-    fun policy(): UserCachePolicy = UserCachePolicy().apply {
+    fun policy(): UserCachePolicy = MutableUserCachePolicy().apply {
         view { map.values.toList() }
         get { map[it] }
         update { map[it.id] = it }

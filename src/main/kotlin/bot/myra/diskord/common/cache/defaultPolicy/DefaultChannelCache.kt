@@ -2,6 +2,7 @@ package bot.myra.diskord.common.cache.defaultPolicy
 
 import bot.myra.diskord.common.Diskord.id
 import bot.myra.diskord.common.cache.models.ChannelCachePolicy
+import bot.myra.diskord.common.cache.models.MutableChannelCachePolicy
 import bot.myra.diskord.common.entities.channel.ChannelData
 
 class DefaultChannelCache {
@@ -9,7 +10,7 @@ class DefaultChannelCache {
     private val map = mutableMapOf<String, ChannelData>()
     private val guildMap = mutableMapOf<String, MutableList<ChannelData>>()
 
-    fun policy(): ChannelCachePolicy = ChannelCachePolicy().apply {
+    fun policy(): ChannelCachePolicy = MutableChannelCachePolicy().apply {
         view { map.values.toList() }
         get { map[it] }
         update { map[it.id] = it }

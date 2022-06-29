@@ -3,12 +3,12 @@ package bot.myra.diskord.common.cache
 import bot.myra.diskord.common.cache.models.*
 
 data class CachePolicy(
-    var user: UserCachePolicy = UserCachePolicy(),
-    var guild: GuildCachePolicy = GuildCachePolicy(),
-    var member: MemberCachePolicy = MemberCachePolicy(),
-    var voiceState: VoiceStateCachePolicy = VoiceStateCachePolicy(),
-    var channel: ChannelCachePolicy = ChannelCachePolicy(),
-    var message: MessageCachePolicy = MessageCachePolicy()
+    var user: UserCachePolicy = DisabledUserCachePolicy(),
+    var guild: GuildCachePolicy = DisabledGuildCachePolicy(),
+    var member: MemberCachePolicy = DisabledMemberCachePolicy(),
+    var voiceState: VoiceStateCachePolicy = DisabledVoiceStateCachePolicy(),
+    var channel: ChannelCachePolicy = DisabledChannelCachePolicy(),
+    var message: MessageCachePolicy = DisabledMessageCachePolicy()
 ) {
 
     fun all(): List<GenericCachePolicy<*, *>> = listOf(
@@ -16,27 +16,27 @@ data class CachePolicy(
     )
 
     fun user(builder: UserCachePolicy.() -> Unit) {
-        user = UserCachePolicy().apply(builder).apply { active = true }
+        user = MutableUserCachePolicy().apply(builder)
     }
 
-    fun guild(builder: GuildCachePolicy.() -> Unit) {
-        guild = GuildCachePolicy().apply(builder).apply { active = true }
+    fun guild(builder: MutableGuildCachePolicy.() -> Unit) {
+        guild = MutableGuildCachePolicy().apply(builder)
     }
 
     fun member(builder: MemberCachePolicy.() -> Unit) {
-        member = MemberCachePolicy().apply(builder).apply { active = true }
+        member = MutableMemberCachePolicy().apply(builder)
     }
 
     fun voiceState(builder: VoiceStateCachePolicy.() -> Unit) {
-        voiceState = VoiceStateCachePolicy().apply(builder).apply { active = true }
+        voiceState = MutableVoiceStateCachePolicy().apply(builder)
     }
 
     fun channel(builder: ChannelCachePolicy.() -> Unit) {
-        channel = ChannelCachePolicy().apply(builder).apply { active = true }
+        channel = MutableChannelCachePolicy().apply(builder)
     }
 
     fun message(builder: MessageCachePolicy.() -> Unit) {
-        message = MessageCachePolicy().apply(builder).apply { active = true }
+        message = MutableMessageCachePolicy().apply(builder)
     }
 
 }
