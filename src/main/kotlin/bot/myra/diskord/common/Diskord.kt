@@ -55,16 +55,6 @@ object Diskord : GetTextChannelBehavior {
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
     var intents: MutableSet<GatewayIntent> = mutableSetOf()
     var cachePolicy: CachePolicy = CachePolicy()
-        set(value) {
-            field = value
-
-            value.user.loadListeners()
-            value.guild.loadListeners()
-            value.member.loadListeners()
-            value.voiceState.loadListeners()
-            value.channel.loadListeners()
-            value.message.loadListeners()
-        }
     var rateLimitThreshold = 1000
     var errorHandler: ErrorHandler = ErrorHandler()
     var transformer: MessageTransformer = DefaultTransformer
