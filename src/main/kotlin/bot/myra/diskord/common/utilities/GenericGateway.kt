@@ -2,7 +2,7 @@ package bot.myra.diskord.common.utilities
 
 import bot.myra.diskord.gateway.OpPacket
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
@@ -26,7 +26,7 @@ abstract class GenericGateway(
      */
     private val waitingCalls = mutableListOf<OpPacket>()
 
-    val client = HttpClient(CIO) {
+    val client = HttpClient(OkHttp) {
         install(WebSockets)
         install(HttpTimeout) { requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS }
         expectSuccess = true

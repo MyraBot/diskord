@@ -33,7 +33,7 @@ dependencies {
     compileOnly("bot.myra:kommons:$kommons")
 
     implementation("io.ktor:ktor-client-core:$ktor")
-    implementation("io.ktor:ktor-client-cio:$ktor")
+    implementation("io.ktor:ktor-client-okhttp:$ktor")
     implementation("io.ktor:ktor-client-websockets:$ktor")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerialization") // Serializer
 
