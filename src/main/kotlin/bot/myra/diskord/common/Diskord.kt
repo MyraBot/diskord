@@ -21,7 +21,7 @@ import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +51,7 @@ object Diskord : GetTextChannelBehavior {
     internal lateinit var gateway: Gateway
     lateinit var id: String
 
-    var gatewayClient = HttpClient(CIO) { install(WebSockets) }
+    var gatewayClient = HttpClient(OkHttp) { install(WebSockets) }
     var listenersPackage: List<String> = emptyList()
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
     var intents: MutableSet<GatewayIntent> = mutableSetOf()
