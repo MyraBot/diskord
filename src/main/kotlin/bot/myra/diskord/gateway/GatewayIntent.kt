@@ -27,7 +27,7 @@ enum class GatewayIntent(val index: Int) {
 
     companion object {
         fun getID(intents: Set<GatewayIntent>): Int {
-            return intents.map { 1 shl it.index }.reduce { acc, i -> acc or i }
+            return intents.map { 1 shl it.index }.reduceOrNull { acc, i -> acc or i } ?: 0
         }
     }
 }
