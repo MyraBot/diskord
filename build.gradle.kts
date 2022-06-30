@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktor")
     implementation("io.ktor:ktor-client-okhttp:$ktor")
     implementation("io.ktor:ktor-client-websockets:$ktor")
+    implementation("io.ktor:ktor-network:$ktor")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerialization") // Serializer
 
     // Reflections
