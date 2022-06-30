@@ -7,6 +7,7 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
+import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.rest.request.RestClient
 
@@ -29,10 +30,14 @@ object EntityProvider {
                 arguments { arg("user.id", id) }
             }?.also { Diskord.cachePolicy.user.update(it) }
 
-    suspend fun fetchMessages(channelId: String, max: Int = 100, before: String? = null) = RestClient.execute(Endpoints.getChannelMessages) {
-        arguments { arg("channel.id", channelId) }
-        queryParameter.add("limit" to max)
-        before?.let { queryParameter.add("before" to before) }
+    suspend fun fetchMessages(channelId: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> {
+        if (before != null && after != null) throw IllegalArgumentException("Only one, before or after can be set")
+        return RestClient.execute(Endpoints.getChannelMessages) {
+            arguments { arg("channel.id", channelId) }
+            queryParameter.add("limit" to max)
+            before?.let { queryParameter.add("before" to before) }
+            after?.let { queryParameter.add("after" to after) }
+        }
     }
 
     suspend fun getMessage(channelId: String, messageId: String) =

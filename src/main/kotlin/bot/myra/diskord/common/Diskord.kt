@@ -96,7 +96,7 @@ object Diskord : GetTextChannelBehavior {
     suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
     suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
     suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
-    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before)
+    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before, after)
 
 }
 
