@@ -58,8 +58,7 @@ object Events {
                         else                  -> null
                     }?.call()
                 } catch (e: SerializationException) {
-                    error(this::class) { "Failed to deserialize income = ${JSON.encodeToString(json)}" }
-                    e.printStackTrace()
+                    error(this::class) { "Failed to deserialize ${income.d!!} = ${JSON.encodeToString(json)}" }
                 }
             }
         }
