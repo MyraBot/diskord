@@ -11,7 +11,7 @@ class GuildMessageCreateEvent(
     val message: Message
 ) : Event() {
 
-    suspend fun getGuild(): Guild? = message.getGuild()
+    suspend fun getGuild(): Guild = message.getGuild()!!
     fun getMember(): Member = message.getMember()!!
     suspend fun getChannel(): TextChannel = message.getChannelAs()!!
 
