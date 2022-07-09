@@ -12,6 +12,6 @@ data class MemberJoinEvent(
     val member: Member
 ) : Event() {
 
-    suspend fun getGuild():Guild? = Diskord.getGuild(member.guildId)
+    suspend fun getGuild(): Guild = Diskord.getGuild(member.guildId)!!
 
 }
