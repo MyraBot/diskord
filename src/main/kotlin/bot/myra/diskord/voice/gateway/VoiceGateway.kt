@@ -89,6 +89,7 @@ class VoiceGateway(
         VoiceSocketClosedReason.DISCONNECTED            -> ReconnectMethod.STOP
         VoiceSocketClosedReason.VOICE_SERVER_CRASHED    -> ReconnectMethod.RETRY
         VoiceSocketClosedReason.UNKNOWN_ENCRYPTION_MODE -> ReconnectMethod.STOP
+        VoiceSocketClosedReason.UNKNOWN                 -> ReconnectMethod.RETRY
     }
 
     suspend fun disconnect() {

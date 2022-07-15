@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
+import java.io.EOFException
 import kotlin.time.Duration.Companion.seconds
 
 abstract class GenericGateway(
@@ -49,13 +50,17 @@ abstract class GenericGateway(
                     val income = JSON.decodeFromString<OpPacket>(data.readText())
                     handleIncome(income, resumed)
                 }
+
                 logger.debug("Reached end of socket")
+                handleDisconnect()
             } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
         }
         // On disconnect
         catch (e: Exception) {
             logger.warn("Lost connection: ${e.message}")
+            println(1)
             handleDisconnect()
+            println(2)
         }
     }
 
@@ -63,18 +68,29 @@ abstract class GenericGateway(
         val reasonSocket = socket ?: return
         socket = null
         val reason = withTimeoutOrNull(5.seconds) {
-            reasonSocket.closeReason.await()
-        }?.also { logger.warn("Socket closed with reason $it") }
-
-        if (reason == null) openGatewayConnection(true)
-        else {
-            println("Chose ${chooseReconnectMethod(reason).name} method because of reason $reason")
-            when (chooseReconnectMethod(reason)) {
-                ReconnectMethod.CONNECT -> openGatewayConnection(false)
-                ReconnectMethod.RETRY   -> openGatewayConnection(true)
-                ReconnectMethod.STOP    -> return
+            var t: CloseReason? = null
+            try {
+                t = reasonSocket.closeReason.await()
+            } catch (e: EOFException) {
+                println("CATCHED THIS WEIRD EXCEPTIon")
             }
-        }
+            t
+        }?.also { logger.warn("Socket closed with reason $it") }
+        println(
+            """
+            Socket = $reasonSocket
+            Reason = ${reason?.knownReason}
+            Code = ${reason?.code}
+        """.trimIndent()
+        )
+        if (reason == null) openGatewayConnection(true)
+        else reason.knownReason?.let { openGatewayConnection(true) } ?: checkSocketSpecificReasons(reason)
+    }
+
+    private suspend fun checkSocketSpecificReasons(reason: CloseReason) = when (chooseReconnectMethod(reason)) {
+        ReconnectMethod.CONNECT -> openGatewayConnection(false)
+        ReconnectMethod.RETRY   -> openGatewayConnection(true)
+        ReconnectMethod.STOP    -> Unit
     }
 
     open suspend fun onConnectionOpened(resumed: Boolean) {}

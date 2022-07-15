@@ -75,6 +75,7 @@ class Gateway(
         GatewaySocketClosedReason.INVALID_API_VERSION   -> throw Exception("Invalid gateway version")
         GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
         GatewaySocketClosedReason.DISALLOWED_INTENTS    -> throw Exception("You may have tried to specify an intent that you have not enabled or are not approved for.")
+        GatewaySocketClosedReason.UNKNOWN               -> ReconnectMethod.RETRY
     }
 
     /**

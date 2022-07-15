@@ -1,6 +1,6 @@
 package bot.myra.diskord.gateway
 
-enum class GatewaySocketClosedReason(val code: Short) {
+enum class GatewaySocketClosedReason(var code: Short?) {
     UNKNOWN_ERROR(4000),
     UNKNOWN_OPCODE(4001),
     DECODE_ERROR(4002),
@@ -14,10 +14,12 @@ enum class GatewaySocketClosedReason(val code: Short) {
     SHARDING_REQUIRED(4011),
     INVALID_API_VERSION(4012),
     INVALID_INTENTS(4013),
-    DISALLOWED_INTENTS(4014);
+    DISALLOWED_INTENTS(4014),
+    UNKNOWN(null);
 
     companion object {
-        fun fromCode(code: Short): GatewaySocketClosedReason = values().first { it.code == code }
+        fun fromCode(code: Short): GatewaySocketClosedReason =
+            values().firstOrNull { it.code == code } ?: UNKNOWN.apply { this.code = code }
     }
 
 }
