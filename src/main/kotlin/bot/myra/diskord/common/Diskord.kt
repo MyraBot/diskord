@@ -9,15 +9,20 @@ import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashC
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
+import bot.myra.diskord.common.utilities.FileFormats
+import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.gateway.Gateway
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.loadListeners
 import bot.myra.diskord.rest.DefaultTransformer
+import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.MessageTransformer
 import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
+import bot.myra.diskord.rest.bodies.ModifyCurrentUser
+import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
 import bot.myra.kommons.error
 import io.ktor.client.*
@@ -30,6 +35,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import java.util.*
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
 
@@ -72,6 +78,17 @@ object Diskord : GetTextChannelBehavior {
     suspend fun updatePresence(status: PresenceUpdate.Status, presence: PresenceUpdate.() -> Unit) {
         val newPresence = PresenceUpdate(status = status).apply(presence)
         gateway.updatePresence(newPresence)
+    }
+
+    suspend fun updateAvatar(bytes: ByteArray, file: FileFormats): User {
+        val supportedFileTypes = listOf(FileFormats.JPEG, FileFormats.PNG)
+        if (file !in supportedFileTypes) throw UnsupportedOperationException("${file.name} isn't supported as avatars")
+
+        val base64 = Base64.getEncoder().encodeToString(bytes)
+        val avatarString = "data:image/${file.extension};base64,$base64"
+        return RestClient.execute(Endpoints.modifyCurrentUser) {
+            json = ModifyCurrentUser(getBotUser().username, avatarString).toJson()
+        }
     }
 
     suspend fun getApplicationCommands(): List<SlashCommand> = EntityProvider.getApplicationCommands()

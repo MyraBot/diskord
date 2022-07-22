@@ -46,4 +46,5 @@ object Endpoints {
     val getChannelMessage = Route(HttpMethod.Get, "/channels/{channel.id}/messages/{message.id}", Message.serializer())
     val getChannelMessages = Route(HttpMethod.Get, "/channels/{channel.id}/messages", ListSerializer(Message.serializer()))
     val bulkDeleteMessages = Route(HttpMethod.Post, "/channels/{channel.id}/messages/bulk-delete", Unit.serializer())
+    val modifyCurrentUser = Route(HttpMethod.Patch, "/users/@me", User.serializer())
 }
