@@ -21,7 +21,7 @@ data class Guild(
     @SerialName("icon") private val iconHash: String?,
     @SerialName("splash") private val splashHash: String?,
     @SerialName("discovery_splash") private val discoverySplashHash: String?,
-    @SerialName("owner_id") internal val ownerId: String,
+    @SerialName("owner_id") val ownerId: String,
     var roles: List<Role>,
     val emojis: List<Emoji>,
     val features: List<String>,
