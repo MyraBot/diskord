@@ -7,6 +7,7 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
+import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.ListSerializer
@@ -47,4 +48,5 @@ object Endpoints {
     val getChannelMessages = Route(HttpMethod.Get, "/channels/{channel.id}/messages", ListSerializer(Message.serializer()))
     val bulkDeleteMessages = Route(HttpMethod.Post, "/channels/{channel.id}/messages/bulk-delete", Unit.serializer())
     val modifyCurrentUser = Route(HttpMethod.Patch, "/users/@me", User.serializer())
+    val modifyGuildRole = Route(HttpMethod.Patch, "/guilds/{guild.id}/roles/{role.id}", Role.serializer())
 }
