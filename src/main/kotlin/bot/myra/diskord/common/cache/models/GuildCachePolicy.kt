@@ -7,6 +7,7 @@ import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.guild.GenericGuildCreateEvent
+import bot.myra.diskord.gateway.events.impl.guild.GuildLeaveEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleUpdateEvent
@@ -22,6 +23,12 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
         Diskord.guildIds.add(event.guild.id)
         update(event.guild)
         Diskord.pendingGuilds[event.guild.id]?.complete(event.guild)
+    }
+
+    @ListenTo(GuildLeaveEvent::class)
+    fun onGuildLeave(event: GuildLeaveEvent) {
+        Diskord.guildIds.remove(event.guild.id)
+        remove(event.guild.id)
     }
 
     @ListenTo(RoleCreateEvent::class)
