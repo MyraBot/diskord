@@ -20,8 +20,9 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
     @ListenTo(MessageCreateEvent::class)
     fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
 
+    //TODO Improve this somehow
     @ListenTo(MessageUpdateEvent::class)
-    fun onMessageUpdate(event: MessageUpdateEvent) = update(event.message)
+    suspend fun onMessageUpdate(event: MessageUpdateEvent) = update(Diskord.getMessage(event.message.channelId, event.message.id)!!)
 
     @ListenTo(MessageDeleteEvent::class)
     fun onMessageDelete(event: MessageDeleteEvent) = remove(event.message.id)
