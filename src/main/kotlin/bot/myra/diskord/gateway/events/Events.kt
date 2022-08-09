@@ -41,7 +41,7 @@ object Events {
                         "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
                         "CHANNEL_UPDATE"      -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
                         "GUILD_CREATE"        -> GenericGuildCreateEvent(JSON.decodeFromJsonElement(json))
-                        "GUILD_DELETE"        -> GuildLeaveEvent(JSON.decodeFromJsonElement(json))
+                        "GUILD_DELETE"        -> GenericGuildDeleteEvent(JSON.decodeFromJsonElement(json))
                         "GUILD_MEMBER_ADD"    -> MemberJoinEvent(JSON.decodeFromJsonElement(json))
                         "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent(JSON.decodeFromJsonElement(json))
                         "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(JSON.decodeFromJsonElement(json))
