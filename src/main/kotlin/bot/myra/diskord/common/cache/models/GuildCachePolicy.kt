@@ -22,6 +22,8 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     fun onGuildCreate(event: GenericGuildCreateEvent) {
         Diskord.guildIds.add(event.guild.id)
         update(event.guild)
+
+        Diskord.lazyLoadedGuilds.add(event.guild.id)
         Diskord.pendingGuilds[event.guild.id]?.complete(event.guild)
     }
 

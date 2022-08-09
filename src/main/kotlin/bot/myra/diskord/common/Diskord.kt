@@ -67,6 +67,7 @@ object Diskord : GetTextChannelBehavior {
     var transformer: MessageTransformer = DefaultTransformer
 
     val guildIds: MutableSet<String> = mutableSetOf()
+    val lazyLoadedGuilds:MutableSet<String> = mutableSetOf()
     var unavailableGuilds: MutableSet<String> = mutableSetOf()
     val pendingGuilds: MutableMap<String, CompletableDeferred<Guild>> = mutableMapOf()
 
