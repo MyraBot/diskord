@@ -7,5 +7,5 @@ data class UnavailableGuild(
     val id: String,
     val unavailable: Boolean? = null
 ) {
-    val wasLeft: Boolean = unavailable == null
+    val gotKicked: Boolean = unavailable == null
 }
