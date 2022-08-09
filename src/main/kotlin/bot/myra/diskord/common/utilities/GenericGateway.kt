@@ -6,6 +6,7 @@ import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withTimeoutOrNull
@@ -67,14 +68,18 @@ abstract class GenericGateway(
     private suspend fun handleDisconnect() {
         val reasonSocket = socket ?: return
         socket = null
-        val reason = withTimeoutOrNull(5.seconds) {
-            var t: CloseReason? = null
+
+        val reason: CloseReason? = withTimeoutOrNull(5.seconds) {
             try {
-                t = reasonSocket.closeReason.await()
+                return@withTimeoutOrNull reasonSocket.closeReason.await()
             } catch (e: EOFException) {
                 println("CATCHED THIS WEIRD EXCEPTIon")
+            } catch (_: TimeoutCancellationException) { // Thrown when the #withTimeoutOrNull cancels the closeReason#await function
+            } catch (e: Exception) {
+                println("Received other exception: ")
+                e.printStackTrace()
             }
-            t
+            null
         }?.also { logger.warn("Socket closed with reason $it") }
         println(
             """
