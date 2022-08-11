@@ -30,12 +30,11 @@ import java.util.concurrent.ForkJoinPool
  */
 class Gateway(
     private val intents: MutableSet<GatewayIntent> = mutableSetOf(),
-) : GenericGateway(
-    url = "wss://gateway.discord.gg/?v=9&encoding=json",
-    logger = LoggerFactory.getLogger(Gateway::class.java)
-) {
+) : GenericGateway(LoggerFactory.getLogger(Gateway::class.java)) {
     private val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Websocket"))
     lateinit var session: String
+    override val url: String = "wss://gateway.discord.gg/?v=9&encoding=json"
+    override var resumeUrl: String? = null
     private var sequence: Int = 0
     val eventDispatcher = MutableSharedFlow<OpPacket>()
 

@@ -13,11 +13,13 @@ data class ReadyEvent(
     @SerialName("user") val botUser: User,
     val guilds: List<UnavailableGuild>,
     @SerialName("session_id") val sessionId: String,
+    @SerialName("resume_gateway_url") val resumeGatewayUrl: String
 ) : Event() {
 
     override fun prepareEvent() {
         Diskord.apply {
             gateway.session = sessionId
+            gateway.resumeUrl = resumeGatewayUrl
             id = botUser.id
             guildIds.addAll(guilds.map(UnavailableGuild::id))
             unavailableGuilds.addAll(guilds.map(UnavailableGuild::id))

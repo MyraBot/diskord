@@ -26,10 +26,8 @@ class VoiceGateway(
     private val token: String,
     private val session: String,
     private val guildId: String
-) : GenericGateway(
-    url = "wss://$endpoint/?v=4",
-    logger = LoggerFactory.getLogger(VoiceGateway::class.java)
-) {
+) : GenericGateway(LoggerFactory.getLogger(VoiceGateway::class.java)) {
+    override val url: String = "wss://$endpoint/?v=4"
     val eventDispatcher = MutableSharedFlow<OpPacket>()
     private var lastTimestamp: Long = System.currentTimeMillis()
 

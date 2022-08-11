@@ -15,10 +15,9 @@ import org.slf4j.Logger
 import java.io.EOFException
 import kotlin.time.Duration.Companion.seconds
 
-abstract class GenericGateway(
-    open val url: String,
-    val logger: Logger
-) {
+abstract class GenericGateway(val logger: Logger) {
+    abstract val url: String
+    open var resumeUrl: String? = null
 
     /**
      * Queued calls which couldn't be delivered to Discord because
@@ -39,7 +38,7 @@ abstract class GenericGateway(
 
     suspend fun openGatewayConnection(resumed: Boolean = false) {
         try {
-            socket = client.webSocketSession(url)
+            socket = client.webSocketSession(if (resumed) resumeUrl ?: url else url)
             socket?.apply {
                 logger.info("Opened websocket connection")
                 onConnectionOpened(resumed)
