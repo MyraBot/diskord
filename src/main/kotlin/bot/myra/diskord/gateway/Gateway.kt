@@ -109,8 +109,8 @@ class Gateway(
         startHeartbeat(packet)
         if (resumed) resume()
         else identify()
-        ready()
         info(this::class) { "Successfully connected to Discord" }
+        ready()
     }
 
     /**
