@@ -31,8 +31,12 @@ class VoiceGateway(
     val eventDispatcher = MutableSharedFlow<OpPacket>()
     private var lastTimestamp: Long = System.currentTimeMillis()
 
-    suspend fun connect() = scope.launch {
-        openGatewayConnection()
+    suspend fun connect() = scope.launch { openGatewayConnection() }
+
+    suspend fun disconnect() {
+        socket?.close()
+        socket = null
+        logger.debug("Disconnected from socket")
     }
 
     override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
@@ -41,16 +45,25 @@ class VoiceGateway(
             Operations.READY                 -> eventDispatcher.emit(packet)
             Operations.SESSION_DESCRIPTION   -> eventDispatcher.emit(packet)
             Operations.HEARTBEAT_ACKNOWLEDGE -> handleHeartbeat(packet)
-            Operations.HELLO                 -> startHeartbeat(packet)
+            Operations.HELLO                 -> onSuccessfulConnection(packet, resumed)
             //Operations.RESUMED               -> TODO()
             //Operations.CLIENT_DISCONNECT     -> TODO()
             Operations.INVALID               -> throw Exception()
         }
     }
 
-    override suspend fun onConnectionOpened(resumed: Boolean) {
+    /**
+     * Runs when the client received the acknowledgment from discord ([Operations.HELLO]).
+     * Does identification and starts the heartbeat.
+     *
+     * @param packet The received opcode packet.
+     * @param resumed Whether this is a resumed connection.
+     */
+    private suspend fun onSuccessfulConnection(packet: OpPacket, resumed: Boolean) {
         if (resumed) send(Resume(guildId, session, token))
         else send(Identify(guildId, Diskord.id, session, token))
+
+        startHeartbeat(packet)
     }
 
     private fun startHeartbeat(hello: OpPacket) = scope.launch {
@@ -88,12 +101,6 @@ class VoiceGateway(
         VoiceSocketClosedReason.VOICE_SERVER_CRASHED    -> ReconnectMethod.RETRY
         VoiceSocketClosedReason.UNKNOWN_ENCRYPTION_MODE -> ReconnectMethod.STOP
         VoiceSocketClosedReason.UNKNOWN                 -> ReconnectMethod.RETRY
-    }
-
-    suspend fun disconnect() {
-        socket?.close()
-        socket = null
-        logger.debug("Disconnected from socket")
     }
 
     /**

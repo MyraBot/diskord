@@ -48,6 +48,23 @@ class Gateway(
         coroutineScope.launch { openGatewayConnection() }
     }
 
+    override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
+        when (OpCode.from(packet.op)) {
+            OpCode.DISPATCH              -> fireEvent(packet)
+            OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
+            OpCode.RECONNECT             -> throw ClosedReceiveChannelException("Received reconnect from discord")
+            OpCode.HELLO                 -> onSuccessfulConnection(packet, resumed)
+            OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
+        }
+    }
+
+    private suspend fun onSuccessfulConnection(packet: OpPacket, resumed: Boolean) {
+        if (resumed) resume() else identify()
+        info(this::class) { "Successfully connected to Discord" }
+        startHeartbeat(packet)
+        ready()
+    }
+
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#identifying)
      *
@@ -59,24 +76,6 @@ class Gateway(
         send(IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), IdentifyResponse.Properties()))
     }
 
-    override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (GatewaySocketClosedReason.fromCode(reason.code)) {
-        GatewaySocketClosedReason.UNKNOWN_ERROR         -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.UNKNOWN_OPCODE        -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.DECODE_ERROR          -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.NOT_AUTHENTICATED     -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.ALREADY_AUTHENTICATED -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
-        GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.SESSION_TIMED_OUT     -> ReconnectMethod.CONNECT
-        GatewaySocketClosedReason.INVALID_SHARD         -> throw Exception("Invalid shard")
-        GatewaySocketClosedReason.SHARDING_REQUIRED     -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.INVALID_API_VERSION   -> throw Exception("Invalid gateway version")
-        GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> throw Exception("You may have tried to specify an intent that you have not enabled or are not approved for.")
-        GatewaySocketClosedReason.UNKNOWN               -> ReconnectMethod.RETRY
-    }
-
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#resuming)
      * Resumes an old websocket connection.
@@ -85,30 +84,9 @@ class Gateway(
         send(GatewayResume(Diskord.token, session, sequence))
     }
 
-    override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
-        when (OpCode.from(packet.op)) {
-            OpCode.DISPATCH              -> fireEvent(packet)
-            OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
-            OpCode.RECONNECT             -> {
-                logger.info("Received reconnect from discord -> closing connection")
-                throw ClosedReceiveChannelException("Received reconnect from discord")
-            }
-            OpCode.HELLO                 -> hello(packet, resumed)
-            OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
-        }
-    }
-
     private suspend fun fireEvent(packet: OpPacket) {
         eventDispatcher.emit(packet)
         sequence = packet.s ?: sequence
-    }
-
-    private suspend fun hello(packet: OpPacket, resumed: Boolean) {
-        startHeartbeat(packet)
-        if (resumed) resume()
-        else identify()
-        info(this::class) { "Successfully connected to Discord" }
-        ready()
     }
 
     /**
@@ -145,6 +123,24 @@ class Gateway(
      * @param presence New presence / status.
      */
     suspend fun updatePresence(presence: PresenceUpdate) = send(presence)
+
+    override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (GatewaySocketClosedReason.fromCode(reason.code)) {
+        GatewaySocketClosedReason.UNKNOWN_ERROR         -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.UNKNOWN_OPCODE        -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.DECODE_ERROR          -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.NOT_AUTHENTICATED     -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.ALREADY_AUTHENTICATED -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
+        GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
+        GatewaySocketClosedReason.SESSION_TIMED_OUT     -> ReconnectMethod.CONNECT
+        GatewaySocketClosedReason.INVALID_SHARD         -> throw Exception("Invalid shard")
+        GatewaySocketClosedReason.SHARDING_REQUIRED     -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.INVALID_API_VERSION   -> throw Exception("Invalid gateway version")
+        GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> throw Exception("You may have tried to specify an intent that you have not enabled or are not approved for.")
+        GatewaySocketClosedReason.UNKNOWN               -> ReconnectMethod.RETRY
+    }
 
     private suspend inline fun <reified T : GatewayCommand> send(command: T) = send {
         op = command.operation?.code ?: throw Exception("No opcode provided by operation ${T::class.simpleName}")

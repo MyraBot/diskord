@@ -42,7 +42,6 @@ abstract class GenericGateway(val logger: Logger) {
             socket = client.webSocketSession(if (resumed) resumeUrl ?: url else url)
             socket?.apply {
                 logger.info("Opened websocket connection")
-                onConnectionOpened(resumed)
 
                 // Handle incoming data
                 incoming.receiveAsFlow().collect {
@@ -97,8 +96,6 @@ abstract class GenericGateway(val logger: Logger) {
         ReconnectMethod.RETRY   -> openGatewayConnection(true)
         ReconnectMethod.STOP    -> Unit
     }
-
-    open suspend fun onConnectionOpened(resumed: Boolean) {}
 
     open suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = ReconnectMethod.RETRY
 
