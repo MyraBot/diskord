@@ -3,6 +3,7 @@ package bot.myra.diskord.gateway.events
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.events.impl.ReadyEvent
+import bot.myra.diskord.gateway.events.impl.ResumedEvent
 import bot.myra.diskord.gateway.events.impl.guild.*
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
@@ -37,6 +38,7 @@ object Events {
                 val json = income.d ?: return@collect
                 try {
                     when (income.t!!) {
+                        "RESUMED"             -> ResumedEvent()
                         "CHANNEL_CREATE"      -> ChannelCreateEvent(JSON.decodeFromJsonElement(json))
                         "CHANNEL_DELETE"      -> ChannelDeleteEvent(JSON.decodeFromJsonElement(json))
                         "CHANNEL_UPDATE"      -> ChannelUpdateEvent(JSON.decodeFromJsonElement(json))
