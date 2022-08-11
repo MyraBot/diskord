@@ -82,7 +82,6 @@ class Gateway(
      * Resumes an old websocket connection.
      */
     private suspend fun resume() {
-        kInfo(this::class) { "Reconnecting to Discord" }
         send(GatewayResume(Diskord.token, session, sequence))
     }
 
