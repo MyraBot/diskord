@@ -119,16 +119,9 @@ abstract class GenericGateway(val logger: Logger) {
      * @param packet Opcode to send.
      */
     suspend fun send(packet: OpPacket) {
-        socket!!.send(packet.toJson(true))
-        println("sent")
-        println(packet)
-/*
         socket?.send(packet.toJson(true))?.also {
             logger.debug(">> ${packet.toJson()}")
-        } ?: kotlin.run {
-            println("waiting")
-            waitingCalls.add(packet)
-        }*/
+        } ?: waitingCalls.add(packet)
     }
 
     suspend fun send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
