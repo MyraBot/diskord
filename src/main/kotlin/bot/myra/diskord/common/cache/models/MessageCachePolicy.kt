@@ -21,7 +21,8 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
     fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
 
     @ListenTo(MessageUpdateEvent::class)
-    suspend fun onMessageUpdate(event: MessageUpdateEvent) {
+    fun onMessageUpdate(event: MessageUpdateEvent) {
+        /*
         val message = get(event.message.id) ?: Diskord.getMessage(event.message.channelId, event.message.id) ?: return
         val updatedMessage = Message(
             id = message.id,
@@ -47,6 +48,8 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
             components = event.message.components?.toMutableList() ?: message.components
         )
         update(updatedMessage)
+        */
+        update(event.message)
     }
 
     @ListenTo(MessageDeleteEvent::class)

@@ -38,34 +38,34 @@ abstract class GenericGateway(val logger: Logger) {
 
     suspend fun openGatewayConnection(resumed: Boolean = false) {
         if (resumed) logger.info("Reconnecting...")
-        try {
-            socket = client.webSocketSession(if (resumed) resumeUrl ?: url else url)
-            socket?.apply {
-                logger.info("Opened websocket connection")
 
-                // Handle incoming data
+        socket = client.webSocketSession(if (resumed) resumeUrl ?: url else url)
+        socket?.apply {
+            logger.info("Opened websocket connection")
+
+            // Handle incoming data
+            try {
                 incoming.receiveAsFlow().collect {
                     val data = it as Frame.Text
                     logger.debug("<< ${data.readText()}")
                     val income = JSON.decodeFromString<OpPacket>(data.readText())
                     handleIncome(income, resumed)
                 }
-
-                logger.debug("Reached end of socket")
+            } catch (e: Exception) { // On disconnect
+                logger.warn("Lost connection: ${e.message}")
+                println(1)
                 handleDisconnect()
-            } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
-        }
-        // On disconnect
-        catch (e: Exception) {
-            logger.warn("Lost connection: ${e.message}")
-            println(1)
+                println(2)
+            }
+
+            logger.debug("Reached end of socket")
             handleDisconnect()
-            println(2)
-        }
+        } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
     }
 
     private suspend fun handleDisconnect() {
         val reasonSocket = socket ?: return
+        socket?.close()
         socket = null
 
         val reason: CloseReason? = withTimeoutOrNull(5.seconds) {
@@ -77,6 +77,8 @@ abstract class GenericGateway(val logger: Logger) {
             } catch (e: Exception) {
                 println("Received other exception: ")
                 e.printStackTrace()
+                println(e.message)
+                println(e.cause?.printStackTrace())
             }
             null
         }?.also { logger.warn("Socket closed with reason $it") }
@@ -117,8 +119,16 @@ abstract class GenericGateway(val logger: Logger) {
      * @param packet Opcode to send.
      */
     suspend fun send(packet: OpPacket) {
-        logger.debug(">> ${packet.toJson()}")
-        socket?.send(packet.toJson(true)) ?: waitingCalls.add(packet)
+        socket!!.send(packet.toJson(true))
+        println("sent")
+        println(packet)
+/*
+        socket?.send(packet.toJson(true))?.also {
+            logger.debug(">> ${packet.toJson()}")
+        } ?: kotlin.run {
+            println("waiting")
+            waitingCalls.add(packet)
+        }*/
     }
 
     suspend fun send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
@@ -131,4 +141,3 @@ abstract class GenericGateway(val logger: Logger) {
     suspend fun DefaultClientWebSocketSession.send(builder: OpPacket.() -> Unit) = send(OpPacket(op = -1).apply(builder))
 
 }
-

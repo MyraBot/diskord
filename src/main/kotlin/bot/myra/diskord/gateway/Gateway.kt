@@ -59,9 +59,9 @@ class Gateway(
     }
 
     private suspend fun onSuccessfulConnection(packet: OpPacket, resumed: Boolean) {
+        startHeartbeat(packet)
         if (resumed) resume() else identify()
         info(this::class) { "Successfully connected to Discord" }
-        startHeartbeat(packet)
         ready()
     }
 
