@@ -39,9 +39,10 @@ abstract class GenericGateway(val logger: Logger) {
     suspend fun openGatewayConnection(resumed: Boolean = false) {
         if (resumed) logger.info("Reconnecting...")
 
-        socket = client.webSocketSession(if (resumed) resumeUrl ?: url else url)
+        val socketUrl = if (resumed) resumeUrl ?: url else url
+        socket = client.webSocketSession(socketUrl)
         socket?.apply {
-            logger.info("Opened websocket connection")
+            logger.info("Opened websocket connection to $socketUrl")
 
             // Handle incoming data
             try {
