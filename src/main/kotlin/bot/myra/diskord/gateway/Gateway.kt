@@ -22,6 +22,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ForkJoinPool
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
@@ -53,6 +55,7 @@ class Gateway(
             OpCode.DISPATCH              -> fireEvent(packet)
             OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
             OpCode.RECONNECT             -> throw ClosedReceiveChannelException("Received reconnect from discord")
+            OpCode.INVALID_SESSION       -> onInvalidSession()
             OpCode.HELLO                 -> onSuccessfulConnection(packet, resumed)
             OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
         }
@@ -63,6 +66,13 @@ class Gateway(
         if (resumed) resume() else identify()
         info(this::class) { "Successfully connected to Discord" }
         ready()
+    }
+
+    private suspend fun onInvalidSession() {
+        logger.warn("Invalid session")
+        val delay = Random.nextDouble(5.0)
+        delay(delay.seconds)
+        identify()
     }
 
     /**
