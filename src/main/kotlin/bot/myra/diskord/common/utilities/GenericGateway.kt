@@ -63,7 +63,7 @@ abstract class GenericGateway(val logger: Logger) {
 
     private suspend fun handleDisconnect(socket: DefaultClientWebSocketSession) {
         socket.close()
-        val reason: CloseReason? = withTimeoutOrNull(5.seconds) {
+        val reason: CloseReason? = withTimeoutOrNull(3.seconds) {
             try {
                 return@withTimeoutOrNull socket.closeReason.await()
             } catch (e: EOFException) {
