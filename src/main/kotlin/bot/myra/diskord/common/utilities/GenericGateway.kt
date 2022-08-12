@@ -53,25 +53,19 @@ abstract class GenericGateway(val logger: Logger) {
                     handleIncome(income, resumed)
                 }
             } catch (e: Exception) { // On disconnect
-                logger.warn("Lost connection: ${e.message}")
-                println(1)
-                handleDisconnect()
-                println(2)
+                logger.warn("Connection got disconnected: ${e.message}")
             }
 
-            logger.debug("Reached end of socket")
-            handleDisconnect()
+            logger.debug("Lost connection")
+            socket?.apply { handleDisconnect(this) } ?: openGatewayConnection(false)
         } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
     }
 
-    private suspend fun handleDisconnect() {
-        val reasonSocket = socket ?: return
-        socket?.close()
-        socket = null
-
+    private suspend fun handleDisconnect(socket: DefaultClientWebSocketSession) {
+        socket.close()
         val reason: CloseReason? = withTimeoutOrNull(5.seconds) {
             try {
-                return@withTimeoutOrNull reasonSocket.closeReason.await()
+                return@withTimeoutOrNull socket.closeReason.await()
             } catch (e: EOFException) {
                 println("CATCHED THIS WEIRD EXCEPTIon")
             } catch (_: TimeoutCancellationException) { // Thrown when the #withTimeoutOrNull cancels the closeReason#await function
@@ -82,16 +76,16 @@ abstract class GenericGateway(val logger: Logger) {
                 println(e.cause?.printStackTrace())
             }
             null
-        }?.also { logger.warn("Socket closed with reason $it") }
-        println(
-            """
-            Socket = $reasonSocket
-            Reason = ${reason?.knownReason}
-            Code = ${reason?.code}
-        """.trimIndent()
-        )
-        if (reason == null) openGatewayConnection(true)
-        else reason.knownReason?.let { openGatewayConnection(true) } ?: checkSocketSpecificReasons(reason)
+        }
+        reason?.let { logger.warn("Socket closed with reason ${it.message} (${it.code})") }
+
+        when (reason == null) {
+            true  -> openGatewayConnection(true)
+            false -> {
+                if (reason.knownReason == null) checkSocketSpecificReasons(reason)
+                else openGatewayConnection(true)
+            }
+        }
     }
 
     private suspend fun checkSocketSpecificReasons(reason: CloseReason) = when (chooseReconnectMethod(reason)) {
