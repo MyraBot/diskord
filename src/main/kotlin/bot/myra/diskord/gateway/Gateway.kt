@@ -33,7 +33,7 @@ class Gateway(
 ) : GenericGateway(LoggerFactory.getLogger(Gateway::class.java)) {
     private val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Websocket"))
     lateinit var session: String
-    override val url: String = "wss://gateway.discord.gg/?v=9&encoding=json"
+    override val url: String = "wss://gateway.discord.gg/?v=10&encoding=json"
     override var resumeUrl: String? = null
     private var sequence: Int = 0
     val eventDispatcher = MutableSharedFlow<OpPacket>()

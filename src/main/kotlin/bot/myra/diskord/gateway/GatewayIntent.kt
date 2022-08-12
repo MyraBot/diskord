@@ -23,7 +23,11 @@ enum class GatewayIntent(val index: Int) {
     GUILD_MESSAGE_TYPING(11),
     DIRECT_MESSAGES(12),
     DIRECT_MESSAGE_REACTIONS(13),
-    DIRECT_MESSAGE_TYPING(14);
+    DIRECT_MESSAGE_TYPING(14),
+    MESSAGE_CONTENT(15),
+    GUILD_SCHEDULED_EVENTS(16),
+    AUTO_MODERATION_CONFIGURATION(20),
+    AUTO_MODERATION_EXECUTION(21);
 
     companion object {
         fun getID(intents: Set<GatewayIntent>): Int {
