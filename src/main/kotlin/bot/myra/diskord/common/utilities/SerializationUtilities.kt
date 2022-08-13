@@ -10,11 +10,13 @@ internal val JSON = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     explicitNulls = false
+    isLenient = true
 }
 internal val JSON_WITH_NULLS = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     explicitNulls = true
+    isLenient = true
 }
 
 internal inline fun <reified T> T.toJson(explicitNulls: Boolean = false): String {
