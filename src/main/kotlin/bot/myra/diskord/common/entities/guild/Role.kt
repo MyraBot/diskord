@@ -17,7 +17,7 @@ data class Role(
     val icon: String? = null,
     @SerialName("unicode_emoji") val unicodeEmoji: String? = null,
     val position: Int,
-    @SerialName("permissions_new") @Serializable(with = Permission.Serializer::class) val permissions: List<Permission>,
+    @Serializable(with = Permission.Serializer::class) val permissions: List<Permission>,
     @SerialName("managed") val fromAnIntegration: Boolean,
     val mentionable: Boolean
 ) {
