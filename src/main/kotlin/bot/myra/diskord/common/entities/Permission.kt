@@ -46,7 +46,8 @@ enum class Permission(val value: Long) {
     CREATE_PRIVATE_THREADS(0x1000000000L),
     USE_EXTERNAL_STICKERS(0x2000000000L),
     SEND_MESSAGES_IN_THREADS(0x4000000000L),
-    START_EMBEDDED_ACTIVITIES(0x8000000000L);
+    USE_EMBEDDED_ACTIVITIES(0x8000000000L),
+    MODERATE_MEMBERS(0x10000000000L);
 
     internal object Serializer : KSerializer<List<Permission>> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Permission", PrimitiveKind.STRING)
