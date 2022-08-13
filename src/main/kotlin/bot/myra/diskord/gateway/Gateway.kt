@@ -139,7 +139,7 @@ class Gateway(
         GatewaySocketClosedReason.UNKNOWN_OPCODE        -> ReconnectMethod.RETRY
         GatewaySocketClosedReason.DECODE_ERROR          -> ReconnectMethod.RETRY
         GatewaySocketClosedReason.NOT_AUTHENTICATED     -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> ReconnectMethod.STOP
+        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> throw Exception("Invalid token")
         GatewaySocketClosedReason.ALREADY_AUTHENTICATED -> ReconnectMethod.RETRY
         GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
         GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
