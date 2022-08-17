@@ -10,7 +10,19 @@ class DefaultVoiceStateCache {
     private val map = mutableMapOf<DoubleKey<String?, String>, VoiceState>()
 
     fun policy(): VoiceStateCachePolicy = MutableVoiceStateCachePolicy().apply {
-        view { map.values.toList() }
+        view {
+            try {
+                map.values.toList()
+            } catch (e: Exception) {
+                println("VOICE STATE CACHE! ERROR")
+                println("values:")
+                map.forEach { (k, v) ->
+                    println("$k - $v")
+                }
+                e.printStackTrace()
+                emptyList()
+            }
+        }
         get { map[it] }
         update {
             val key = DoubleKey(it.guildId, it.userId)
