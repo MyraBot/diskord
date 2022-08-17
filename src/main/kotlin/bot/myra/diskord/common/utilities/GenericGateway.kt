@@ -5,6 +5,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
+import io.ktor.client.request.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
@@ -41,7 +42,10 @@ abstract class GenericGateway(val logger: Logger) {
         if (resumed) logger.info("Reconnecting...")
 
         val socketUrl = if (resumed) resumeUrl ?: url else url
-        socket = client.webSocketSession(socketUrl)
+        socket = client.webSocketSession{
+            url(socketUrl)
+            expectSuccess = false
+        }
         socket?.apply {
             logger.info("Opened websocket connection to $socketUrl")
 
@@ -71,7 +75,7 @@ abstract class GenericGateway(val logger: Logger) {
                 when (e) {
                     is TimeoutCancellationException -> Unit // Thrown when the #withTimeoutOrNull cancels the closeReason#await function
                     is SocketException              -> return@withTimeoutOrNull CloseReason(4000, e.message ?: "Socket exception")
-                    is EOFException                 -> println("Caught this weird exception")
+                    is EOFException                 -> return@withTimeoutOrNull CloseReason(4000, e.message ?: "EOF exception")
                     else                            -> e.cause?.printStackTrace()
                 }
             }
