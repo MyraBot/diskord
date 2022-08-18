@@ -24,7 +24,7 @@ class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
 
     private fun updateVoiceState(state: VoiceState) {
         // Add voice state
-        if (state.channelId !== null) {
+        if (state.channelId != null) {
             // Remove outdated voice states ➜ important if user got moved to a different channel
             view().forEach { oldState ->
                 // Found old voice state
