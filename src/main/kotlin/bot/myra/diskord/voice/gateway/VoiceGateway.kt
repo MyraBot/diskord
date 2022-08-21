@@ -93,7 +93,7 @@ class VoiceGateway(
         VoiceSocketClosedReason.NOT_AUTHENTICATED       -> ReconnectMethod.CONNECT
         VoiceSocketClosedReason.AUTHENTICATION_FAILED   -> ReconnectMethod.CONNECT
         VoiceSocketClosedReason.ALREADY_AUTHENTICATED   -> ReconnectMethod.STOP
-        VoiceSocketClosedReason.SESSION_INVALID         -> ReconnectMethod.CONNECT
+        VoiceSocketClosedReason.SESSION_INVALID         -> ReconnectMethod.STOP
         VoiceSocketClosedReason.SESSION_TIMEOUT         -> ReconnectMethod.CONNECT
         VoiceSocketClosedReason.SERVER_NOT_FOUND        -> ReconnectMethod.CONNECT
         VoiceSocketClosedReason.UNKNOWN_PROTOCOL        -> ReconnectMethod.STOP
