@@ -18,6 +18,11 @@ data class ReadyEvent(
 
     override fun prepareEvent() {
         Diskord.apply {
+            if (initialConnection) {
+                InitialReadyEvent(this@ReadyEvent).call()
+                initialConnection = false
+            }
+
             gateway.session = sessionId
             gateway.resumeUrl = resumeGatewayUrl
             id = botUser.id
