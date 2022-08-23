@@ -1,11 +1,14 @@
 package bot.myra.diskord.gateway.events.impl.guild
 
 import bot.myra.diskord.common.Diskord
+import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.UnavailableGuild
 import bot.myra.diskord.gateway.events.Event
+import kotlinx.coroutines.runBlocking
 
 data class GenericGuildDeleteEvent(
-    val guild: UnavailableGuild
+    val guild: UnavailableGuild,
+    var cachedGuild: Guild? = runBlocking { Diskord.getGuild(guild.id) }
 ) : Event() {
 
     override fun prepareEvent() {
