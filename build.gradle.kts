@@ -15,7 +15,7 @@ plugins {
 
 val id = "Diskord"
 group = "bot.myra"
-version = "2.75"
+version = "2.76"
 
 repositories {
     mavenCentral()
