@@ -22,34 +22,32 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
 
     @ListenTo(MessageUpdateEvent::class)
     fun onMessageUpdate(event: MessageUpdateEvent) {
-        /*
-        val message = get(event.message.id) ?: Diskord.getMessage(event.message.channelId, event.message.id) ?: return
+        val message = get(event.updatedMessage.id) ?: return
         val updatedMessage = Message(
             id = message.id,
             channelId = message.channelId,
             guildId = message.guildId,
             user = message.user,
             memberData = message.memberData,
-            content = event.message.content ?: message.content,
+            content = event.updatedMessage.content ?: message.content,
             timestamp = message.timestamp,
-            edited = event.message.edited,
+            edited = event.updatedMessage.edited,
             tts = message.tts,
             mentionsEveryone = message.mentionsEveryone,
             mentionedUsers = message.mentionedUsers,
             mentionedRoles = message.mentionedRoles,
             mentionedChannels = message.mentionedChannels,
-            attachments = event.message.attachments ?: message.attachments,
-            embeds = event.message.embeds?.toMutableList() ?: message.embeds,
+            attachments = event.updatedMessage.attachments ?: message.attachments,
+            embeds = event.updatedMessage.embeds?.toMutableList() ?: message.embeds,
             reactions = message.reactions,
             pinned = message.pinned,
             webhookId = message.webhookId,
             type = message.type,
             flags = message.flags,
-            components = event.message.components?.toMutableList() ?: message.components
+            components = event.updatedMessage.components?.toMutableList() ?: message.components
         )
         update(updatedMessage)
-        */
-        update(event.message)
+
     }
 
     @ListenTo(MessageDeleteEvent::class)
