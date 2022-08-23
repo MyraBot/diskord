@@ -1,5 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild
 
+import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.UnavailableGuild
 import bot.myra.diskord.gateway.events.Event
 
@@ -9,5 +10,6 @@ import bot.myra.diskord.gateway.events.Event
  * @property guild The guild.
  */
 data class GuildUnloadEvent(
-        val guild: UnavailableGuild
+    val guild: UnavailableGuild,
+    var cachedGuild: Guild?
 ) : Event()

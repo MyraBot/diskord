@@ -16,8 +16,8 @@ data class GenericGuildDeleteEvent(
         if (shadowedGuild) return // Guild got removed by trust and safety team
 
         when (guild.gotKicked) {
-            true  -> GuildLeaveEvent(guild)
-            false -> GuildUnloadEvent(guild)
+            true  -> GuildLeaveEvent(guild, cachedGuild)
+            false -> GuildUnloadEvent(guild, cachedGuild)
         }.call()
     }
 
