@@ -40,30 +40,39 @@ abstract class GenericGateway(val logger: Logger) {
 
     suspend fun openGatewayConnection(resumed: Boolean = false) {
         if (resumed) logger.info("Reconnecting...")
+        try {
+            startConnection(resumed)
+        } catch (e: EOFException) {
+            openGatewayConnection(resumed)
+        }
+    }
 
+    private suspend fun startConnection(resumed: Boolean) {
         val socketUrl = if (resumed) resumeUrl ?: url else url
-        socket = client.webSocketSession{
+        socket = client.webSocketSession {
             url(socketUrl)
             expectSuccess = false
         }
         socket?.apply {
             logger.info("Opened websocket connection to $socketUrl")
-
             // Handle incoming data
             try {
-                incoming.receiveAsFlow().collect {
-                    val data = it as Frame.Text
-                    logger.debug("<< ${data.readText()}")
-                    val income = JSON.decodeFromString<OpPacket>(data.readText())
-                    handleIncome(income, resumed)
-                }
+                collectIncoming(resumed)
             } catch (e: Exception) { // On disconnect
                 logger.warn("Connection got disconnected: ${e.message}")
             }
-
             logger.debug("Lost connection")
             socket?.apply { handleDisconnect(this) } ?: openGatewayConnection(false)
         } ?: throw ClosedReceiveChannelException("Couldn't open a websocket connection to $url")
+    }
+
+    private suspend fun DefaultClientWebSocketSession.collectIncoming(resumed: Boolean) {
+        incoming.receiveAsFlow().collect {
+            val data = it as Frame.Text
+            logger.debug("<< ${data.readText()}")
+            val income = JSON.decodeFromString<OpPacket>(data.readText())
+            handleIncome(income, resumed)
+        }
     }
 
     private suspend fun handleDisconnect(socket: DefaultClientWebSocketSession) {
