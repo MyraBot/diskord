@@ -1,8 +1,8 @@
 package bot.myra.diskord.common.entities.guild
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.Mention
@@ -49,8 +49,8 @@ data class Member(
     override val id: String = user.id
     val name: String get() = nick ?: user.username
     val mention: String = Mention.user(id)
-    val voiceState: VoiceState? get() = Diskord.cachePolicy.voiceState.view().find { it.userId == this.id && it.guildId == this.guildId }
 
+    suspend fun getVoiceState(): VoiceState? = Diskord.cachePolicy.voiceState.view().find { it.userId == this.id && it.guildId == this.guildId }
     suspend fun getGuild(): Guild = Diskord.getGuild(guildId)!!
     suspend fun getRoles(): List<Role> = getGuild().roles.filter { roleIds.contains(it.id) }
     suspend fun getColour(): Color = getRoles().reversed().first { it.colour != Color.decode("0") }.colour

@@ -86,7 +86,9 @@ object EntityProvider {
                 arg("guild.id", guildId)
                 arg("limit", limit)
             }
-        }.map { Member.withUserInMember(it, guildId) }
+        }
+            .map { Member.withUserInMember(it, guildId) }
+            .onEach { Diskord.cachePolicy.member.update(it) }
 
     suspend fun fetchRoles(guildId: String): List<Role>? = Diskord.cachePolicy.guild.get(guildId)?.roles ?: RestClient.executeNullable(Endpoints.getGuild) {
         arguments { arg("guild.id", guildId) }

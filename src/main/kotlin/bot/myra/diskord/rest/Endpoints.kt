@@ -1,11 +1,9 @@
 package bot.myra.diskord.rest
 
-import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Application
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
-import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.message.Message
@@ -24,12 +22,7 @@ object Endpoints {
     val getChannels = Route(HttpMethod.Get, "/guilds/{guild.id}/channels", ListSerializer(ChannelData.serializer()))
     val getUser = Route(HttpMethod.Get, "/users/{user.id}", User.serializer())
     val getGuildMember = Route(HttpMethod.Get, "/guilds/{guild.id}/members/{user.id}", MemberData.serializer())
-    val listGuildMembers = Route(HttpMethod.Get, "/guilds/{guild.id}/members?limit={limit}&after=0", ListSerializer(MemberData.serializer())) { members, args ->
-        members.forEach { data ->
-            val member = Member.withUserInMember(data, args["guild.id"].toString())
-            Diskord.cachePolicy.member.update(member)
-        }
-    }
+    val listGuildMembers = Route(HttpMethod.Get, "/guilds/{guild.id}/members?limit={limit}&after=0", ListSerializer(MemberData.serializer()))
     val getBotApplication = Route(HttpMethod.Get, "/oauth2/applications/@me", Application.serializer())
     val acknowledgeInteraction = Route(HttpMethod.Post, "/interactions/{interaction.id}/{interaction.token}/callback", Unit.serializer())
     val acknowledgeOriginalResponse = Route(HttpMethod.Patch, "/webhooks/{application.id}/{interaction.token}/messages/@original", Unit.serializer())
