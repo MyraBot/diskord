@@ -77,11 +77,7 @@ object RestClient {
         if (response.status.isSuccess()) {
             @Suppress("UNCHECKED_CAST")
             return if (req.route.serializer == Unit.serializer()) Unit as R
-            else {
-                val deserialized: R = JSON.decodeFromString(req.route.serializer, response.bodyAsText())
-                req.route.cache?.invoke(deserialized, req.arguments)
-                deserialized
-            }
+            else JSON.decodeFromString(req.route.serializer, response.bodyAsText())
         } else {
             val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
             val message = error["message"]?.string ?: "No error message provided"
