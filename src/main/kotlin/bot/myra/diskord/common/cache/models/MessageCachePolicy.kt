@@ -18,10 +18,10 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
     }
 
     @ListenTo(MessageCreateEvent::class)
-    fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
+    suspend fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
 
     @ListenTo(MessageUpdateEvent::class)
-    fun onMessageUpdate(event: MessageUpdateEvent) {
+    suspend fun onMessageUpdate(event: MessageUpdateEvent) {
         val message = get(event.updatedMessage.id) ?: return
         val updatedMessage = Message(
             id = message.id,
@@ -47,14 +47,13 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
             components = event.updatedMessage.components?.toMutableList() ?: message.components
         )
         update(updatedMessage)
-
     }
 
     @ListenTo(MessageDeleteEvent::class)
-    fun onMessageDelete(event: MessageDeleteEvent) = remove(event.message.id)
+    suspend fun onMessageDelete(event: MessageDeleteEvent) = remove(event.message.id)
 
     @ListenTo(BulkMessageDeleteEvent::class)
-    fun onBulkMessageDelete(event: BulkMessageDeleteEvent) = event.message.ids.onEach { remove(it) }
+    suspend fun onBulkMessageDelete(event: BulkMessageDeleteEvent) = event.message.ids.onEach { remove(it) }
 
 }
 

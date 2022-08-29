@@ -19,7 +19,7 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     }
 
     @ListenTo(GenericGuildCreateEvent::class)
-    fun onGuildCreate(event: GenericGuildCreateEvent) {
+    suspend fun onGuildCreate(event: GenericGuildCreateEvent) {
         Diskord.guildIds.add(event.guild.id)
         update(event.guild)
 
@@ -28,18 +28,18 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     }
 
     @ListenTo(GuildLeaveEvent::class)
-    fun onGuildLeave(event: GuildLeaveEvent) {
+    suspend fun onGuildLeave(event: GuildLeaveEvent) {
         Diskord.guildIds.remove(event.guild.id)
         remove(event.guild.id)
     }
 
     @ListenTo(RoleCreateEvent::class)
-    fun onRoleCreate(event: RoleCreateEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleCreate(event: RoleCreateEvent) = get(event.guildId)?.apply {
         roles = roles.toMutableList().apply { add(event.role) }
     }
 
     @ListenTo(RoleUpdateEvent::class)
-    fun onRoleUpdate(event: RoleUpdateEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleUpdate(event: RoleUpdateEvent) = get(event.guildId)?.apply {
         roles = roles.toMutableList().apply {
             removeIf { it.id == event.role.id }
             add(event.role)
@@ -47,7 +47,7 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     }
 
     @ListenTo(RoleDeleteEvent::class)
-    fun onRoleDelete(event: RoleDeleteEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleDelete(event: RoleDeleteEvent) = get(event.guildId)?.apply {
         roles = roles.toMutableList().apply { removeIf { it.id == event.roleId } }
     }
 

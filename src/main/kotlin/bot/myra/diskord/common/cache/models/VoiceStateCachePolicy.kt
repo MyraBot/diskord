@@ -17,12 +17,12 @@ class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
     }
 
     @ListenTo(GenericGuildCreateEvent::class)
-    fun onGuildCreate(event: GenericGuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
+    suspend fun onGuildCreate(event: GenericGuildCreateEvent) = event.guild.voiceStates.forEach { updateVoiceState(it) }
 
     @ListenTo(VoiceStateUpdateEvent::class)
-    fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = updateVoiceState(event.newVoiceState)
+    suspend fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = updateVoiceState(event.newVoiceState)
 
-    private fun updateVoiceState(state: VoiceState) {
+    private suspend fun updateVoiceState(state: VoiceState) {
         // Add voice state
         if (state.channelId != null) {
             // Remove outdated voice states ➜ important if user got moved to a different channel

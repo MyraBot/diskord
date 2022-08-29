@@ -18,13 +18,13 @@ class MutableMemberCachePolicy : MemberCachePolicy() {
     }
 
     @ListenTo(MemberJoinEvent::class)
-    fun onMemberJoin(event: MemberJoinEvent) = update(event.member)
+    suspend fun onMemberJoin(event: MemberJoinEvent) = update(event.member)
 
     @ListenTo(MemberUpdateEvent::class)
-    fun onMemberUpdate(event: MemberUpdateEvent) = update(event.member)
+    suspend fun onMemberUpdate(event: MemberUpdateEvent) = update(event.member)
 
     @ListenTo(MemberRemoveEvent::class)
-    fun onMemberRemove(event: MemberRemoveEvent) = remove(DoubleKey(event.removedMember.guildId, event.removedMember.user.id))
+    suspend fun onMemberRemove(event: MemberRemoveEvent) = remove(DoubleKey(event.removedMember.guildId, event.removedMember.user.id))
 
 }
 
