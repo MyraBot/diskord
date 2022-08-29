@@ -15,7 +15,7 @@ import kotlin.reflect.full.valueParameters
  */
 abstract class Event : DefaultBehavior {
 
-    open fun prepareEvent() {}
+    open suspend fun prepareEvent() {}
 
     /**
      * Prepares the event to be ready to be called and executes the events for all registered listeners.
