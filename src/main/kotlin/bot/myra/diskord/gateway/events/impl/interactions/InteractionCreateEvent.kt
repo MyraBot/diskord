@@ -11,7 +11,7 @@ class InteractionCreateEvent(
     val interaction: Interaction,
 ) : Event() {
 
-    override fun prepareEvent() = when (interaction.type) {
+    override suspend fun prepareEvent() = when (interaction.type) {
         InteractionType.PING                             -> TODO()
         InteractionType.APPLICATION_COMMAND              -> RawSlashCommandEvent(interaction)
         InteractionType.MESSAGE_COMPONENT                -> MessageComponentEvent(interaction)

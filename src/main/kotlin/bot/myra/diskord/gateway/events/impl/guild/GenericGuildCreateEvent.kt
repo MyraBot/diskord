@@ -18,7 +18,7 @@ data class GenericGuildCreateEvent(
     val guild: Guild
 ) : Event() {
 
-    override fun prepareEvent() = when (guild.id in Diskord.unavailableGuilds) {
+    override suspend fun prepareEvent() = when (guild.id in Diskord.unavailableGuilds) {
         true  -> {
             Diskord.unavailableGuilds.remove(guild.id)
             GuildAvailableEvent(guild)

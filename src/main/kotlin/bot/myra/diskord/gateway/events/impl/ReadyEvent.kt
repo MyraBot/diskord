@@ -16,7 +16,7 @@ data class ReadyEvent(
     @SerialName("resume_gateway_url") val resumeGatewayUrl: String
 ) : Event() {
 
-    override fun prepareEvent() {
+    override suspend fun prepareEvent() {
         Diskord.apply {
             if (initialConnection) {
                 InitialReadyEvent(this@ReadyEvent).call()
