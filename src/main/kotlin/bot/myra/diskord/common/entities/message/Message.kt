@@ -49,15 +49,16 @@ data class Message(
     override val message: Message = this
     val isWebhook: Boolean = webhookId != null
     val isSystem: Boolean = flags.contains(MessageFlag.URGENT)
-    val member: Member?
-        get() {
-            return if (!guildId.missing && memberData != null) Member.withUser(memberData, guildId.value!!, user)
-            else null
-        }
 
     suspend fun isFromGuild(): Boolean = guildId.value !== null || Diskord.cachePolicy.channel.guildAssociation.associatedByGuild(channelId) != null
     suspend fun getLink(): String = Diskord.cachePolicy.channel.guildAssociation.associatedByGuild(channelId)?.let { MessageLink.guild(it, channelId, id) } ?: MessageLink.dms(channelId, id)
     suspend fun getGuild(): Guild? = guildId.value?.let { Diskord.getGuild(it) }
+    suspend fun getMember(): Member? {
+        return if (guildId.missing) null
+        else if (memberData != null) Member.withUser(memberData, guildId.value!!, user)
+        else Diskord.getMember(guildId.value!!, id)
+    }
+
     suspend fun getChannel(): ChannelData? = Diskord.getChannel(channelId)
     suspend inline fun <reified T> getChannelAs(): T? = Diskord.getChannel<T>(channelId)
 

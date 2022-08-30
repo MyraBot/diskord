@@ -10,9 +10,7 @@ import bot.myra.diskord.gateway.events.Event
 class GuildMessageCreateEvent(
     val message: Message
 ) : Event() {
-    val member: Member = message.member!!
-
     suspend fun getGuild(): Guild = message.getGuild()!!
+    suspend fun getMember(): Member = message.getMember()!!
     suspend fun getChannel(): TextChannel = message.getChannelAs()!!
-
 }
