@@ -7,6 +7,7 @@ import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.cache.CachePolicy
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.guild.Guild
+import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.FileFormats
@@ -114,6 +115,7 @@ object Diskord : GetTextChannelBehavior {
 
     suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
     suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
+    suspend fun getMember(guild: String, member: String): Member? = EntityProvider.getMember(guild, member)
     suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
     suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before, after)
 
