@@ -18,7 +18,7 @@ data class UpdatedMessage(
     override val id: String,
     @SerialName("channel_id") val channelId: String,
     val content: String? = null,
-    @Serializable(with = SInstant::class) @SerialName("edited_timestamp") val edited: Instant,
+    @Serializable(with = SInstant::class) @SerialName("edited_timestamp") val edited: Instant? = null,
     @SerialName("guild_id") val guildId: String? = null,
     val attachments: List<Attachment>? = null,
     val embeds: List<Embed>? = null,

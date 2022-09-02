@@ -8,4 +8,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 open class MessageUpdateEvent(
     @SerialName("message") val updatedMessage: UpdatedMessage
-) : Event()
+) : Event() {
+
+    override suspend fun prepareEvent() {
+        if (updatedMessage.edited == null) TODO("Make prepare event returnable")
+    }
+
+}
