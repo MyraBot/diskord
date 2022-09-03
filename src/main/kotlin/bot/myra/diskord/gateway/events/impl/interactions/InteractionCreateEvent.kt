@@ -11,11 +11,14 @@ class InteractionCreateEvent(
     val interaction: Interaction,
 ) : Event() {
 
-    override suspend fun handle() = when (interaction.type) {
-        InteractionType.PING                             -> TODO()
-        InteractionType.APPLICATION_COMMAND              -> RawSlashCommandEvent(interaction)
-        InteractionType.MESSAGE_COMPONENT                -> MessageComponentEvent(interaction)
-        InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
-    }.call()
+    override suspend fun handle() {
+        when (interaction.type) {
+            InteractionType.PING                             -> TODO()
+            InteractionType.APPLICATION_COMMAND              -> RawSlashCommandEvent(interaction)
+            InteractionType.MESSAGE_COMPONENT                -> MessageComponentEvent(interaction)
+            InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> AutoCompleteEvent(interaction)
+        }.handle()
+        call()
+    }
 
 }

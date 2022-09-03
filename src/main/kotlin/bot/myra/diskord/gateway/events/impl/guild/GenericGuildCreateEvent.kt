@@ -25,7 +25,8 @@ data class GenericGuildCreateEvent(
                 GuildAvailableEvent(guild)
             }
             false -> GuildCreateEvent(guild)
-        }.call()
+        }.handle()
+        call()
     }
 
 }

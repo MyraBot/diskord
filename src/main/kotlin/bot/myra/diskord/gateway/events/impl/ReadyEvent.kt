@@ -19,7 +19,7 @@ data class ReadyEvent(
     override suspend fun handle() {
         Diskord.apply {
             if (initialConnection) {
-                InitialReadyEvent(this@ReadyEvent).call()
+                InitialReadyEvent(this@ReadyEvent).handle()
                 initialConnection = false
             }
 

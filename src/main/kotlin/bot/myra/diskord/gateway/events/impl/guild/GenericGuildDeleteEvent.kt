@@ -18,7 +18,8 @@ data class GenericGuildDeleteEvent(
         when (guild.gotKicked) {
             true  -> GuildLeaveEvent(guild, cachedGuild)
             false -> GuildUnloadEvent(guild, cachedGuild)
-        }.call()
+        }.handle()
+        call()
     }
 
 }

@@ -18,7 +18,7 @@ data class RawSlashCommandEvent(
         when (interaction.guildId.missing) {
             true  -> PrivateSlashCommandEvent(interaction)
             false -> GuildSlashCommandEvent(interaction)
-        }.call()
+        }.handle()
     }
 
 }
