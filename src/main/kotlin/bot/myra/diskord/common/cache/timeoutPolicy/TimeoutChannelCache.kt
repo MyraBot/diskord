@@ -10,7 +10,7 @@ class TimeoutChannelCache(expireIn: Duration = 10.seconds) : TimeoutCache<String
 
     private val guildMap = mutableMapOf<String, MutableList<ChannelData>>()
 
-    fun policy(): ChannelCachePolicy = MutableChannelCachePolicy().apply {
+    override fun policy(): ChannelCachePolicy = MutableChannelCachePolicy().apply {
         view { map.values.onEach { it.updateExpiry() }.map { it.value } }
         get { map[it]?.apply { updateExpiry() }?.value }
         update { map[it.id]?.apply { this.value = it } ?: run { map[it.id] = TimeoutCacheValue(it) } }

@@ -8,7 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TimeoutMessageCache(expireIn: Duration = 10.seconds) : TimeoutCache<String, Message>(expireIn) {
 
-    fun policy(): MessageCachePolicy = MutableMessageCachePolicy().apply {
+    override fun policy(): MessageCachePolicy = MutableMessageCachePolicy().apply {
         view { map.values.onEach { it.updateExpiry() }.map { it.value } }
         get { map[it]?.apply { updateExpiry() }?.value }
         update { map[it.id]?.apply { this.value = it } ?: run { map[it.id] = TimeoutCacheValue(it) } }

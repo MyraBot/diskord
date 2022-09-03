@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TimeoutMemberCache(expireIn: Duration = 10.seconds) : TimeoutCache<DoubleKey<String, String>, Member>(expireIn) {
 
-    fun policy(): MemberCachePolicy = MutableMemberCachePolicy().apply {
+    override fun policy(): MemberCachePolicy = MutableMemberCachePolicy().apply {
         view { map.values.onEach { it.updateExpiry() }.map { it.value } }
         get { map[it]?.apply { updateExpiry() }?.value }
         update {

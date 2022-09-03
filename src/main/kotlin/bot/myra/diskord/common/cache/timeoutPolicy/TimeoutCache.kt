@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.cache.timeoutPolicy
 
+import bot.myra.diskord.common.cache.GenericCachePolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -22,10 +23,12 @@ abstract class TimeoutCache<K, V>(private val expireIn: Duration = 10.seconds) {
     private suspend fun runCheck() {
         val estimatedFinishInstant = Clock.System.now() + interval
         map.forEach { (k, v) ->
-            if (v.expireAt <= Clock.System.now()) map.remove(k)
+            if (v.expireAt <= Clock.System.now()) policy().remove(k)
         }
         delay(estimatedFinishInstant.minus(Clock.System.now()))
         runCheck()
     }
+
+    abstract fun policy(): GenericCachePolicy<K, V>
 
 }
