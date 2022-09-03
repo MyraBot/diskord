@@ -15,14 +15,13 @@ import kotlin.reflect.full.valueParameters
  */
 abstract class Event : DefaultBehavior {
 
-    open suspend fun prepareEvent() {}
+    open suspend fun handle() = call()
 
     /**
      * Prepares the event to be ready to be called and executes the events for all registered listeners.
      */
     fun call() {
         Events.coroutineScope.launch {
-            prepareEvent()
             Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
         }
     }

@@ -16,7 +16,7 @@ data class ReadyEvent(
     @SerialName("resume_gateway_url") val resumeGatewayUrl: String
 ) : Event() {
 
-    override suspend fun prepareEvent() {
+    override suspend fun handle() {
         Diskord.apply {
             if (initialConnection) {
                 InitialReadyEvent(this@ReadyEvent).call()
@@ -29,6 +29,7 @@ data class ReadyEvent(
             guildIds.addAll(guilds.map(UnavailableGuild::id))
             unavailableGuilds.addAll(guilds.map(UnavailableGuild::id))
         }
+        call()
     }
 
 }

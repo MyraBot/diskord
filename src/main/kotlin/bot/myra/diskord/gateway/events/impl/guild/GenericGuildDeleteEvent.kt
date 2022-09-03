@@ -11,7 +11,7 @@ data class GenericGuildDeleteEvent(
     var cachedGuild: Guild? = runBlocking { Diskord.getGuild(guild.id) }
 ) : Event() {
 
-    override suspend fun prepareEvent() {
+    override suspend fun handle() {
         val shadowedGuild = Diskord.lazyLoadedGuilds.none { it == guild.id }
         if (shadowedGuild) return // Guild got removed by trust and safety team
 

@@ -10,8 +10,8 @@ open class MessageUpdateEvent(
     @SerialName("message") val updatedMessage: UpdatedMessage
 ) : Event() {
 
-    override suspend fun prepareEvent() {
-        if (updatedMessage.edited == null) TODO("Make prepare event returnable")
+    override suspend fun handle() {
+        if (updatedMessage.edited != null) call()
     }
 
 }

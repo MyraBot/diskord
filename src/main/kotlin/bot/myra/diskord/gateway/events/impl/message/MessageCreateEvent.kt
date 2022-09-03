@@ -9,7 +9,7 @@ open class MessageCreateEvent(
     val message: Message
 ) : Event() {
 
-    override suspend fun prepareEvent() = when (message.guildId.missing) {
+    override suspend fun handle() = when (message.guildId.missing) {
         true  -> PrivateMessageCreateEvent(message)
         false -> GuildMessageCreateEvent(message)
     }.call()

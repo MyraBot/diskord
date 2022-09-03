@@ -58,7 +58,7 @@ object Events {
                         "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(JSON.decodeFromJsonElement(json))
                         "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
                         else                  -> null
-                    }?.call()
+                    }?.handle()
                 } catch (e: SerializationException) {
                     error(this::class) { "Failed to deserialize ${income.t!!} (${e.message}) = ${JSON.encodeToString(json)}" }
                 }

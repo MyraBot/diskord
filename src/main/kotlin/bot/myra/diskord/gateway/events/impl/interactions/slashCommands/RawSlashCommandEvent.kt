@@ -14,12 +14,11 @@ data class RawSlashCommandEvent(
     val interaction: Interaction
 ) : Event() {
 
-    override suspend fun prepareEvent() {
-        val t = when (interaction.guildId.missing) {
+    override suspend fun handle() {
+        when (interaction.guildId.missing) {
             true  -> PrivateSlashCommandEvent(interaction)
             false -> GuildSlashCommandEvent(interaction)
-        }
-        t.call()
+        }.call()
     }
 
 }

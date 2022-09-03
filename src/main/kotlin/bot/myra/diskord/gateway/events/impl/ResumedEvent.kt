@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ResumedEvent : Event() {
-    override suspend fun prepareEvent() {
+    override suspend fun handle() {
         info(Diskord.gateway::class) { "Resumed connection!" }
+        call()
     }
 }
