@@ -45,6 +45,8 @@ dependencies {
     // Voice encryption
     implementation("com.codahale:xsalsa20poly1305:0.11.0")
 
+    implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.4.0")
+
     testImplementation("bot.myra:kommons:$kommons")
     testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")

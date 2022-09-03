@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.cache.timeoutPolicy
+package bot.myra.diskord.common.cache.caches.timeout
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant

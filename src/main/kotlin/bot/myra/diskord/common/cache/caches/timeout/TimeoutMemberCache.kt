@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.cache.timeoutPolicy
+package bot.myra.diskord.common.cache.caches.timeout
 
 import bot.myra.diskord.common.cache.DoubleKey
 import bot.myra.diskord.common.cache.models.MemberCachePolicy

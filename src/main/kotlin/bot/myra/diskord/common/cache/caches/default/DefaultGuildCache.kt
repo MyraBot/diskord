@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.cache.defaultPolicy
+package bot.myra.diskord.common.cache.caches.default
 
 import bot.myra.diskord.common.cache.models.GuildCachePolicy
 import bot.myra.diskord.common.cache.models.MutableGuildCachePolicy

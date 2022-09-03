@@ -1,4 +1,4 @@
-package bot.myra.diskord.common.cache.timeoutPolicy
+package bot.myra.diskord.common.cache.caches.timeout
 
 import bot.myra.diskord.common.cache.models.ChannelCachePolicy
 import bot.myra.diskord.common.cache.models.MutableChannelCachePolicy
