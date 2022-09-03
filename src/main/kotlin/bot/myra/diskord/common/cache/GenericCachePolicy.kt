@@ -2,6 +2,13 @@ package bot.myra.diskord.common.cache
 
 import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.loadListeners
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.ForkJoinPool
+
+private val coroutinesScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
 
 data class DoubleKey<F, S>(val first: F, val second: S)
 
@@ -9,8 +16,9 @@ abstract class GenericCachePolicy<K, V>(
     internal var view: ViewCache<V>? = null,
     internal var get: GetCache<K, V>? = null,
     internal var update: UpdateCache<V>? = null,
-    internal var remove: ((K) -> Unit)? = null
+    internal var remove: RemoveCache<K>? = null
 ) : EventListener {
+    private val mutex = Mutex()
 
     init {
         loadListeners()
@@ -21,8 +29,8 @@ abstract class GenericCachePolicy<K, V>(
     fun update(action: UpdateCache<V>) = run { update = action }
     fun remove(action: RemoveCache<K>) = run { remove = action }
 
-    fun view() = view?.invoke() ?: emptyList()
-    fun get(key: K): V? = get?.invoke(key)
-    fun update(value: V) = update?.invoke(value)
-    fun remove(key: K) = remove?.invoke(key)
+    suspend fun view(): List<V> = mutex.withLock { view?.invoke() ?: emptyList() }
+    suspend fun get(key: K) = mutex.withLock { get?.invoke(key) }
+    suspend fun update(value: V) = mutex.withLock { update?.invoke(value) }
+    suspend fun remove(key: K) = mutex.withLock { remove?.invoke(key) }
 }
