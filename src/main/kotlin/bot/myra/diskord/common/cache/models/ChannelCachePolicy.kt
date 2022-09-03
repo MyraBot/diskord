@@ -4,6 +4,7 @@ import bot.myra.diskord.common.cache.GenericCachePolicy
 import bot.myra.diskord.common.cache.GuildCacheAssociation
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.gateway.events.ListenTo
+import bot.myra.diskord.gateway.events.impl.guild.GuildLeaveEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
@@ -22,6 +23,9 @@ class MutableChannelCachePolicy : ChannelCachePolicy() {
         val guild = event.channelData.guildId.value ?: return
         guildAssociation.remove(guild, event.channelData.id)
     }
+
+    @ListenTo(GuildLeaveEvent::class)
+    suspend fun onGuildLeave(event: GuildLeaveEvent) = view().filter { it.guildId.value == event.guild.id }.forEach { remove(it.id) }
 
 }
 
