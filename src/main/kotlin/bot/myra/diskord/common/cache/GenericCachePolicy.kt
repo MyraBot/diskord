@@ -18,7 +18,7 @@ abstract class GenericCachePolicy<K, V>(
     internal var update: UpdateCache<V>? = null,
     internal var remove: RemoveCache<K>? = null
 ) : EventListener {
-    private val mutex = Mutex()
+     val mutex = Mutex()
 
     init {
         loadListeners()
