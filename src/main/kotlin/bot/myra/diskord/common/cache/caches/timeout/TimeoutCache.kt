@@ -17,7 +17,6 @@ abstract class TimeoutCache<K, V>(private val expireIn: Duration = 10.seconds) {
         timeouts[key] = coroutineScope.launch {
             delay(expireIn)
             policy().remove(key)
-            println("Removed a value")
         }
     }
 
