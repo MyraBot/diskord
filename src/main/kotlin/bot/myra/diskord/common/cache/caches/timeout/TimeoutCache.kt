@@ -1,11 +1,7 @@
 package bot.myra.diskord.common.cache.caches.timeout
 
 import bot.myra.diskord.common.cache.GenericCachePolicy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.coroutines.*
 import java.util.concurrent.ForkJoinPool
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -13,20 +9,20 @@ import kotlin.time.Duration.Companion.seconds
 private val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher())
 
 abstract class TimeoutCache<K, V>(private val expireIn: Duration = 10.seconds) {
-    private val interval = 10.seconds
-    internal val map = mutableMapOf<K, TimeoutCacheValue<V>>()
+    val cache = mutableMapOf<K, V>()
+    private val timeouts = mutableMapOf<K, Job>()
 
-    init {
-        coroutineScope.launch { runCheck() }
+    suspend fun startExpiry(key: K) {
+        stopExpiry(key)
+        timeouts[key] = coroutineScope.launch {
+            delay(expireIn)
+            policy().remove(key)
+            println("Removed a value")
+        }
     }
 
-    private suspend fun runCheck() {
-        val estimatedFinishInstant = Clock.System.now() + interval
-        map.forEach { (k, v) ->
-            if (v.expireAt <= Clock.System.now()) policy().remove(k)
-        }
-        delay(estimatedFinishInstant.minus(Clock.System.now()))
-        runCheck()
+    fun stopExpiry(key: K) {
+        timeouts[key]?.cancel()
     }
 
     abstract fun policy(): GenericCachePolicy<K, V>
