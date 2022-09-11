@@ -2,11 +2,12 @@ package bot.myra.diskord.rest
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-@kotlinx.serialization.Serializable(with = Optional.MissingSerializer::class)
+@Serializable(with = Optional.MissingSerializer::class)
 class Optional<T>(val value: T?) {
     var missing: Boolean = false
 
@@ -24,7 +25,7 @@ class Optional<T>(val value: T?) {
                     decoder.decodeNull()
                     Missing()
                 }
-                else -> {
+                else                         -> {
                     Optional(decoder.decodeSerializableValue(contentSerializer))
                 }
             }
@@ -37,7 +38,7 @@ class Optional<T>(val value: T?) {
         override fun serialize(encoder: Encoder, value: Optional<T>) {
             when {
                 value.missing -> encoder.encodeNull()
-                else -> encoder.encodeNullableSerializableValue(contentSerializer, value.value)
+                else          -> encoder.encodeNullableSerializableValue(contentSerializer, value.value)
             }
         }
     }
