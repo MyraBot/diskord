@@ -55,4 +55,6 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
 
 class DisabledGuildCachePolicy : GuildCachePolicy()
 
-abstract class GuildCachePolicy : GenericCachePolicy<String, Guild>()
+abstract class GuildCachePolicy : GenericCachePolicy<String, Guild>() {
+    override fun getAsKey(value: Guild): String = value.id
+}

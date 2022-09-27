@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.cache.DoubleKey
+import bot.myra.diskord.common.cache.MemberCacheKey
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Guild
@@ -55,12 +55,12 @@ object EntityProvider {
             arguments { arg("guild.id", id) }
         }?.also { Diskord.cachePolicy.guild.update(it) }
 
-    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channel.guildAssociation.view(id) ?: fetchGuildChannels(id)
+    suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channel.viewByGuild(id) ?: fetchGuildChannels(id)
 
     suspend fun fetchGuildChannels(id: String): List<ChannelData> =
         RestClient.execute(Endpoints.getChannels) {
             arguments { arg("guild.id", id) }
-        }.onEach { Diskord.cachePolicy.channel.updateChannel(it) }
+        }.onEach { Diskord.cachePolicy.channel.update(it) }
 
     suspend fun getChannel(id: String): ChannelData? =
         Diskord.cachePolicy.channel.get(id)
@@ -69,7 +69,7 @@ object EntityProvider {
             }?.also { Diskord.cachePolicy.channel.update(it) }
 
     suspend fun getMember(guildId: String, userId: String): Member? {
-        val key = DoubleKey(guildId, userId)
+        val key = MemberCacheKey(guildId, userId)
         return Diskord.cachePolicy.member.get(key)
             ?: RestClient.executeNullable(Endpoints.getGuildMember) {
                 arguments {

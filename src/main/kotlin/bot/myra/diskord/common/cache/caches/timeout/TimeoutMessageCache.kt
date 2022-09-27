@@ -4,9 +4,10 @@ import bot.myra.diskord.common.cache.models.MessageCachePolicy
 import bot.myra.diskord.common.cache.models.MutableMessageCachePolicy
 import bot.myra.diskord.common.entities.message.Message
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
-class TimeoutMessageCache(expireIn: Duration = 10.seconds) : TimeoutCache<String, Message>(expireIn) {
+class TimeoutMessageCache(expireIn: Duration = 10.minutes) : TimeoutCache<String, Message>(expireIn) {
+    private val cache = mutableMapOf<String, Message>()
 
     override fun policy(): MessageCachePolicy = MutableMessageCachePolicy().apply {
         view {
@@ -21,8 +22,8 @@ class TimeoutMessageCache(expireIn: Duration = 10.seconds) : TimeoutCache<String
             cache[it.id] = it
         }
         remove {
-            stopExpiry(it)
-            cache.remove(it)
+            stopExpiry(it.id)
+            cache.remove(it.id)
         }
     }
 

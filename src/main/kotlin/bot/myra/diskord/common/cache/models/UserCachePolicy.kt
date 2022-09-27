@@ -6,5 +6,7 @@ import bot.myra.diskord.common.entities.user.User
 class MutableUserCachePolicy : UserCachePolicy()
 class DisabledUserCachePolicy : UserCachePolicy()
 
-abstract class UserCachePolicy : GenericCachePolicy<String, User>()
+abstract class UserCachePolicy : GenericCachePolicy<String, User>() {
+    override fun getAsKey(value: User): String = value.id
+}
 

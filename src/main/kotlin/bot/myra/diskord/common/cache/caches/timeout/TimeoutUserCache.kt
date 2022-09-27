@@ -7,6 +7,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class TimeoutUserCache(expireIn: Duration = 10.seconds) : TimeoutCache<String, User>(expireIn) {
+    private val cache = mutableMapOf<String,User>()
 
     override fun policy(): UserCachePolicy = MutableUserCachePolicy().apply {
         view {
@@ -21,8 +22,8 @@ class TimeoutUserCache(expireIn: Duration = 10.seconds) : TimeoutCache<String, U
             cache[it.id] = it
         }
         remove {
-            stopExpiry(it)
-            cache.remove(it)
+            stopExpiry(it.id)
+            cache.remove(it.id)
         }
     }
 

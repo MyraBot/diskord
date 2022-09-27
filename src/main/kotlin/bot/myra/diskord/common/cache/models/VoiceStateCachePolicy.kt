@@ -1,9 +1,9 @@
 package bot.myra.diskord.common.cache.models
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.cache.DoubleKey
-import bot.myra.diskord.common.cache.GenericCachePolicy
+import bot.myra.diskord.common.cache.GenericGuildCachePolicy
 import bot.myra.diskord.common.cache.MissingIntentException
+import bot.myra.diskord.common.cache.VoiceStateCacheKey
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
@@ -23,28 +23,27 @@ class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
     suspend fun onVoiceStateUpdate(event: VoiceStateUpdateEvent) = updateVoiceState(event.newVoiceState)
 
     private suspend fun updateVoiceState(state: VoiceState) {
+        val guildId = state.guildId ?: return // Don't want to track non guild voice states
+
         // Add voice state
         if (state.channelId != null) {
             // Remove outdated voice states ➜ important if user got moved to a different channel
             view().forEach { oldState ->
                 // Found old voice state
-                if (oldState.userId == state.userId) {
-                    val key = DoubleKey(oldState.guildId, oldState.userId)
-                    remove(key)
-                }
+                if (oldState.userId == state.userId) remove(getAsKey(state), guildId)
             }
 
             update(state)
         }
         // Remove voice state
-        else {
-            val key = DoubleKey(state.guildId, state.userId)
-            remove(key)
-        }
+        else remove(getAsKey(state))
     }
 
 }
 
 class DisabledVoiceStateCachePolicy : VoiceStateCachePolicy()
 
-abstract class VoiceStateCachePolicy : GenericCachePolicy<DoubleKey<String?, String>, VoiceState>()
+abstract class VoiceStateCachePolicy : GenericGuildCachePolicy<VoiceStateCacheKey, VoiceState>() {
+    override fun isFromGuild(value: VoiceState): String? = value.guildId
+    override fun getAsKey(value: VoiceState): VoiceStateCacheKey = VoiceStateCacheKey(value.guildId!!, value.userId) // TODO npe risiko
+}

@@ -12,7 +12,7 @@ class DefaultMessageCache {
         view { map.values.toList() }
         get { map[it] }
         update { map[it.id] = it }
-        remove { map.remove(it) }
+        remove { map.remove(it.id) }
     }
 
 }

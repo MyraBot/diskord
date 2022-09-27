@@ -1,13 +1,14 @@
 package bot.myra.diskord.common.cache.caches.timeout
 
-import bot.myra.diskord.common.cache.DoubleKey
+import bot.myra.diskord.common.cache.MemberCacheKey
 import bot.myra.diskord.common.cache.models.MemberCachePolicy
 import bot.myra.diskord.common.cache.models.MutableMemberCachePolicy
 import bot.myra.diskord.common.entities.guild.Member
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
-class TimeoutMemberCache(expireIn: Duration = 10.seconds) : TimeoutCache<DoubleKey<String, String>, Member>(expireIn) {
+class TimeoutMemberCache(expireIn: Duration = 10.minutes) : TimeoutCache<MemberCacheKey, Member>(expireIn) {
+    private val cache = mutableMapOf<MemberCacheKey, Member>()
 
     override fun policy(): MemberCachePolicy = MutableMemberCachePolicy().apply {
         view {
@@ -19,11 +20,11 @@ class TimeoutMemberCache(expireIn: Duration = 10.seconds) : TimeoutCache<DoubleK
             cache[it]
         }
         update {
-            cache[DoubleKey(it.guildId, it.id)] = it
+            cache[MemberCacheKey(it.guildId, it.id)] = it
         }
         remove {
-            stopExpiry(it)
-            cache.remove(it)
+            stopExpiry(it.id)
+            cache.remove(it.id)
         }
     }
 

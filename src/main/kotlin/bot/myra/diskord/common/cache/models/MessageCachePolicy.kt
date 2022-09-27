@@ -59,4 +59,6 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
 
 class DisabledMessageCachePolicy : MessageCachePolicy()
 
-abstract class MessageCachePolicy : GenericCachePolicy<String, Message>()
+abstract class MessageCachePolicy : GenericCachePolicy<String, Message>() {
+    override fun getAsKey(value: Message): String = value.id
+}
