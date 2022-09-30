@@ -11,10 +11,4 @@ class MessageCreateGuildWebhookEvent(
 ) : Event() {
     suspend fun getGuild(): Guild = message.getGuild()!!
     suspend fun getChannel(): TextChannel = message.getChannelAs()!!
-
-    override suspend fun handle() {
-        if (message.isWebhook)
-        call()
-    }
-
 }
