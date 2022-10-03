@@ -15,7 +15,7 @@ plugins {
 
 val id = "Diskord"
 group = "bot.myra"
-version = "2.79"
+version = "2.80"
 
 repositories {
     mavenCentral()
@@ -50,6 +50,7 @@ dependencies {
     testImplementation("bot.myra:kommons:$kommons")
     testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")
+    testImplementation("com.github.Walkyst", "lavaplayer-fork", "0a721fbec4")
 }
 
 // Publishing
