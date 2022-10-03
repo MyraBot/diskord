@@ -5,10 +5,10 @@ import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJsonObj
+import bot.myra.diskord.gateway.GatewayIntent
+import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.gateway.events.impl.VoiceServerUpdateEvent
-import bot.myra.diskord.gateway.OpPacket
-import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.kommons.debug
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
@@ -30,14 +30,14 @@ interface VoiceChannelBehavior {
         Diskord.gateway.send(packet)
 
         val voiceStateUpdateAwait = asDeferredAsync {
-            Diskord.gateway.eventDispatcher
+            Diskord.gateway.eventFlow
                 .filter { it.t == "VOICE_STATE_UPDATE" }
                 .mapNotNull { it.d }
                 .map { JSON.decodeFromJsonElement<VoiceState>(it) }
                 .first { it.guildId == state.guildId }
         }
         val voiceServerUpdateAwait = asDeferredAsync {
-            Diskord.gateway.eventDispatcher
+            Diskord.gateway.eventFlow
                 .filter { it.t == "VOICE_SERVER_UPDATE" }
                 .mapNotNull { it.d }
                 .map { JSON.decodeFromJsonElement<VoiceServerUpdateEvent>(it) }

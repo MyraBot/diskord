@@ -2,28 +2,19 @@ package bot.myra.diskord.gateway
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
-import bot.myra.diskord.common.utilities.ReconnectMethod
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.GatewayCommand
-import bot.myra.diskord.gateway.commands.GatewayResume
-import bot.myra.diskord.gateway.commands.IdentifyResponse
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
-import bot.myra.kommons.debug
+import bot.myra.diskord.gateway.handlers.*
 import bot.myra.kommons.info
-import bot.myra.kommons.kInfo
-import bot.myra.kommons.trace
 import io.ktor.websocket.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.long
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ForkJoinPool
-import kotlin.random.Random
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
@@ -31,99 +22,55 @@ import kotlin.time.Duration.Companion.seconds
  * The Gateway websocket to listen to discord events.
  */
 class Gateway(
-    private val intents: MutableSet<GatewayIntent> = mutableSetOf(),
-) : GenericGateway(LoggerFactory.getLogger(Gateway::class.java)) {
-    private val coroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Websocket"))
+    internal val intents: MutableSet<GatewayIntent> = mutableSetOf(),
+    override val coroutineScope: CoroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Gateway"))
+) : GenericGateway(LoggerFactory.getLogger(Gateway::class.java), coroutineScope) {
     lateinit var session: String
-    override val url: String = "wss://gateway.discord.gg/?v=10&encoding=json"
-    override var resumeUrl: String? = null
-    private var sequence: Int = 0
-    val eventDispatcher = MutableSharedFlow<OpPacket>()
+    internal val url: String = "wss://gateway.discord.gg/?v=10&encoding=json"
+    internal var resumeUrl: String? = null
+    internal var sequence: Int = 0
+
+    /**
+     * Flow for received events. Useful for awaiting events.
+     * Receives events from []
+     */
+    val eventFlow = MutableSharedFlow<OpPacket>()
+
+    init {
+        DispatchEventHandler(this).listen()
+        HeartbeatAcknowledgeEventHandler(this).listen()
+        HeartbeatEventHandler(this).listen()
+        HelloEventHandler(this).listen()
+        InvalidSessionHandler(this).listen()
+        ReconnectEventHandler(this).listen()
+    }
 
     /**
      * [Documentation](https://discord.com/developers/docs/topics/gateway#gateways)
      *
-     * Starts the event resolver and opens a gateway websocket connection.
+     * Opens the initial gateway connection.
+     * Starts all event handlers and opens a gateway websocket connection.
      */
-    suspend fun connect() {
-        Events.startResolver()
-        coroutineScope.launch { openGatewayConnection() }
-    }
+    fun connect(socketUrl: String = url, resume: Boolean = false) = openSocketConnection(socketUrl, resume)
 
-    override suspend fun handleIncome(packet: OpPacket, resumed: Boolean) {
-        when (OpCode.from(packet.op)) {
-            OpCode.DISPATCH              -> fireEvent(packet)
-            OpCode.HEARTBEAT             -> sendHeartbeat().also { debug(this::class) { "Received Heartbeat attack!" } }
-            OpCode.RECONNECT             -> throw ClosedReceiveChannelException("Received reconnect from discord")
-            OpCode.INVALID_SESSION       -> onInvalidSession()
-            OpCode.HELLO                 -> onSuccessfulConnection(packet, resumed)
-            OpCode.HEARTBEAT_ACKNOWLEDGE -> debug(this::class) { "Heartbeat acknowledged!" }
-        }
-    }
-
-    private suspend fun onSuccessfulConnection(packet: OpPacket, resumed: Boolean) {
-        startHeartbeat(packet)
-        if (resumed) resume() else identify()
-        info(this::class) { "Successfully connected to Discord" }
-        ready()
-    }
-
-    private suspend fun onInvalidSession() {
-        logger.warn("Invalid session")
-        val delay = Random.nextDouble(5.0)
-        delay(delay.seconds)
-        identify()
-    }
-
-    /**
-     * [Documentation](https://discord.com/developers/docs/topics/gateway#identifying)
-     *
-     * Identifies the bot to the websocket server, gets send after receiving the ready event.
-     * With this the bot loads its required intents.
-     */
-    private suspend fun identify() {
-        kInfo(this::class) { "Logging in with intents of $intents (${GatewayIntent.getID(intents)})" }
-        send(IdentifyResponse(Diskord.token, GatewayIntent.getID(intents), IdentifyResponse.Properties()))
-    }
-
-    /**
-     * [Documentation](https://discord.com/developers/docs/topics/gateway#resuming)
-     * Resumes an old websocket connection.
-     */
-    private suspend fun resume() {
-        send(GatewayResume(Diskord.token, session, sequence))
-    }
-
-    private suspend fun fireEvent(packet: OpPacket) {
-        eventDispatcher.emit(packet)
-        sequence = packet.s ?: sequence
-    }
-
-    /**
-     * Starts the heartbeat loop.
-     *
-     * @param income The received [OpPacket].
-     */
-    private fun startHeartbeat(income: OpPacket) {
-        val heartbeatInterval = income.d!!.jsonObject["heartbeat_interval"]!!.jsonPrimitive.long
-        coroutineScope.launch {
-            while (isActive) {
-                sendHeartbeat()
-                delay(heartbeatInterval)
+    override fun handleClose(reason: CloseReason?) {
+        if (reason == null) connect(resumeUrl ?: url)
+        else {
+            val specificReason = GatewayClosedReason.fromCode(reason.code)
+            if (specificReason.exception) throw Exception(specificReason.cause)
+            else {
+                if (specificReason.resume) connect(resumeUrl ?: url, true)
+                else connect(url)
             }
         }
     }
 
-    /**
-     * Sends a heartbeat response to Discord.
-     */
-    private suspend fun sendHeartbeat() {
+    internal suspend fun sendHeartbeat() {
         // Using the second send function to avoid queueing the call if the socket is null
-        socket?.send {
+        send {
             op = OpCode.HEARTBEAT.code
             s = sequence
         }
-        trace(this::class) { "Sent heartbeat!" }
     }
 
     /**
@@ -134,25 +81,7 @@ class Gateway(
      */
     suspend fun updatePresence(presence: PresenceUpdate) = send(presence)
 
-    override suspend fun chooseReconnectMethod(reason: CloseReason): ReconnectMethod = when (GatewaySocketClosedReason.fromCode(reason.code)) {
-        GatewaySocketClosedReason.UNKNOWN_ERROR         -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.UNKNOWN_OPCODE        -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.DECODE_ERROR          -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.NOT_AUTHENTICATED     -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.AUTHENTICATION_FAILED -> throw Exception("Invalid token")
-        GatewaySocketClosedReason.ALREADY_AUTHENTICATED -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.INVALID_SEQUENCE      -> ReconnectMethod.CONNECT
-        GatewaySocketClosedReason.RATE_LIMITED          -> ReconnectMethod.RETRY
-        GatewaySocketClosedReason.SESSION_TIMED_OUT     -> ReconnectMethod.CONNECT
-        GatewaySocketClosedReason.INVALID_SHARD         -> throw Exception("Invalid shard")
-        GatewaySocketClosedReason.SHARDING_REQUIRED     -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.INVALID_API_VERSION   -> throw Exception("Invalid gateway version")
-        GatewaySocketClosedReason.INVALID_INTENTS       -> ReconnectMethod.STOP
-        GatewaySocketClosedReason.DISALLOWED_INTENTS    -> throw Exception("You may have tried to specify an intent that you have not enabled or are not approved for.")
-        GatewaySocketClosedReason.UNKNOWN               -> ReconnectMethod.RETRY
-    }
-
-    private suspend inline fun <reified T : GatewayCommand> send(command: T) = send {
+    internal suspend inline fun <reified T : GatewayCommand> send(command: T) = send {
         op = command.operation?.code ?: throw Exception("No opcode provided by operation ${T::class.simpleName}")
         d = command.toJsonObj(true)
     }
@@ -165,7 +94,7 @@ class Gateway(
  *
  * @return Returns the [Diskord] object. Just for laziness.
  */
-suspend fun Diskord.connectGateway() {
+fun Diskord.connectGateway() {
     info(this::class) { "Registering discord event listeners" }
     listenersPackage.forEach { Events.findListeners(it) }
 

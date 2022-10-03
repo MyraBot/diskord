@@ -18,12 +18,10 @@ abstract class Event : DefaultBehavior {
     open suspend fun handle() = call()
 
     /**
-     * Prepares the event to be ready to be called and executes the events for all registered listeners.
+     * Executes the events for all registered listeners.
      */
     fun call() {
-        Events.coroutineScope.launch {
-            Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
-        }
+        Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
     }
 
     /**
