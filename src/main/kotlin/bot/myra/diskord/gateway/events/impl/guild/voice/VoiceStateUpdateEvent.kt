@@ -30,6 +30,7 @@ data class VoiceStateUpdateEvent(
 
         if (oldVoiceState?.isDeaf == false && newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).handle()
         if (oldVoiceState?.isDeaf == true && !newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).handle()
+        call()
     }
 
     fun getMember(): Member? = newVoiceState.getMember()
