@@ -26,6 +26,9 @@ class TimeoutChannelCache(expireIn: Duration = 10.minutes) : TimeoutCache<String
             cache.remove(it.id)
         }
 
+        guildView {
+            guildMap[it] ?: emptyList()
+        }
         guildUpdate {
             guildMap.getOrPut(it.guild) { mutableListOf() }.apply {
                 removeIf { channel -> channel.id == it.value.id }
