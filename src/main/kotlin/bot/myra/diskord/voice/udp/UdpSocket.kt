@@ -15,7 +15,10 @@ import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.slf4j.Logger
@@ -40,7 +43,7 @@ class UdpSocket(
 
     private lateinit var encryption: SecretBox
     lateinit var audioProvider: AudioProvider
-    val audioReceiver: Channel<ByteArray> = Channel()
+    val audioReceiver: Channel<RtpPacket> = Channel()
 
     suspend fun openSocketConnection() {
         socket = aSocket(ActorSelectorManager(Dispatchers.IO)).udp().connect(remoteAddress = voiceServer)
@@ -68,7 +71,6 @@ class UdpSocket(
                 .filter { voiceServer == it.address }
                 .mapNotNull { RtpPacket.fromPacket(it.packet, encryption) }
                 .filter { it.payloadType == PayloadType.Audio }
-                .map { it.payload }
                 .collect { audioReceiver.send(it) }
         }
     }

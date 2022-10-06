@@ -23,6 +23,7 @@ data class RtpPacket(
     val timestamp: Int,
     val ssrc: Int,
     val payload: ByteArray,
+    val nonce: ByteArray
 ) {
 
     companion object {
@@ -101,7 +102,7 @@ data class RtpPacket(
                 }
             }
 
-            return RtpPacket(paddingBytes, payloadType, sequence.toShort(), timestamp.toInt(), ssrc.toInt(), decryptedAudio)
+            return RtpPacket(paddingBytes, payloadType, sequence.toShort(), timestamp.toInt(), ssrc.toInt(), decryptedAudio, nonce)
         }
 
     }
