@@ -26,7 +26,7 @@ internal class VoiceHelloEventHandler(
 
     override suspend fun onEvent(packet: OpPacket) {
         gateway.apply {
-            if (resume) {
+            if (resumedConnection) {
                 logger.info("Resuming connection $session")
                 send(Resume(guildId, session, token))
             } else {

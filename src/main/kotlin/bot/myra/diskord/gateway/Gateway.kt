@@ -54,14 +54,12 @@ class Gateway(
     fun connect(socketUrl: String = url, resume: Boolean = false) = openSocketConnection(socketUrl, resume)
 
     override fun handleClose(reason: CloseReason?) {
-        if (reason == null) connect(resumeUrl ?: url)
+        if (reason == null) return
+        val discordReason = GatewayClosedReason.fromCode(reason.code) ?: return
+        if (discordReason.exception) throw Exception(discordReason.cause)
         else {
-            val specificReason = GatewayClosedReason.fromCode(reason.code)
-            if (specificReason.exception) throw Exception(specificReason.cause)
-            else {
-                if (specificReason.resume) connect(resumeUrl ?: url, true)
-                else connect(url)
-            }
+            if (discordReason.resume) connect(resumeUrl ?: url, true)
+            else connect(url)
         }
     }
 
@@ -71,6 +69,17 @@ class Gateway(
             op = OpCode.HEARTBEAT.code
             s = sequence
         }
+    }
+
+    suspend fun reconnect(reason: GatewayReconnectReason) {
+        socket?.close(CloseReason(4600, "Reconnecting: ${reason.cause}"))
+
+        if (reason.resume) resumeUrl?.let {
+            openSocketConnection(it, true)
+            return
+        }
+        // Either should not resume or resumeUrl is null
+        openSocketConnection(url, false)
     }
 
     /**

@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.handlers
 
 import bot.myra.diskord.gateway.Gateway
-import bot.myra.diskord.gateway.GatewayClosedReason
+import bot.myra.diskord.gateway.GatewayReconnectReason
 import bot.myra.diskord.gateway.OpCode
 import bot.myra.diskord.gateway.OpPacket
 import kotlinx.serialization.json.boolean
@@ -12,14 +12,13 @@ internal class InvalidSessionHandler(
 ) : GatewayEventHandler(OpCode.INVALID_SESSION, gateway) {
 
     override suspend fun onEvent(packet: OpPacket) {
+        @Suppress("MoveVariableDeclarationIntoWhen")
         val reconnect = packet.d?.jsonPrimitive?.boolean ?: false
-
         val reason = when (reconnect) {
-            true  -> GatewayClosedReason.RECEIVED_INVALID_SESSION_RESUME
-            false -> GatewayClosedReason.SESSION_TIMED_OUT
+            true  -> GatewayReconnectReason.INVALID_SESSION_RESUME
+            false -> GatewayReconnectReason.INVALID_SESSION
         }
-        gateway.closeSocketConnection(reason)
-        //gateway.connect(gateway.resumeUrl ?: gateway.url)
+        gateway.reconnect(reason)
     }
 
 }

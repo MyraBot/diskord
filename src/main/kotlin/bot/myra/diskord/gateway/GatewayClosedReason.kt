@@ -19,18 +19,10 @@ enum class GatewayClosedReason(
     SHARDING_REQUIRED(4011, false, "Because of too many guilds you have to shard your sessions", true),
     INVALID_API_VERSION(4012, false, "Invalid gateway version", true),
     INVALID_INTENTS(4013, false, "Your specified intents are invalid", true),
-    DISALLOWED_INTENTS(4014, false, "You may have tried to specify an intent that you have not enabled or are not approved for", true),
-
-    // Custom close reasons - used when we close the connection
-    RECEIVED_INVALID_SESSION_RESUME(4500, true, "Invalid session (does resumable)"),
-    RECEIVED_INVALID_SESSION(4501, false, "Invalid session"),
-    RECEIVED_RECONNECT(4502, true, "Received reconnect from discord"),
-
-    UNKNOWN(null, true, "Unknown error code");
+    DISALLOWED_INTENTS(4014, false, "You may have tried to specify an intent that you have not enabled or are not approved for", true);
 
     companion object {
-        fun fromCode(code: Short): GatewayClosedReason =
-            values().firstOrNull { it.code == code } ?: UNKNOWN.apply { this.code = code }
+        fun fromCode(code: Short): GatewayClosedReason? = values().firstOrNull { it.code == code }
     }
 
 }

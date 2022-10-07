@@ -22,7 +22,7 @@ internal class HelloEventHandler(
 
     override suspend fun onEvent(packet: OpPacket) {
         startHeartbeat(packet)
-        if (gateway.resume) resume() else identify()
+        if (gateway.resumedConnection) resume() else identify()
         gateway.logger.info("Successfully connected to Discord")
         gateway.sendQueuedCalls()
     }

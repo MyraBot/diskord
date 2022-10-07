@@ -42,7 +42,7 @@ class VoiceGateway(
     }
 
     override fun handleClose(reason: CloseReason?) {
-        val closeReason = VoiceGatewayCloseReason.fromCode(reason?.code)
+        val closeReason = VoiceGatewayCloseReason.fromCode(reason?.code) ?: return
         if (closeReason.reconnect) connect(true)
     }
 
