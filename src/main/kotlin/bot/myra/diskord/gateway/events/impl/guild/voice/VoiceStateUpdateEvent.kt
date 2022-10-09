@@ -26,10 +26,10 @@ data class VoiceStateUpdateEvent(
         else if (oldVoiceState != null && oldVoiceState.channelId != newVoiceState.channelId) VoiceMoveEvent(oldVoiceState, newVoiceState).handle()
 
         if (oldVoiceState?.isMuted == false && newVoiceState.isMuted) VoiceMuteEvent(newVoiceState).handle()
-        if (oldVoiceState?.isMuted == true && !newVoiceState.isMuted) VoiceUnmuteEvent(newVoiceState).handle()
+        else if (oldVoiceState?.isMuted == true && !newVoiceState.isMuted) VoiceUnmuteEvent(newVoiceState).handle()
 
         if (oldVoiceState?.isDeaf == false && newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).handle()
-        if (oldVoiceState?.isDeaf == true && !newVoiceState.isDeaf) VoiceDeafEvent(newVoiceState).handle()
+        else if (oldVoiceState?.isDeaf == true && !newVoiceState.isDeaf) VoiceUndeafEvent(newVoiceState).handle()
         call()
     }
 
