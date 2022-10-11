@@ -30,7 +30,7 @@ abstract class GenericGateway(
     private val waitingCalls = mutableListOf<OpPacket>()
 
     private val client = HttpClient(OkHttp) {
-        install(WebSockets)
+        install(WebSockets) { pingInterval = 20.seconds.inWholeMilliseconds }
         install(HttpTimeout) { requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS }
         expectSuccess = true
     }
