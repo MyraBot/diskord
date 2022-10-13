@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
-import java.io.EOFException
 import kotlin.time.Duration.Companion.seconds
 
 abstract class GenericGateway(
@@ -61,7 +60,7 @@ abstract class GenericGateway(
 
                 try {
                     handleIncome()
-                } catch (_: EOFException) {
+                } catch (_: Exception) {
                     logger.info("End of income")
                 }
 
