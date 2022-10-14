@@ -20,7 +20,9 @@ enum class ChannelType(val id: Int) {
     GUILD_NEWS_THREAD(10),
     GUILD_PUBLIC_THREAD(11),
     GUILD_PRIVATE_THREAD(12),
-    GUILD_STAGE_VOICE(13);
+    GUILD_STAGE_VOICE(13),
+    GUILD_DIRECTORY(14),
+    GUILD_FORUM(15);
 
     object Serializer : KSerializer<ChannelType> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ChannelType", PrimitiveKind.INT)
