@@ -2,7 +2,9 @@ package bot.myra.diskord.gateway.events
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
@@ -19,9 +21,14 @@ abstract class Event : DefaultBehavior {
 
     /**
      * Executes the events for all registered listeners.
+     * The caching listeners get executed after the custom listeners,
+     * so that we are able to access the old values of the event there.
      */
-    fun call() {
-        Diskord.listeners.forEach { (klass, functions) -> runFunctions(klass, functions) }
+    suspend fun call() {
+        // Execute users listeners first
+        Diskord.listeners.flatMap { runFunctions(it.key, it.value) }.awaitAll()
+        // Run caching listeners after this
+        Diskord.cachePolicy.all().flatMap { cache -> runFunctions(cache, cache.eventFunctions) }.awaitAll()
     }
 
     /**
@@ -30,15 +37,19 @@ abstract class Event : DefaultBehavior {
      * @param listener Event listener superclass.
      * @param functions Already pre-filtered listener functions.
      */
-    private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>) {
+    private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>): List<Deferred<Unit>> {
+        // Get all events which are triggered (including subtypes)
         val triggeredEvents = this::class.superclasses.toMutableList()
             .filter { !it.java.isInterface }
             .toMutableList()
-        triggeredEvents.add(this::class)
-        functions.filter { function ->
-            val eventTarget = function.findAnnotation<ListenTo>()?.event ?: return@filter false
-            eventTarget in triggeredEvents
-        }.forEach { Events.coroutineScope.launch { runEvent(it, listener) } }
+            .apply { add(this::class) }
+
+        return functions
+            .filter { function ->
+                val eventTarget = function.findAnnotation<ListenTo>()?.event ?: return@filter false
+                eventTarget in triggeredEvents
+            }
+            .map { Events.coroutineScope.async { runEvent(it, listener) } }
     }
 
     /**

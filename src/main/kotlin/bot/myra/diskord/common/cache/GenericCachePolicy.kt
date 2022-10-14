@@ -1,7 +1,6 @@
 package bot.myra.diskord.common.cache
 
 import bot.myra.diskord.gateway.events.EventListener
-import bot.myra.diskord.gateway.events.loadListeners
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -13,9 +12,12 @@ abstract class GenericCachePolicy<K, V>(
 ) : EventListener {
     val mutex = Mutex()
 
-    init {
-        loadListeners()
-    }
+    /**
+     * Event functions required for the cache to work.
+     * They are stored separately from normal events which
+     * are stored in [bot.myra.diskord.common.Diskord.listeners].
+     */
+    internal val eventFunctions = findEventFunction()
 
     fun view(action: ViewCache<V>) = run { view = action }
     fun get(action: GetCache<K, V>) = run { get = action }
