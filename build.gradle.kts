@@ -39,8 +39,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerialization") // Serializer
 
     // Reflections
-    compileOnly(kotlin("reflect"))
-    compileOnly("org.reflections:reflections:0.10.2")
+    implementation(kotlin("reflect"))
+    implementation("org.reflections:reflections:0.10.2")
 
     // Voice encryption
     implementation("com.codahale:xsalsa20poly1305:0.11.0")
