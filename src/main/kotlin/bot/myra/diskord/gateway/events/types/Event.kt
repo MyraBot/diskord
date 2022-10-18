@@ -5,9 +5,7 @@ import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.callSuspend
@@ -42,25 +40,34 @@ abstract class Event : EventAction(), DefaultBehavior {
      * @param listener Event listener superclass.
      * @param functions Already pre-filtered listener functions.
      */
-    private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>): List<Deferred<Unit>> = functions
+    private fun runFunctions(listener: EventListener, functions: List<KFunction<*>>): List<Deferred<*>> = functions
         .filter { function ->
             val eventTarget = function.findAnnotation<ListenTo>()?.event ?: return@filter false
             eventTarget in eventTree
         }
-        .map { Events.coroutineScope.async { runEvent(it, listener) } }
+        .mapNotNull { runEvent(it, listener) }
 
     /**
-     * Executes the actual functions.
+     * Executes a single event function.
+     * If the function has no event parameter it gets launched in a new coroutine.
+     * This should be used for functions which contain huge blocking code. Otherwise,
+     * the entire event queue get blocked.
+     * For functions with parameters the function returns a not-nullable [Deferred]
+     * value.
      *
      * @param func Event function to execute.
      * @param listener Event listener superclass.
      */
-    private suspend fun runEvent(func: KFunction<*>, listener: EventListener) {
-        try {
-            if (func.valueParameters.isEmpty()) func.callSuspend(listener)
-            else func.callSuspend(listener, this@Event)
-        } catch (e: Exception) {
-            Diskord.errorHandler.onException(this, e)
+    private fun runEvent(func: KFunction<*>, listener: EventListener): Deferred<*>? {
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Diskord.errorHandler.onException(this, exception as Exception)
+        }
+
+        return if (func.valueParameters.isEmpty()) {
+            Events.coroutineScope.launch(handler) { func.callSuspend(listener) }
+            null
+        } else {
+            Events.coroutineScope.async(handler) { func.callSuspend(listener, this@Event) }
         }
     }
 
