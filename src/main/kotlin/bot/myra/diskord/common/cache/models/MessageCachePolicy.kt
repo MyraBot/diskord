@@ -7,18 +7,18 @@ import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.message.BulkMessageDeleteEvent
-import bot.myra.diskord.gateway.events.impl.message.MessageCreateEvent
+import bot.myra.diskord.gateway.events.impl.message.create.GenericMessageCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
 
 class MutableMessageCachePolicy : MessageCachePolicy() {
 
     init {
-        if (GatewayIntent.GUILD_MESSAGES !in Diskord.intents) throw MissingIntentException(MessageCreateEvent::class, GatewayIntent.GUILD_MESSAGES)
+        if (GatewayIntent.GUILD_MESSAGES !in Diskord.intents) throw MissingIntentException(GenericMessageCreateEvent::class, GatewayIntent.GUILD_MESSAGES)
     }
 
-    @ListenTo(MessageCreateEvent::class)
-    suspend fun onMessageCreate(event: MessageCreateEvent) = update(event.message)
+    @ListenTo(GenericMessageCreateEvent::class)
+    suspend fun onMessageCreate(event: GenericMessageCreateEvent) = update(event.message)
 
     @ListenTo(MessageUpdateEvent::class)
     suspend fun onMessageUpdate(event: MessageUpdateEvent) {

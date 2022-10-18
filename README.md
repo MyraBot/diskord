@@ -13,10 +13,18 @@ Diskord has **Rest caching** as well as **Gateway caching**.
 > Though note that if you turn of gateway caching the objects won't be in sync anymore since update events are missing!
 
 ## Event abstraction
-If an even can be interpreted in different ways the event has the following abstraction
+If an even can be interpreted in different ways the event has the following structure
+
 ```
-    GenericFooEvent
-    ├─ FooBarEvent
-    └─ FooBazEvent
+    FooEventBroker
+          |
+          V
+    FooBarEvent ─┐
+                 ├─ GenericFooEvent
+    FooBazEvent ─┘
 ```
-The slash command even is an exception because the event which gets serialized is different from the abstract class.
+
+`FooEventBroker`: Event handler which calls `GenericFooEvent`s subclasses  
+`GenericFooEvent`: Abstract class which shares common methods across its subclasses
+
+If

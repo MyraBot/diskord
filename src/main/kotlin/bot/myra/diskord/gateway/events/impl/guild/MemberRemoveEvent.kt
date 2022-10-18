@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.guild
 
 import bot.myra.diskord.common.entities.guild.RemovedMember
-import bot.myra.diskord.gateway.events.Event
+import bot.myra.diskord.gateway.events.types.Event
 
 /**
  * [Documentation](https://discord.com/developers/docs/topics/gateway#guild-member-add)

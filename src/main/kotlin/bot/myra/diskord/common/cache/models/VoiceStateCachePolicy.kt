@@ -7,7 +7,7 @@ import bot.myra.diskord.common.cache.VoiceStateCacheKey
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
-import bot.myra.diskord.gateway.events.impl.guild.GenericGuildCreateEvent
+import bot.myra.diskord.gateway.events.impl.guild.create.GenericGuildCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.voice.VoiceStateUpdateEvent
 
 class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {

@@ -5,7 +5,7 @@ import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.utilities.JSON
-import bot.myra.diskord.rest.behaviors.AutoCompleteBehavior
+import bot.myra.diskord.rest.behaviors.interaction.AutoCompleteBehavior
 import kotlinx.serialization.json.decodeFromJsonElement
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")

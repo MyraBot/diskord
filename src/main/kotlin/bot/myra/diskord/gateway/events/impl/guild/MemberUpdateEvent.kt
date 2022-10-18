@@ -2,7 +2,7 @@ package bot.myra.diskord.gateway.events.impl.guild
 
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
-import bot.myra.diskord.gateway.events.Event
+import bot.myra.diskord.gateway.events.types.Event
 import kotlinx.serialization.Serializable
 
 @Serializable

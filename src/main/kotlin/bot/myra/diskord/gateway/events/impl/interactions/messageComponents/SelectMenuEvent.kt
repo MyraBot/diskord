@@ -2,6 +2,7 @@ package bot.myra.diskord.gateway.events.impl.interactions.messageComponents
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
+import bot.myra.diskord.common.entities.applicationCommands.InteractionComponentData
 import bot.myra.diskord.common.entities.applicationCommands.components.SelectMenu
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
@@ -12,7 +13,8 @@ import kotlinx.serialization.json.jsonPrimitive
 
 class SelectMenuEvent(
     override val interaction: Interaction,
-) : GenericMessageComponentEvent(interaction) {
+    override val component: InteractionComponentData
+) : GenericMessageComponentEvent(interaction, component) {
     val message: Message = interaction.message.value!!
     val member: Member? get() = interaction.member
     val selectMenu: SelectMenu

@@ -3,8 +3,8 @@ package bot.myra.diskord.gateway.events.impl.interactions
 import bot.myra.diskord.common.entities.Locale
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.user.User
-import bot.myra.diskord.gateway.events.Event
-import bot.myra.diskord.rest.behaviors.InteractionCreateBehavior
+import bot.myra.diskord.gateway.events.types.Event
+import bot.myra.diskord.rest.behaviors.interaction.InteractionCreateBehavior
 import kotlinx.serialization.Serializable
 
 @Serializable

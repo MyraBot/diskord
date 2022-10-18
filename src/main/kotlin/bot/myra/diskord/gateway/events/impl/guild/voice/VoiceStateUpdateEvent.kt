@@ -4,7 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
-import bot.myra.diskord.gateway.events.Event
+import bot.myra.diskord.gateway.events.types.Event
 import kotlinx.serialization.SerialName
 
 /**

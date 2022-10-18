@@ -1,6 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild.roles
 
-import bot.myra.diskord.gateway.events.Event
+import bot.myra.diskord.gateway.events.types.Event
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

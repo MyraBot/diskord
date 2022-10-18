@@ -1,16 +1,16 @@
-package bot.myra.diskord.gateway.events.impl.message
+package bot.myra.diskord.gateway.events.impl.message.create.guild
 
 import bot.myra.diskord.common.entities.channel.TextChannel
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.message.Message
-import bot.myra.diskord.gateway.events.Event
+import bot.myra.diskord.gateway.events.impl.message.create.GenericMessageCreateEvent
 
-@Suppress("unused")
-class MessageCreateGuildUserEvent(
-    val message: Message
-) : Event() {
+
+abstract class GenericGuildMessageCreateEvent(
+    override val message: Message
+) : GenericMessageCreateEvent(message) {
     suspend fun getGuild(): Guild = message.getGuild()!!
-    suspend fun getMember(): Member = message.getMember()!!
+    open suspend fun getMember(): Member? = message.getMember()
     suspend fun getChannel(): TextChannel = message.getChannelAs()!!
 }

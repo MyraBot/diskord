@@ -1,4 +1,4 @@
-package bot.myra.diskord.rest.behaviors
+package bot.myra.diskord.rest.behaviors.interaction
 
 import bot.myra.diskord.common.entities.applicationCommands.ChoiceResponses
 import bot.myra.diskord.common.entities.applicationCommands.Interaction

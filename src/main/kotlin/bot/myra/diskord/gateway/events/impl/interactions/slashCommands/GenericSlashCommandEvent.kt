@@ -12,13 +12,14 @@ import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.JSON
-import bot.myra.diskord.gateway.events.impl.interactions.NonModalInteractionEvent
+import bot.myra.diskord.gateway.events.impl.interactions.GenericInteractionCreateEvent
 import bot.myra.diskord.rest.EntityProvider
+import bot.myra.diskord.rest.behaviors.interaction.NonModalInteractionBehavior
 import kotlinx.serialization.json.*
 
-open class GenericSlashCommandEvent(
+abstract class GenericSlashCommandEvent(
     override val interaction: Interaction
-) : NonModalInteractionEvent(interaction) {
+) : GenericInteractionCreateEvent(interaction), NonModalInteractionBehavior {
     val command: SlashCommand get() = JSON.decodeFromJsonElement(interaction.data.value!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId.value!!)
     open val member: Member? get() = interaction.member

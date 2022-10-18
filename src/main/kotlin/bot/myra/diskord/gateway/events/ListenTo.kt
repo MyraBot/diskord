@@ -1,5 +1,6 @@
 package bot.myra.diskord.gateway.events
 
+import bot.myra.diskord.gateway.events.types.Event
 import kotlin.reflect.KClass
 
 /**

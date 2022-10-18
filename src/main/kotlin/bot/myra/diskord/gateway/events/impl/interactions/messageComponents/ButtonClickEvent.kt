@@ -1,6 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.interactions.messageComponents
 
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
+import bot.myra.diskord.common.entities.applicationCommands.InteractionComponentData
 import bot.myra.diskord.common.entities.applicationCommands.components.Button
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
@@ -9,8 +10,9 @@ import bot.myra.diskord.rest.EntityProvider
 import kotlinx.coroutines.runBlocking
 
 class ButtonClickEvent(
-    override val interaction: Interaction
-) : GenericMessageComponentEvent(interaction) {
+    override val interaction: Interaction,
+    override val component: InteractionComponentData
+) : GenericMessageComponentEvent(interaction, component) {
     val message: Message = interaction.message.value!!
     val guild: Guild? get() = runBlocking { EntityProvider.getGuild(interaction.guildId.value!!) }
     val member: Member? get() = interaction.member

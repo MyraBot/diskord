@@ -3,7 +3,7 @@ package bot.myra.diskord.common.cache.models
 import bot.myra.diskord.common.cache.GenericGuildCachePolicy
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.gateway.events.ListenTo
-import bot.myra.diskord.gateway.events.impl.guild.GuildLeaveEvent
+import bot.myra.diskord.gateway.events.impl.guild.delete.GuildLeaveEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
