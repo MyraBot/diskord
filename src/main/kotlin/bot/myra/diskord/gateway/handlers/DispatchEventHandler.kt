@@ -6,7 +6,6 @@ import bot.myra.diskord.gateway.OpCode
 import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.gateway.events.impl.ReadyEvent
 import bot.myra.diskord.gateway.events.impl.ResumedEvent
-import bot.myra.diskord.gateway.events.impl.guild.delete.GuildDeleteEventBroker
 import bot.myra.diskord.gateway.events.impl.guild.MemberJoinEvent
 import bot.myra.diskord.gateway.events.impl.guild.MemberRemoveEvent
 import bot.myra.diskord.gateway.events.impl.guild.MemberUpdateEvent
@@ -14,6 +13,7 @@ import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.channel.ChannelUpdateEvent
 import bot.myra.diskord.gateway.events.impl.guild.create.GuildCreateEventBroker
+import bot.myra.diskord.gateway.events.impl.guild.delete.GuildDeleteEventBroker
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleCreateEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleDeleteEvent
 import bot.myra.diskord.gateway.events.impl.guild.roles.RoleUpdateEvent
@@ -57,7 +57,7 @@ internal class DispatchEventHandler(
                 "GUILD_ROLE_UPDATE"   -> json.decode<RoleUpdateEvent>()
                 "GUILD_ROLE_DELETE"   -> json.decode<RoleDeleteEvent>()
                 "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(json.decode())
-                "READY"               -> JSON.decodeFromJsonElement<ReadyEvent>(json)
+                "READY"               -> json.decode<ReadyEvent>()
                 else                  -> null
             }?.handle()
         } catch (e: SerializationException) {
