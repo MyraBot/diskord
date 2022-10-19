@@ -18,16 +18,16 @@ data class ReadyEvent(
 
     override suspend fun handle() {
         Diskord.apply {
-            if (initialConnection) {
-                InitialReadyEvent(this@ReadyEvent).handle()
-                initialConnection = false
-            }
-
             gateway.session = sessionId
             gateway.resumeUrl = resumeGatewayUrl
             id = botUser.id
             guildIds.addAll(guilds.map(UnavailableGuild::id))
             unavailableGuilds.addAll(guilds.map(UnavailableGuild::id))
+        }
+
+        if (Diskord.initialConnection) {
+            InitialReadyEvent(this@ReadyEvent).handle()
+            Diskord.initialConnection = false
         }
         call()
     }
