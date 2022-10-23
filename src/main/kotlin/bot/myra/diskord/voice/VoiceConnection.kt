@@ -28,9 +28,9 @@ class VoiceConnection(
     val endpoint: String,
     val session: String,
     val token: String,
-    val guildId: String
+    val guildId: String,
+    val scope: CoroutineScope
 ) {
-    private val scope = CoroutineScope(Dispatchers.Default + CoroutineName("VoiceConnection($guildId)"))
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId)
     var udp: UdpSocket? = null
 
