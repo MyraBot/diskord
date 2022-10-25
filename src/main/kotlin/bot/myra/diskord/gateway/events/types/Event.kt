@@ -21,7 +21,7 @@ import kotlin.reflect.full.valueParameters
  */
 abstract class Event : EventAction(), DefaultBehavior {
 
-    val eventTree = this::class.allSuperclasses + this::class
+    private val eventTree = this::class.allSuperclasses + this::class
 
     override suspend fun handle() = call()
 
