@@ -5,7 +5,10 @@ import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.callSuspend
@@ -58,16 +61,21 @@ abstract class Event : EventAction(), DefaultBehavior {
      * @param func Event function to execute.
      * @param listener Event listener superclass.
      */
-    private fun runEvent(func: KFunction<*>, listener: EventListener): Deferred<*>? {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            Diskord.errorHandler.onException(this, exception as Exception)
-        }
-
-        return if (func.valueParameters.isEmpty()) {
-            Events.coroutineScope.launch(handler) { func.callSuspend(listener) }
+    private fun runEvent(func: KFunction<*>, listener: EventListener): Deferred<*>? = runEventSafeAsync {
+        if (func.valueParameters.isEmpty()) {
+            Events.coroutineScope.launch { func.callSuspend(listener) }
             null
         } else {
-            Events.coroutineScope.async(handler) { func.callSuspend(listener, this@Event) }
+            Events.coroutineScope.async { func.callSuspend(listener, this@Event) }
+        }
+    }
+
+    private fun runEventSafeAsync(code: () -> Deferred<*>?): Deferred<*>? {
+        return try {
+            code.invoke()
+        } catch (e: Exception) {
+            Diskord.errorHandler.onException(this@Event, e)
+            null
         }
     }
 
