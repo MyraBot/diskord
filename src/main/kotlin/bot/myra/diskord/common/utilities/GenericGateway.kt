@@ -7,10 +7,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
 import kotlin.time.Duration.Companion.seconds
@@ -40,7 +37,8 @@ abstract class GenericGateway(
     val connected get() = socket != null && !socket!!.outgoing.isClosedForSend && !socket!!.incoming.isClosedForReceive
     var resumedConnection = false
 
-    val incomingEvents = MutableSharedFlow<OpPacket>()
+    private val _incomingEvents = MutableSharedFlow<OpPacket>()
+    val incomingEvents = _incomingEvents.asSharedFlow()
 
     fun openSocketConnection(url: String, resume: Boolean) {
         coroutineScope.launch {
@@ -59,9 +57,15 @@ abstract class GenericGateway(
                 logger.debug("Opened websocket connection to $url")
 
                 try {
-                    handleIncome()
+                    incoming.receiveAsFlow()
+                        .map { it as Frame.Text }
+                        .onEach { logger.debug("<< ${it.readText()}") }
+                        .map { JSON.decodeFromString<OpPacket>(it.readText()) }
+                        .collect { _incomingEvents.emit(it) }
                 } catch (_: Exception) {
-                    logger.info("End of income")
+                    logger.info("End of income, opening a new socket connection")
+                    openSocketConnection(url, false)
+                    return@apply
                 }
 
                 val reason = withTimeoutOrNull(3.seconds) { closeReason.await() }
@@ -75,18 +79,6 @@ abstract class GenericGateway(
 
     suspend fun stop() {
         socket?.close(CloseReason(1000, "Closed by user"))
-    }
-
-    /**
-     * Handles incoming data
-     */
-    private suspend fun DefaultClientWebSocketSession.handleIncome() {
-        this.incoming.consumeAsFlow().buffer(Channel.UNLIMITED).collect {
-            val data = it as Frame.Text
-            logger.debug("<< ${data.readText()}")
-            val packet = JSON.decodeFromString<OpPacket>(data.readText())
-            incomingEvents.emit(packet)
-        }
     }
 
     abstract fun handleClose(reason: CloseReason?)
