@@ -10,9 +10,7 @@ import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
 import bot.myra.diskord.voice.gateway.models.Operations
 import bot.myra.diskord.voice.udp.UdpSocket
 import bot.myra.kommons.debug
-import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.decodeFromJsonElement
 
@@ -28,9 +26,9 @@ class VoiceConnection(
     val endpoint: String,
     val session: String,
     val token: String,
-    val guildId: String
+    val guildId: String,
+    val scope :CoroutineScope
 ) {
-    private val scope = CoroutineScope(Dispatchers.Default + CoroutineName("VoiceConnection($guildId)"))
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId)
     var udp: UdpSocket? = null
 
