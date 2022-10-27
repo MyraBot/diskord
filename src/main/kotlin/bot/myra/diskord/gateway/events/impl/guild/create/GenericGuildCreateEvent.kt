@@ -1,6 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild.create
 
-import bot.myra.diskord.common.entities.guild.Guild
+import bot.myra.diskord.common.entities.guild.DetailedGuild
 import bot.myra.diskord.gateway.events.types.Event
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -15,6 +15,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 abstract class GenericGuildCreateEvent(
-    @Contextual
-    open val guild: Guild
+    @Contextual open val guild: DetailedGuild
 ) : Event()
