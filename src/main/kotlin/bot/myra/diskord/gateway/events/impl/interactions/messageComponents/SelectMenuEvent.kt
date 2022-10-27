@@ -26,6 +26,6 @@ class SelectMenuEvent(
     val id: String get() = interaction.id
     val values: List<String> get() = interaction.data.value!!.jsonObject["values"]!!.jsonArray.map { it.jsonPrimitive.content }
 
-    suspend fun getGuild(): Guild? = interaction.guildId.value?.let { Diskord.getGuild(it) }
+    suspend fun getGuild() = interaction.guildId.value?.let { Diskord.getGuild(it) }
 
 }

@@ -3,7 +3,6 @@ package bot.myra.diskord.common.entities.message
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.channel.ChannelData
-import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.entities.message.embed.Embed
@@ -52,7 +51,7 @@ data class Message(
 
     suspend fun isFromGuild(): Boolean = guildId.value !== null || Diskord.cachePolicy.channel.getGuild(channelId) != null
     suspend fun getLink(): String = Diskord.cachePolicy.channel.getGuild(channelId)?.let { MessageLink.guild(it, channelId, id) } ?: MessageLink.dms(channelId, id)
-    suspend fun getGuild(): Guild? = guildId.value?.let { Diskord.getGuild(it) }
+    suspend fun getGuild() = guildId.value?.let { Diskord.getGuild(it) }
     suspend fun getMember(): Member? {
         return if (guildId.missing) null
         else if (memberData != null) Member.withUser(memberData, guildId.value!!, user)

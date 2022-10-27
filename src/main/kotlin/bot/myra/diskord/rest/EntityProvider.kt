@@ -4,6 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.cache.MemberCacheKey
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.channel.ChannelData
+import bot.myra.diskord.common.entities.guild.GenericGuild
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
@@ -48,12 +49,17 @@ object EntityProvider {
             }
         }
 
-    suspend fun getGuild(id: String): Guild? = Diskord.cachePolicy.guild.get(id) ?: fetchGuild(id)
+    suspend fun getGuild(id: String): GenericGuild? = Diskord.cachePolicy.guild.get(id) ?: fetchGuild(id)
 
-    suspend fun fetchGuild(id: String): Guild? =
-        RestClient.executeNullable(Endpoints.getGuild) {
+    suspend fun fetchGuild(id: String): Guild? {
+        println("started")
+        val t = RestClient.executeNullable(Endpoints.getGuild) {
             arguments { arg("guild.id", id) }
         }?.also { Diskord.cachePolicy.guild.update(it) }
+        println("ihogoern")
+        return t
+    }
+
 
     suspend fun getGuildChannels(id: String): List<ChannelData> = Diskord.cachePolicy.channel.viewByGuild(id) ?: fetchGuildChannels(id)
 

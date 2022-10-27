@@ -3,7 +3,7 @@ package bot.myra.diskord.common.cache.models
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.cache.GenericCachePolicy
 import bot.myra.diskord.common.cache.MissingIntentException
-import bot.myra.diskord.common.entities.guild.Guild
+import bot.myra.diskord.common.entities.guild.GenericGuild
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.guild.create.GenericGuildCreateEvent
@@ -55,6 +55,6 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
 
 class DisabledGuildCachePolicy : GuildCachePolicy()
 
-abstract class GuildCachePolicy : GenericCachePolicy<String, Guild>() {
-    override fun getAsKey(value: Guild): String = value.id
+abstract class GuildCachePolicy : GenericCachePolicy<String, GenericGuild>() {
+    override fun getAsKey(value: GenericGuild): String = value.id
 }

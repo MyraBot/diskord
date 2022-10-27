@@ -6,7 +6,6 @@ import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashC
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionData
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
 import bot.myra.diskord.common.entities.channel.ChannelData
-import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.entities.message.Attachment
@@ -38,7 +37,7 @@ abstract class GenericSlashCommandEvent(
             }
         }
 
-    open suspend fun getGuild(): Guild? = interaction.guildId.value?.let { EntityProvider.getGuild(it) }
+    open suspend fun getGuild() = interaction.guildId.value?.let { EntityProvider.getGuild(it) }
 
     inline fun <reified T> getOption(name: String): T? {
         val option: SlashCommandOptionData? = arguments.find { it.name == name }

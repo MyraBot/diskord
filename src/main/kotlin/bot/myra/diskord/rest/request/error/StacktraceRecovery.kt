@@ -23,6 +23,7 @@ object StacktraceRecovery {
     suspend fun <T> handleNullable(request: HttpRequest<T>): T? {
         val dummyException = RecoverableException()
         return try {
+            println("Executing")
             RestClient.executeRequest(request)
         } catch (e: Exception) {
             return when (e) {

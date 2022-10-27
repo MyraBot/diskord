@@ -8,9 +8,6 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * [Documentation](https://discord.com/developers/docs/resources/guild#guild-object-guild-structure)
- */
 @Suppress("unused")
 @Serializable
 data class DetailedGuild(
@@ -35,7 +32,7 @@ data class DetailedGuild(
     private val unavailable: Boolean?,
     @SerialName("member_count") val memberCount: Int,
     @SerialName("voice_states") val voiceStates: List<VoiceState>
-) : Guild() {
+) : GenericGuild() {
     val available = unavailable == null || !unavailable
 
     init {

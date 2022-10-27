@@ -1,7 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.gateway.events.types.Event
 
@@ -12,6 +11,6 @@ data class MemberJoinEvent(
     val member: Member
 ) : Event() {
 
-    suspend fun getGuild(): Guild = Diskord.getGuild(member.guildId)!!
+    suspend fun getGuild() = Diskord.getGuild(member.guildId)!!
 
 }

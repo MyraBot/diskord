@@ -1,7 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.guild.voice
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.gateway.events.types.Event
@@ -34,6 +33,6 @@ data class VoiceStateUpdateEvent(
     }
 
     fun getMember(): Member? = newVoiceState.getMember()
-    suspend fun getGuild(): Guild? = newVoiceState.guildId?.let { Diskord.getGuild(it) }
+    suspend fun getGuild() = newVoiceState.guildId?.let { Diskord.getGuild(it) }
     suspend fun getOldVoiceState(): VoiceState? = Diskord.cachePolicy.voiceState.view().find { it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId }
 }
