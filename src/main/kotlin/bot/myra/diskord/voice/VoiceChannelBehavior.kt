@@ -20,7 +20,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 interface VoiceChannelBehavior {
     val data: ChannelData
 
-    suspend fun requestConnection(mute: Boolean = false, deaf: Boolean = false): VoiceConnection {
+    suspend fun requestConnection(mute: Boolean = false, deaf: Boolean = false):VoiceConnection {
         if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) throw Exception("You have to enable the GUILD_VOICE_STATES intent in order to join voice channels")
 
         val guildId = data.guildId.value ?: throw Exception("A bot can only join guild channels")
@@ -45,6 +45,7 @@ interface VoiceChannelBehavior {
                 .map { JSON.decodeFromJsonElement<VoiceServerUpdateEvent>(it) }
                 .first { it.guildId == state.guildId }
         }
+
         val (stateEvent, serverEvent) = awaitAll(voiceStateUpdateAwait, voiceServerUpdateAwait)
 
         debug(this::class) { "Received all information ➜ opening voice gateway connection" }
