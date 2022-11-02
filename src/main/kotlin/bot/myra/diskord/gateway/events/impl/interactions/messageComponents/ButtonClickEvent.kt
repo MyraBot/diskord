@@ -9,6 +9,7 @@ import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.rest.EntityProvider
 import kotlinx.coroutines.runBlocking
 
+@Suppress("unused")
 class ButtonClickEvent(
     override val interaction: Interaction,
     override val component: InteractionComponentData

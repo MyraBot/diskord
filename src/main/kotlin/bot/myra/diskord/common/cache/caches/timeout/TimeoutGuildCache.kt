@@ -6,6 +6,7 @@ import bot.myra.diskord.common.entities.guild.Guild
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
+@Suppress("unused")
 class TimeoutGuildCache(expireIn: Duration = 10.minutes) : TimeoutCache<String, Guild>(expireIn) {
     private val cache = mutableMapOf<String, Guild>()
 
