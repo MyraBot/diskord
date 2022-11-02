@@ -2,11 +2,11 @@ package bot.myra.diskord.common.cache.caches.default
 
 import bot.myra.diskord.common.cache.models.GuildCachePolicy
 import bot.myra.diskord.common.cache.models.MutableGuildCachePolicy
-import bot.myra.diskord.common.entities.guild.GenericGuild
+import bot.myra.diskord.common.entities.guild.Guild
 
 class DefaultGuildCache {
 
-    private val map = mutableMapOf<String, GenericGuild>()
+    private val map = mutableMapOf<String, Guild>()
 
     fun policy(): GuildCachePolicy = MutableGuildCachePolicy().apply {
         view { map.values.toList() }

@@ -6,7 +6,7 @@ import bot.myra.diskord.common.Diskord.intents
 import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.cache.CachePolicy
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
-import bot.myra.diskord.common.entities.guild.GenericGuild
+import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
@@ -70,7 +70,7 @@ object Diskord : GetTextChannelBehavior {
     val guildIds: MutableSet<String> = mutableSetOf()
     val lazyLoadedGuilds: MutableSet<String> = mutableSetOf()
     var unavailableGuilds: MutableSet<String> = mutableSetOf()
-    val pendingGuilds: MutableMap<String, CompletableDeferred<GenericGuild>> = mutableMapOf()
+    val pendingGuilds: MutableMap<String, CompletableDeferred<Guild>> = mutableMapOf()
 
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
@@ -97,7 +97,7 @@ object Diskord : GetTextChannelBehavior {
     suspend fun getBotUser(): User = EntityProvider.getUserNonNull(this.id)
     suspend fun getUser(id: String): User? = EntityProvider.getUser(id)
 
-    fun getGuilds(): Flow<GenericGuild> = flow {
+    fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
         when (cachePolicy.guild.update === null) {
             true  -> copiedIds.forEach { id -> emitGuildFromCache(id) }
@@ -105,15 +105,15 @@ object Diskord : GetTextChannelBehavior {
         }
     }
 
-    private suspend fun FlowCollector<GenericGuild>.emitGuildFromCache(id: String) {
-        val guild: GenericGuild? = cachePolicy.guild.get(id) ?: run {
+    private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
+        val guild: Guild? = cachePolicy.guild.get(id) ?: run {
             pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id)
         }
         guild?.let { emit(it) }
     }
 
-    suspend fun getGuild(id: String): GenericGuild? = EntityProvider.getGuild(id)
-    suspend fun fetchGuild(id: String): GenericGuild? = EntityProvider.fetchGuild(id)
+    suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
+    suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
     suspend fun getMember(guild: String, member: String): Member? = EntityProvider.getMember(guild, member)
     suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
     suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before, after)

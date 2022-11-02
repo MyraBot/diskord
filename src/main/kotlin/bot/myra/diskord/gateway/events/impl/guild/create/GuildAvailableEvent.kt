@@ -1,7 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.guild.create
 
-import bot.myra.diskord.common.entities.guild.DetailedGuild
+import bot.myra.diskord.common.entities.guild.ExtendedGuild
 
 class GuildAvailableEvent(
-    override val guild: DetailedGuild
+    override val guild: ExtendedGuild
 ) : GenericGuildCreateEvent(guild)

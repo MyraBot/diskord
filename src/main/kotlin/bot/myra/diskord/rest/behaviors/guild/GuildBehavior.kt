@@ -2,10 +2,14 @@
 
 package bot.myra.diskord.rest.behaviors.guild
 
+import bot.myra.diskord.common.Diskord
+import bot.myra.diskord.common.entities.Emoji
 import bot.myra.diskord.common.entities.channel.ChannelData
+import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.utilities.toJson
+import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.EntityProvider
 import bot.myra.diskord.rest.behaviors.Entity
@@ -14,6 +18,16 @@ import bot.myra.diskord.rest.bodies.ModifyGuildRole
 import bot.myra.diskord.rest.request.RestClient
 
 interface GuildBehavior : Entity, GetTextChannelBehavior {
+    val guild: Guild
+
+    val icon: String? get() = guild.iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild_id", id); arg("guild_icon", it) } }
+    val splash: String? get() = guild.splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
+    val discoverySplash: String? get() = guild.discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
+
+    suspend fun getOwner(): Member? = getMember(guild.ownerId)
+    suspend fun getMemberCount(): Int = Diskord.fetchGuild(id)!!.approximateMemberCount.value!!
+    suspend fun getOnlineCount(): Int = Diskord.fetchGuild(id)!!.approximateOnlineCount.value!!
+    fun getEmoji(name: String): Emoji? = guild.emojis.find { it.name == name }
 
     suspend fun getMember(id: String): Member? = EntityProvider.getMember(this.id, id)
     suspend fun getBotMember(): Member? = getMember(getApplication().id)
