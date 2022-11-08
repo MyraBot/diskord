@@ -25,6 +25,7 @@ interface InteractionCreateBehavior {
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, message.apply { transform() }).toJson()
+        if (files.any { it.bytes.size / 1000000 > 8 }) throw Exception("A file is too big")
         attachments = files.toList()
         arguments {
             arg("interaction.id", interaction.id)
