@@ -10,6 +10,7 @@ internal class ReconnectEventHandler(
 ) : GatewayEventHandler(OpCode.RECONNECT, gateway) {
 
     override suspend fun onEvent(packet: OpPacket) {
+        gateway.logger.info("Received reconnect from Discord")
         gateway.reconnect(GatewayReconnectReason.RECONNECT)
     }
 
