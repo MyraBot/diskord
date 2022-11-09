@@ -17,6 +17,25 @@ abstract class GenericGateway(
     internal open val coroutineScope: CoroutineScope
 ) {
 
+    enum class GatewayState {
+        /**
+         * The gateway is connected and running.
+         */
+        RUNNING,
+
+        /**
+         * The gateway is currently offline because its
+         * reconnecting.
+         */
+        RECONNECTING,
+
+        /**
+         * Gateway is stopped for a reason. This will stop automatic reconnects
+         * and requires you to start the gateway manually again.
+         */
+        STOPPED
+    }
+
     /**
      * Queued calls which couldn't be delivered to Discord because
      * of no connection.
@@ -35,6 +54,7 @@ abstract class GenericGateway(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val connected get() = socket != null && !socket!!.outgoing.isClosedForSend && !socket!!.incoming.isClosedForReceive
+    private var state = GatewayState.STOPPED
     var resumedConnection = false
 
     private val _incomingEvents = MutableSharedFlow<OpPacket>()
@@ -54,6 +74,7 @@ abstract class GenericGateway(
             socket = client.webSocketSession(url) { expectSuccess = false }
 
             socket?.apply {
+                state = GatewayState.RUNNING
                 logger.debug("Opened websocket connection to $url")
 
                 try {
@@ -71,17 +92,25 @@ abstract class GenericGateway(
                 val reason = withTimeoutOrNull(3.seconds) { closeReason.await() }
                 if (reason != null) logger.warn("Socket ended with reason ${reason.message} (${reason.code})")
                 else logger.warn("Socket ended with no reason")
-                handleClose(reason)
+                // TODO SHould the if really belong in here?
+                if (state != GatewayState.STOPPED) state = handleClose(reason)
             }
 
         }
     }
 
     suspend fun stop() {
+        state = GatewayState.STOPPED
         socket?.close(CloseReason(1000, "Closed by user"))
     }
 
-    abstract fun handleClose(reason: CloseReason?)
+    /**
+     * Runs when the socket ended to handle reconnecting.
+     *
+     * @param reason The websocket close reason.
+     * @return Returns the updated gateway state.
+     */
+    abstract suspend fun handleClose(reason: CloseReason?): GatewayState
 
     suspend fun sendQueuedCalls() {
         // Send queued calls

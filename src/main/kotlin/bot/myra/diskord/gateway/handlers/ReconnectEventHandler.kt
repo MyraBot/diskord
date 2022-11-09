@@ -1,9 +1,9 @@
 package bot.myra.diskord.gateway.handlers
 
 import bot.myra.diskord.gateway.Gateway
-import bot.myra.diskord.gateway.GatewayReconnectReason
 import bot.myra.diskord.gateway.OpCode
 import bot.myra.diskord.gateway.OpPacket
+import bot.myra.diskord.gateway.ReconnectReason
 
 internal class ReconnectEventHandler(
     override val gateway: Gateway
@@ -11,7 +11,7 @@ internal class ReconnectEventHandler(
 
     override suspend fun onEvent(packet: OpPacket) {
         gateway.logger.info("Received reconnect from Discord")
-        gateway.reconnect(GatewayReconnectReason.RECONNECT)
+        gateway.reconnect(ReconnectReason.RequestReconnect())
     }
 
 }

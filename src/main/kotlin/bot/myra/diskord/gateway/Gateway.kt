@@ -53,14 +53,35 @@ class Gateway(
      */
     fun connect(socketUrl: String = url, resume: Boolean = false) = openSocketConnection(socketUrl, resume)
 
-    override fun handleClose(reason: CloseReason?) {
-        if (reason == null) return
-        val discordReason = GatewayClosedReason.fromCode(reason.code) ?: return
+    /**
+     * Decides on how to continue after a gateway close.
+     *
+     * @param reason A nullable close reason.
+     */
+    override suspend fun handleClose(reason: CloseReason?): GatewayState {
+        if (reason == null) return reconnect(ReconnectReason.NoCode())
+
+        val discordReason = GatewayClosedReason.fromCode(reason.code) ?: return reconnect(ReconnectReason.UnknownCloseCode())
         if (discordReason.exception) throw Exception(discordReason.cause)
-        else {
-            if (discordReason.resume) connect(resumeUrl ?: url, true)
-            else connect(url)
-        }
+
+        val reconnectReason = ReconnectReason.Any(discordReason.resume, discordReason.cause)
+        return reconnect(reconnectReason)
+    }
+
+    /**
+     * Reconnects to the gateway.
+     *
+     * @param reason The reason on why to reconnect.
+     */
+    suspend fun reconnect(reason: ReconnectReason): GatewayState {
+        logger.debug("Going to reconnect")
+        socket?.close(CloseReason(4600, "Reconnecting: ${reason.cause}"))
+
+        val finalResumeUrl = resumeUrl
+        if (reason.resume && finalResumeUrl != null) openSocketConnection(finalResumeUrl, true)
+        else openSocketConnection(url, false)
+
+        return GatewayState.RECONNECTING
     }
 
     internal suspend fun sendHeartbeat() {
@@ -69,17 +90,6 @@ class Gateway(
             op = OpCode.HEARTBEAT.code
             s = sequence
         }
-    }
-
-    suspend fun reconnect(reason: GatewayReconnectReason) {
-        socket?.close(CloseReason(4600, "Reconnecting: ${reason.cause}"))
-
-        if (reason.resume) resumeUrl?.let {
-            openSocketConnection(it, true)
-            return
-        }
-        // Either should not resume or resumeUrl is null
-        openSocketConnection(url, false)
     }
 
     /**
