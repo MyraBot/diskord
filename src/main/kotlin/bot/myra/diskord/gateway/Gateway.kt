@@ -58,7 +58,10 @@ class Gateway(
      *
      * @param reason A nullable close reason.
      */
-    override suspend fun handleClose(reason: CloseReason?): GatewayState {
+    override suspend fun handleClose(reason: CloseReason?) {
+        if (super.state == GatewayState.STOPPED) return // Gateway got stopped on purpose
+        if (super.state == GatewayState.RECONNECTING) return  // Gateway is in the process of reconnecting ➜ do not interrupt
+
         if (reason == null) return reconnect(ReconnectReason.NoCode())
 
         val discordReason = GatewayClosedReason.fromCode(reason.code) ?: return reconnect(ReconnectReason.UnknownCloseCode())
@@ -73,15 +76,20 @@ class Gateway(
      *
      * @param reason The reason on why to reconnect.
      */
-    suspend fun reconnect(reason: ReconnectReason): GatewayState {
+    suspend fun reconnect(reason: ReconnectReason) {
+        super.state = GatewayState.RECONNECTING
+
         logger.debug("Going to reconnect")
-        socket?.close(CloseReason(4600, "Reconnecting: ${reason.cause}"))
+        logger.info("Reconnecting: ${reason.cause}")
+
+        // Close connection if it isn't closed already
+        if (connected) {
+            socket?.close(CloseReason(4600, "Reconnecting: ${reason.cause}"))
+        }
 
         val finalResumeUrl = resumeUrl
-        if (reason.resume && finalResumeUrl != null) openSocketConnection(finalResumeUrl, true)
-        else openSocketConnection(url, false)
-
-        return GatewayState.RECONNECTING
+        if (reason.resume && finalResumeUrl != null) connect(finalResumeUrl, true)
+        else connect(url, false)
     }
 
     internal suspend fun sendHeartbeat() {

@@ -41,13 +41,21 @@ class VoiceGateway(
         logger.debug("Disconnected from socket")
     }
 
-    override suspend fun handleClose(reason: CloseReason?): GatewayState {
-        val closeReason = VoiceGatewayCloseReason.fromCode(reason?.code) ?: return GatewayState.STOPPED
-        if (closeReason.reconnect) {
-            connect(true)
-            return GatewayState.RECONNECTING
+    override suspend fun handleClose(reason: CloseReason?) {
+        val closeReason = VoiceGatewayCloseReason.fromCode(reason?.code)
+
+        if (closeReason == null) {
+            super.state = GatewayState.STOPPED
+            return
         }
-        return GatewayState.STOPPED
+
+        if (closeReason.reconnect) {
+            super.state = GatewayState.RECONNECTING
+            connect(true)
+            return
+        }
+
+        super.state = GatewayState.STOPPED
     }
 
     /**

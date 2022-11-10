@@ -54,7 +54,7 @@ abstract class GenericGateway(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val connected get() = socket != null && !socket!!.outgoing.isClosedForSend && !socket!!.incoming.isClosedForReceive
-    private var state = GatewayState.STOPPED
+    internal var state = GatewayState.STOPPED
     var resumedConnection = false
 
     private val _incomingEvents = MutableSharedFlow<OpPacket>()
@@ -92,8 +92,7 @@ abstract class GenericGateway(
                 val reason = withTimeoutOrNull(3.seconds) { closeReason.await() }
                 if (reason != null) logger.warn("Socket ended with reason ${reason.message} (${reason.code})")
                 else logger.warn("Socket ended with no reason")
-                // TODO SHould the if really belong in here?
-                if (state != GatewayState.STOPPED) state = handleClose(reason)
+                handleClose(reason)
             }
 
         }
@@ -105,12 +104,11 @@ abstract class GenericGateway(
     }
 
     /**
-     * Runs when the socket ended to handle reconnecting.
+     * Runs when the socket ended to handle possible reconnecting.
      *
      * @param reason The websocket close reason.
-     * @return Returns the updated gateway state.
      */
-    abstract suspend fun handleClose(reason: CloseReason?): GatewayState
+    abstract suspend fun handleClose(reason: CloseReason?)
 
     suspend fun sendQueuedCalls() {
         // Send queued calls
