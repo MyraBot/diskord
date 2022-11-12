@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 class Guild(
     override val id: String,
     val name: String,
+    @SerialName("icon")
     val iconHash: String?,
     val splashHash: String?,
     val discoverySplashHash: String?,
