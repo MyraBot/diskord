@@ -5,7 +5,7 @@ import kotlinx.coroutines.sync.withLock
 abstract class GenericGuildCachePolicy<K, V>(
     private var guildUpdate: UpdateCache<GuildSafeValue<V>>? = null,
     private var guildRemove: RemoveCache<CacheGuildKey<K>>? = null,
-    private var guildView: ((String) -> List<V>)? = null,
+    private var guildView: ((String) -> List<V>?)? = null,
 ) : GenericCachePolicy<K, V>() {
 
     /**
@@ -20,7 +20,7 @@ abstract class GenericGuildCachePolicy<K, V>(
 
     fun guildUpdate(action: UpdateCache<GuildSafeValue<V>>) = run { guildUpdate = action }
     fun guildRemove(action: RemoveCache<CacheGuildKey<K>>) = run { guildRemove = action }
-    fun guildView(action: (String) -> List<V>) = run { guildView = action }
+    fun guildView(action: (String) -> List<V>?) = run { guildView = action }
 
     abstract fun isFromGuild(value: V): String?
 

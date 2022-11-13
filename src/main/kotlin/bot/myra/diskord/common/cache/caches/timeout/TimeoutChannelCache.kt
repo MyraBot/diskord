@@ -27,7 +27,7 @@ class TimeoutChannelCache(expireIn: Duration = 10.minutes) : TimeoutCache<String
         }
 
         guildView {
-            guildMap[it] ?: emptyList()
+            guildMap[it]
         }
         guildUpdate {
             val guildChannels = guildMap.getOrPut(it.guild) { mutableListOf() }
