@@ -9,7 +9,7 @@ enum class GatewayClosedReason(
     UNKNOWN_ERROR(4000, true, "Unknown error occurred"),
     UNKNOWN_OPCODE(4001, false, "Sent an unknown opcode", true),
     DECODE_ERROR(4002, false, "Sent an invalid payload"),
-    NOT_AUTHENTICATED(4003, false, "Sent a payload before identifying", true),
+    NOT_AUTHENTICATED(4003, false, "Sent a payload before identifying"),
     AUTHENTICATION_FAILED(4004, false, "Invalid token", true),
     ALREADY_AUTHENTICATED(4005, false, "You sent more than one identify payload"),
     INVALID_SEQUENCE(4007, false, "Invalid sequence when resuming"),
