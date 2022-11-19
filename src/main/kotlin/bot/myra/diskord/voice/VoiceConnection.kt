@@ -9,12 +9,10 @@ import bot.myra.diskord.voice.gateway.VoiceGateway
 import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
 import bot.myra.diskord.voice.gateway.models.Operations
 import bot.myra.diskord.voice.udp.UdpSocket
-import bot.myra.kommons.debug
-import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.decodeFromJsonElement
+import org.slf4j.LoggerFactory
 
 /**
  * Voice connection
@@ -31,6 +29,7 @@ class VoiceConnection(
     val guildId: String,
     val scope: CoroutineScope
 ) {
+    val logger = LoggerFactory.getLogger("Voice-$session")
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId)
     var udp: UdpSocket? = null
 
@@ -41,7 +40,7 @@ class VoiceConnection(
             .let { it.d ?: throw IllegalStateException("Invalid voice ready payload") }
             .let { JSON.decodeFromJsonElement<ConnectionReadyPayload>(it) }
         udp = UdpSocket(scope, gateway, connectionDetails).apply { openSocketConnection() }
-        debug(this::class) { "Successfully created voice connection for $guildId" }
+        logger.debug( "Successfully created voice connection for $guildId" )
     }
 
     /**

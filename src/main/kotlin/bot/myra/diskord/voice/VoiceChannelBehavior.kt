@@ -9,24 +9,25 @@ import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.gateway.events.impl.VoiceServerUpdateEvent
-import bot.myra.kommons.debug
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.serialization.json.decodeFromJsonElement
+import org.slf4j.LoggerFactory
 
 interface VoiceChannelBehavior {
     val data: ChannelData
 
-    suspend fun requestConnection(mute: Boolean = false, deaf: Boolean = false):VoiceConnection {
+    suspend fun requestConnection(mute: Boolean = false, deaf: Boolean = false): VoiceConnection {
         if (GatewayIntent.GUILD_VOICE_STATES !in Diskord.intents) throw Exception("You have to enable the GUILD_VOICE_STATES intent in order to join voice channels")
 
         val guildId = data.guildId.value ?: throw Exception("A bot can only join guild channels")
         val state = VoiceUpdate(guildId, data.id, mute, deaf)
 
-        debug(this::class) { "Requesting connection for guild ${state.guildId}" }
+        val logger = LoggerFactory.getLogger("Voice")
+        logger.debug("Requesting connection for guild ${state.guildId}")
         val packet = OpPacket(op = 4, d = state.toJsonObj(), s = null, t = null)
         Diskord.gateway.send(packet)
 
@@ -48,7 +49,7 @@ interface VoiceChannelBehavior {
 
         val (stateEvent, serverEvent) = awaitAll(voiceStateUpdateAwait, voiceServerUpdateAwait)
 
-        debug(this::class) { "Received all information ➜ opening voice gateway connection" }
+        logger.debug("Received all information ➜ opening voice gateway connection")
         return VoiceConnection(
             endpoint = (serverEvent as VoiceServerUpdateEvent).endpoint,
             session = (stateEvent as VoiceState).sessionId,

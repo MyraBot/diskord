@@ -30,8 +30,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("bot.myra:kommons:$kommons")
-
     implementation("io.ktor:ktor-client-core:$ktor")
     implementation("io.ktor:ktor-client-okhttp:$ktor")
     implementation("io.ktor:ktor-client-websockets:$ktor")
@@ -47,7 +45,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.4.0")
 
-    testImplementation("bot.myra:kommons:$kommons")
     testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")
     testImplementation("com.github.Walkyst", "lavaplayer-fork", "0a721fbec4")

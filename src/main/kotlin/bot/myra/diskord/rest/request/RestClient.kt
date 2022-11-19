@@ -8,8 +8,6 @@ import bot.myra.diskord.common.utilities.string
 import bot.myra.diskord.rest.Route
 import bot.myra.diskord.rest.request.error.*
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
-import bot.myra.kommons.debug
-import bot.myra.kommons.kDebug
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
@@ -21,12 +19,14 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
+import org.slf4j.LoggerFactory
 
 /**
  * Http client for executing rest requests.
  */
 object RestClient {
 
+    val logger = LoggerFactory.getLogger(RestClient::class.java)
     private val httpClient: HttpClient = HttpClient(OkHttp) {
         install(HttpTimeout) {
             connectTimeoutMillis = 10000
@@ -61,7 +61,8 @@ object RestClient {
      * @param request Detailed information about the request.
      * @return Returns the response as a nullable [R].
      */
-    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? = StacktraceRecovery.handleNullable(HttpRequest(route).apply { request.invoke(this) })
+    suspend fun <R> executeNullable(route: Route<R>, request: HttpRequest<R>.() -> Unit = {}): R? =
+        StacktraceRecovery.handleNullable(HttpRequest(route).apply { request.invoke(this) })
 
     /**
      * Executes a http request to the saved path of [req].
@@ -69,10 +70,10 @@ object RestClient {
      * @param req information about the to be executed [HttpRequest].
      */
     suspend fun <R> executeRequest(req: HttpRequest<R>): R? {
-        debug(this::class) { "Rest >>> ${req.route.httpMethod}: ${req.getFullPath()} - ${req.json}" }
+        logger.debug("Rest >>> ${req.route.httpMethod}: ${req.getFullPath()} - ${req.json}")
         val response = if (req.attachments.isEmpty()) bodyRequest(req) // Request doesn't contain files
         else formDataRequest(req.getFullPath(), req.json!!, req.attachments) // Request needs to send files
-        kDebug(this::class) { "Rest <<< ${response.bodyAsText()}" }
+        logger.debug("Rest <<< ${response.bodyAsText()}")
 
         if (response.status.isSuccess()) {
             @Suppress("UNCHECKED_CAST")
@@ -112,7 +113,7 @@ object RestClient {
                 }
             }
         } catch (e: HttpRequestTimeoutException) {
-            debug(RestClient::class) { "Retrying" }
+            logger.debug("Retrying")
             return bodyRequest(req)
         }
     }

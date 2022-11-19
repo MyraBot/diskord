@@ -24,7 +24,6 @@ import bot.myra.diskord.rest.behaviors.GetTextChannelBehavior
 import bot.myra.diskord.rest.bodies.ModifyCurrentUser
 import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.error.ErrorHandler
-import bot.myra.kommons.error
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.websocket.*
@@ -35,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.reflect.KFunction
 import kotlin.system.exitProcess
@@ -57,6 +57,7 @@ object Diskord : GetTextChannelBehavior {
     internal lateinit var gateway: Gateway
     lateinit var id: String
 
+    val logger = LoggerFactory.getLogger(Diskord::class.java)
     var gatewayClient = HttpClient(OkHttp) { install(WebSockets) }
     var listenersPackage: List<String> = emptyList()
     val listeners: MutableMap<EventListener, List<KFunction<*>>> = mutableMapOf()
@@ -116,14 +117,15 @@ object Diskord : GetTextChannelBehavior {
     suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
     suspend fun getMember(guild: String, member: String): Member? = EntityProvider.getMember(guild, member)
     suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
-    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> = EntityProvider.fetchMessages(channel, max, before, after)
+    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> =
+        EntityProvider.fetchMessages(channel, max, before, after)
 
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {
     builder.invoke(Diskord)
     if (Diskord.token.isBlank()) {
-        error(Diskord::class) { "Your token is invalid, aborting..." }
+        Diskord.logger.error("Your token is invalid, aborting...")
         exitProcess(-1)
     }
 }

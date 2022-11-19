@@ -7,7 +7,6 @@ import bot.myra.diskord.gateway.commands.GatewayCommand
 import bot.myra.diskord.gateway.commands.PresenceUpdate
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.handlers.*
-import bot.myra.kommons.info
 import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -122,7 +121,7 @@ class Gateway(
  * @return Returns the [Diskord] object. Just for laziness.
  */
 fun Diskord.connectGateway() {
-    info(this::class) { "Registering discord event listeners" }
+    logger.info("Registering discord event listeners")
     listenersPackage.forEach { Events.findListeners(it) }
 
     if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
