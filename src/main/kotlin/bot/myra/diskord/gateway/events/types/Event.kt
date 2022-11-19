@@ -5,8 +5,7 @@ import bot.myra.diskord.gateway.events.EventListener
 import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.rest.behaviors.DefaultBehavior
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.async
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.allSuperclasses
@@ -52,16 +51,18 @@ abstract class Event : EventAction(), DefaultBehavior {
      * @param listener Event listener superclass.
      */
     private fun runEvent(func: KFunction<*>, listener: EventListener) {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            println("caughted exception")
-            Diskord.errorHandler.onException(this, exception as Exception)
+        fun launchCatching(block: suspend CoroutineScope.() -> Unit) {
+            Events.coroutineScope.launch {
+                try {
+                    block.invoke(this)
+                } catch (e: Exception) {
+                    Diskord.errorHandler.onException(this@Event, e.cause ?: e)
+                }
+            }
         }
 
-         if (func.valueParameters.isEmpty()) {
-            Events.coroutineScope.launch(handler) { func.callSuspend(listener) }
-        } else {
-            Events.coroutineScope.async(handler) { func.callSuspend(listener, this@Event) }
-        }
+        return if (func.valueParameters.isEmpty()) launchCatching { func.callSuspend(listener) }
+        else launchCatching { func.callSuspend(listener, this@Event) }
     }
 
 }
