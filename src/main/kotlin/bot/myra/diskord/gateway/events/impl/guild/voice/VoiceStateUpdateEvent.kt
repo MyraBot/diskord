@@ -4,6 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.gateway.events.types.Event
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 
 /**
@@ -16,10 +17,12 @@ import kotlinx.serialization.SerialName
 @Suppress("MemberVisibilityCanBePrivate")
 data class VoiceStateUpdateEvent(
     @SerialName("voice_state") val newVoiceState: VoiceState,
+    val oldVoiceState: VoiceState? = runBlocking {
+        Diskord.cachePolicy.voiceState.view().find { it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId }
+    }
 ) : Event() {
 
     override suspend fun handle() {
-        val oldVoiceState = getOldVoiceState()
         if (oldVoiceState == null && newVoiceState.channelId != null) VoiceJoinEvent(newVoiceState).handle()
         else if (oldVoiceState?.channelId != null && newVoiceState.channelId == null) VoiceLeaveEvent(newVoiceState, oldVoiceState).handle()
         else if (oldVoiceState != null && oldVoiceState.channelId != newVoiceState.channelId) VoiceMoveEvent(oldVoiceState, newVoiceState).handle()
@@ -34,5 +37,4 @@ data class VoiceStateUpdateEvent(
 
     fun getMember(): Member? = newVoiceState.getMember()
     suspend fun getGuild() = newVoiceState.guildId?.let { Diskord.getGuild(it) }
-    suspend fun getOldVoiceState(): VoiceState? = Diskord.cachePolicy.voiceState.view().find { it.userId == newVoiceState.userId && it.guildId == newVoiceState.guildId }
 }
