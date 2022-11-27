@@ -19,6 +19,7 @@ abstract class GenericMessageModifier(
     var attachments: MutableList<Attachment> = mutableListOf(),
 ) : IComponentModifier, IEmbedModifier {
 
+    @Suppress("unused")
     fun ephemeral() = flags.add(MessageFlag.EPHEMERAL)
 
 }
