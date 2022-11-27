@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.entities.message.embed
 
+import bot.myra.diskord.common.entities.MessageMarker
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
  * @property url Url as hyperlink.
  * @property icon Url of author icon.
  */
+@MessageMarker
 @Serializable
 data class Author(
         var name: String,

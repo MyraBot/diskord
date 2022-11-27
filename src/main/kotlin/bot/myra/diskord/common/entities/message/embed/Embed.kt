@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.entities.message.embed
 
+import bot.myra.diskord.common.entities.MessageMarker
 import bot.myra.diskord.common.serializers.SColor
 import bot.myra.diskord.common.serializers.SInstant
 import kotlinx.serialization.SerialName
@@ -8,6 +9,7 @@ import java.awt.Color
 import java.time.Instant
 
 @Suppress("unused")
+@MessageMarker
 @Serializable
 data class Embed(
     var title: String? = null,
@@ -16,16 +18,31 @@ data class Embed(
     var url: String? = null,
     @Serializable(with = SInstant::class) var timestamp: Instant? = null,
     @SerialName("color") @Serializable(with = SColor::class) var colour: Color? = null,
-    var footer: Footer? = null,
-    var image: Image? = null,
-    var thumbnail: Thumbnail? = null,
-    var author: Author? = null,
+    internal var footer: Footer? = null,
+    private var image: Image? = null,
+    @SerialName("thumbnail") private var _thumbnail: Thumbnail? = null,
+    internal var author: Author? = null,
     val fields: MutableList<Field> = mutableListOf(),
 ) {
+    var thumbnail: String?
+        get() = _thumbnail?.url
+        set(value) {
+            _thumbnail = value?.let { Thumbnail(it) }
+        }
+
+    suspend fun author(data: suspend Author.() -> Unit) {
+        this.author = Author("", null, null).apply { data.invoke(this) }
+    }
+
     suspend fun addField(data: suspend Field.() -> Unit) {
-        val field = Field("", "").also { data.invoke(it) }
+        val field = Field("", "").apply { data.invoke(this) }
         fields.add(field)
     }
+
+    suspend fun footer(data: suspend Footer.() -> Unit) {
+        this.footer = Footer("", null).apply { data.invoke(this) }
+    }
+
 }
 
 suspend fun embed(builder: suspend Embed.() -> Unit): Embed = Embed().apply { builder.invoke(this) }

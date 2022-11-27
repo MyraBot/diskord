@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.entities.message.embed
 
+import bot.myra.diskord.common.entities.MessageMarker
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,6 +10,7 @@ import kotlinx.serialization.Serializable
  * @property text Footer text.
  * @property icon Url of footer icon.
  */
+@MessageMarker
 @Serializable
 data class Footer(
         var text: String,
