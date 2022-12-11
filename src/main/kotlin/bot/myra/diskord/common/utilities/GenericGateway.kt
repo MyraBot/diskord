@@ -10,6 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
+import java.io.EOFException
 import kotlin.time.Duration.Companion.seconds
 
 abstract class GenericGateway(
@@ -71,7 +72,11 @@ abstract class GenericGateway(
             if (resume) logger.info("Resuming gateway connection")
             else logger.info("Connecting to gateway")
 
-            socket = client.webSocketSession(url) { expectSuccess = false }
+            try {
+                socket = client.webSocketSession(url) { expectSuccess = false }
+            } catch (e: EOFException) {
+               logger.error("ERROR!!! = ${e.message}")
+            }
 
             socket?.apply {
                 state = GatewayState.RUNNING
