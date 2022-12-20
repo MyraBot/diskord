@@ -1,6 +1,5 @@
 package bot.myra.diskord.common.entities.message.embed
 
-import bot.myra.diskord.common.entities.MessageMarker
 import bot.myra.diskord.common.serializers.SColor
 import bot.myra.diskord.common.serializers.SInstant
 import kotlinx.serialization.SerialName
@@ -9,7 +8,6 @@ import java.awt.Color
 import java.time.Instant
 
 @Suppress("unused")
-@MessageMarker
 @Serializable
 data class Embed(
     var title: String? = null,
