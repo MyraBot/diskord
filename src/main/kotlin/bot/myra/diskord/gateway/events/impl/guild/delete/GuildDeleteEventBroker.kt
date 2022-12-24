@@ -10,7 +10,7 @@ class GuildDeleteEventBroker(
 ) : EventBroker() {
 
     override suspend fun choose(): EventAction? {
-        val shadowedGuild = Diskord.lazyLoadedGuilds.none { it == guild.id }
+        val shadowedGuild = Diskord.unavailableGuilds.any { it.key == guild.id }
         if (shadowedGuild) return null // Guild got removed by trust and safety team
 
         return when (guild.gotKicked) {

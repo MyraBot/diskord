@@ -67,9 +67,23 @@ object Diskord : GetTextChannelBehavior {
 
     var initialConnection: Boolean = true
     val guildIds: MutableSet<String> = mutableSetOf()
-    val lazyLoadedGuilds: MutableSet<String> = mutableSetOf()
-    var unavailableGuilds: MutableSet<String> = mutableSetOf()
-    val pendingGuilds: MutableMap<String, CompletableDeferred<Guild>> = mutableMapOf()
+
+    /**
+     * Stores all unavailable guilds from the ready event
+     * until we receive a guild create event, which we can
+     * use to refill the guilds' data.
+     *
+     * So this map contains
+     * - Normal unavailable guilds
+     * - Shadowed guilds (Guilds which got removed by Discords trust and saftey team)
+     *
+     * If we receive a guild delete event of such guild and the
+     * guild is still in here (so that means that I didn't receive
+     * a guild create event) we know that the guild is a shadowed guild,
+     * so it got removed by Discords trust and safety team. This is handled
+     * in the [bot.myra.diskord.gateway.events.impl.ReadyEvent]
+     */
+    var unavailableGuilds: MutableMap<String, CompletableDeferred<Guild>> = mutableMapOf()
 
     fun addListeners(vararg listeners: EventListener) = listeners.forEach(EventListener::loadListeners)
     fun intents(vararg intents: GatewayIntent) = this.intents.addAll(intents)
@@ -98,15 +112,16 @@ object Diskord : GetTextChannelBehavior {
 
     fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
-        when (cachePolicy.guild.update === null) { // Whether cache is disabled
-            true  -> copiedIds.forEach { id -> emitGuildFromCache(id) } //TODO shouldnt these be the other way round?
-            false -> copiedIds.forEach { id -> this@Diskord.getGuild(id).value?.let { emit(it) } }
+        copiedIds.forEach { id ->
+            println("Pending guilds: $unavailableGuilds")
+            val guild = unavailableGuilds[id]?.await()?.also { println("getting from pending guilds") } ?: getGuild(id).value
+            guild?.let { emit(it) }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
         val guild: Guild? = cachePolicy.guild.get(id).value ?: run {
-            pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id).value
+            unavailableGuilds[id]?.await() ?: EntityProvider.getGuild(id).value
         }
         guild?.let { emit(it) }
     }

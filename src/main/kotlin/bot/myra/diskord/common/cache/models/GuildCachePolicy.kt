@@ -24,8 +24,7 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
         Diskord.guildIds.add(event.guild.id)
         update(guild)
 
-        Diskord.lazyLoadedGuilds.add(event.guild.id)
-        Diskord.pendingGuilds[event.guild.id]?.complete(guild)
+        Diskord.unavailableGuilds.remove(event.guild.id)?.complete(guild)
     }
 
     @ListenTo(GuildLeaveEvent::class)

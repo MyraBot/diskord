@@ -4,6 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.guild.UnavailableGuild
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.gateway.events.types.Event
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,8 +22,11 @@ data class ReadyEvent(
             gateway.session = sessionId
             gateway.resumeUrl = resumeGatewayUrl
             id = botUser.id
+
             guildIds.addAll(guilds.map(UnavailableGuild::id))
-            unavailableGuilds.addAll(guilds.map(UnavailableGuild::id))
+            unavailableGuilds.putAll(guilds
+                .filter { it.unavailable == true }
+                .map { Pair(it.id, CompletableDeferred()) })
         }
 
         if (Diskord.initialConnection) {
