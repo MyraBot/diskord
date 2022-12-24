@@ -20,7 +20,7 @@ interface InteractionCreateBehavior {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, message.apply { transform() }).toJson()
@@ -30,7 +30,7 @@ interface InteractionCreateBehavior {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
         acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
@@ -41,7 +41,7 @@ interface InteractionCreateBehavior {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
     suspend fun editOriginal(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
         editOriginal(files.asList(), interaction.asModifier().apply { message.invoke(this) })
@@ -52,7 +52,7 @@ interface InteractionCreateBehavior {
             arg("application.id", Diskord.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
     /**
      * Edits the original [Interaction.message].
@@ -66,7 +66,7 @@ interface InteractionCreateBehavior {
             arg("interaction.id", interaction.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
     suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply { modifier.invoke(this) })
 
@@ -75,6 +75,6 @@ interface InteractionCreateBehavior {
             arg("application.id", Diskord.id)
             arg("interaction.token", interaction.token)
         }
-    }
+    }.value!!
 
 }
