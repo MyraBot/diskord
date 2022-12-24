@@ -10,9 +10,11 @@ class GuildCreateEventBroker(
 ) : EventBroker() {
 
     override suspend fun choose(): EventAction {
-        Diskord.unavailableGuilds.remove(guild.id)?.complete(guild.toGuild())
         return when (guild.id in Diskord.unavailableGuilds && guild.available) {
-            true  -> GuildAvailableEvent(guild)
+            true  -> {
+                Diskord.unavailableGuilds.remove(guild.id)?.complete(guild.toGuild())
+                GuildAvailableEvent(guild)
+            }
             false -> GuildCreateEvent(guild)
         }
     }
