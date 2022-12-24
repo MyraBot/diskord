@@ -48,6 +48,7 @@ dependencies {
     testImplementation(kotlin("reflect"))
     testImplementation("org.reflections:reflections:0.10.2")
     testImplementation("com.github.Walkyst", "lavaplayer-fork", "0a721fbec4")
+    testImplementation("ch.qos.logback", "logback-classic", "1.2.3") // Logger
 }
 
 // Publishing
