@@ -17,7 +17,7 @@ data class Embed(
     @Serializable(with = SInstant::class) var timestamp: Instant? = null,
     @SerialName("color") @Serializable(with = SColor::class) var colour: Color? = null,
     internal var footer: Footer? = null,
-    private var image: Image? = null,
+    @SerialName("image") private var _image: Image? = null,
     @SerialName("thumbnail") private var _thumbnail: Thumbnail? = null,
     internal var author: Author? = null,
     val fields: MutableList<Field> = mutableListOf(),
@@ -26,6 +26,12 @@ data class Embed(
         get() = _thumbnail?.url
         set(value) {
             _thumbnail = value?.let { Thumbnail(it) }
+        }
+
+    var image: String?
+        get() = _image?.url
+        set(value) {
+            _image = value?.let { Image(it) }
         }
 
     suspend fun author(data: suspend Author.() -> Unit) {
