@@ -15,6 +15,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -68,7 +69,10 @@ object RestClient {
 
         val status = response.status
         return if (status.isSuccess()) {
-            val value = JSON.decodeFromString(req.route.serializer, response.bodyAsText())
+            val value = when(req.route.serializer == Unit.serializer()) {
+                true -> Unit as R
+                false -> JSON.decodeFromString(req.route.serializer, response.bodyAsText())
+            }
             Result(value, status, null)
         } else {
             val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
