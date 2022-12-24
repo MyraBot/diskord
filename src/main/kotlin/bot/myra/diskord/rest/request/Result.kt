@@ -32,9 +32,8 @@ data class Result<T>(
     }
 
     suspend fun orTry(result: suspend () -> Result<T>): Result<T> {
-        val res = result.invoke()
-        return if (res.status.isSuccess()) res
-        else this
+        return if (status.isSuccess()) this
+        else result.invoke()
     }
 
 }
