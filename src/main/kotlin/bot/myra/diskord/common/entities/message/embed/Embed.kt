@@ -19,7 +19,7 @@ data class Embed(
     internal var footer: Footer? = null,
     @SerialName("image") private var _image: Image? = null,
     @SerialName("thumbnail") private var _thumbnail: Thumbnail? = null,
-    internal var author: Author? = null,
+    var author: Author? = null,
     val fields: MutableList<Field> = mutableListOf(),
 ) {
     var thumbnail: String?
