@@ -16,7 +16,7 @@ data class Embed(
     var url: String? = null,
     @Serializable(with = SInstant::class) var timestamp: Instant? = null,
     @SerialName("color") @Serializable(with = SColor::class) var colour: Color? = null,
-    internal var footer: Footer? = null,
+    var footer: Footer? = null,
     @SerialName("image") private var _image: Image? = null,
     @SerialName("thumbnail") private var _thumbnail: Thumbnail? = null,
     var author: Author? = null,
