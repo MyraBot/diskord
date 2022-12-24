@@ -1,7 +1,6 @@
 package bot.myra.diskord.common.entities.user
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.channel.DmChannel
 import bot.myra.diskord.common.utilities.Mention
 import bot.myra.diskord.common.utilities.toJson
@@ -10,6 +9,7 @@ import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.bodies.DmCreation
 import bot.myra.diskord.rest.request.RestClient
+import bot.myra.diskord.rest.request.Result
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -45,7 +45,7 @@ class User(
             }
             return banner
         } else {
-            val user = Diskord.getUser(id)
+            val user = Diskord.getUser(id).value
             val hash = user!!.bannerHash.value ?: return null
             return CdnEndpoints.userBanner.apply {
                 arg("user_id", id)
@@ -56,15 +56,14 @@ class User(
 
     suspend fun getFlags(): List<UserFlag> {
         return if (!flags.missing) flags.value!!
-        else Diskord.getUser(id)!!.flags.value!!
+        else Diskord.getUser(id).value!!.flags.value!!
     }
 
-    suspend fun openDms(): DmChannel? {
-        val channel: ChannelData = RestClient.executeNullable(Endpoints.createDm) {
+    suspend fun openDms(): Result<DmChannel> {
+        return RestClient.execute(Endpoints.createDm) {
             ignoreBadRequest = true
             json = DmCreation(id).toJson()
-        } ?: return null
-        return DmChannel(channel)
+        }.transformValue { DmChannel(it) }
     }
 
 }

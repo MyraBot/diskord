@@ -6,7 +6,7 @@ import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.MemberData
 import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.rest.behaviors.getChannel
-import kotlinx.coroutines.runBlocking
+import bot.myra.diskord.rest.request.Result
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
@@ -46,6 +46,5 @@ data class VoiceState(
     val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
 
     fun getMember(): Member? = guildId?.let { Member.withUserInMember(memberData!!, it) }
-    suspend fun getChannel(): VoiceChannel? = channelId?.let { Diskord.getChannel(it) }
-    val channel: VoiceChannel? get() = runBlocking { getChannel() }
+    suspend fun getChannel(): Result<VoiceChannel>? = channelId?.let { Diskord.getChannel(it) }
 }

@@ -7,9 +7,9 @@ import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.gateway.GatewayIntent
 import bot.myra.diskord.gateway.events.ListenTo
 import bot.myra.diskord.gateway.events.impl.message.BulkMessageDeleteEvent
-import bot.myra.diskord.gateway.events.impl.message.create.GenericMessageCreateEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageDeleteEvent
 import bot.myra.diskord.gateway.events.impl.message.MessageUpdateEvent
+import bot.myra.diskord.gateway.events.impl.message.create.GenericMessageCreateEvent
 
 class MutableMessageCachePolicy : MessageCachePolicy() {
 
@@ -22,7 +22,7 @@ class MutableMessageCachePolicy : MessageCachePolicy() {
 
     @ListenTo(MessageUpdateEvent::class)
     suspend fun onMessageUpdate(event: MessageUpdateEvent) {
-        val message = get(event.updatedMessage.id) ?: return
+        val message = get(event.updatedMessage.id).value ?: return
         val updatedMessage = Message(
             id = message.id,
             channelId = message.channelId,

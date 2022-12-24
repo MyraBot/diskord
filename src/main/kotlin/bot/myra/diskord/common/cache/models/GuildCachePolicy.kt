@@ -35,12 +35,12 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     }
 
     @ListenTo(RoleCreateEvent::class)
-    suspend fun onRoleCreate(event: RoleCreateEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleCreate(event: RoleCreateEvent) = get(event.guildId).value?.apply {
         roles = roles.toMutableList().apply { add(event.role) }
     }
 
     @ListenTo(RoleUpdateEvent::class)
-    suspend fun onRoleUpdate(event: RoleUpdateEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleUpdate(event: RoleUpdateEvent) = get(event.guildId).value?.apply {
         roles = roles.toMutableList().apply {
             removeIf { it.id == event.role.id }
             add(event.role)
@@ -48,7 +48,7 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     }
 
     @ListenTo(RoleDeleteEvent::class)
-    suspend fun onRoleDelete(event: RoleDeleteEvent) = get(event.guildId)?.apply {
+    suspend fun onRoleDelete(event: RoleDeleteEvent) = get(event.guildId).value?.apply {
         roles = roles.toMutableList().apply { removeIf { it.id == event.roleId } }
     }
 

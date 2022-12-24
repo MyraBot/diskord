@@ -9,32 +9,33 @@ import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.bodies.DeleteMessagesBody
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient
+import bot.myra.diskord.rest.request.Result
 
 @Suppress("unused")
 interface TextChannelBehavior {
 
     val data: ChannelData
 
-    suspend fun send(vararg files: File = emptyArray(), message: MessageModifier): Message? {
+    suspend fun send(vararg files: File = emptyArray(), message: MessageModifier): Result<Message> {
         val msg = message.apply { transform() }
-        return RestClient.executeNullable(Endpoints.createMessage) {
+        return RestClient.execute(Endpoints.createMessage) {
             json = msg.toJson()
             attachments = files.toList()
             arguments { arg("channel.id", data.id) }
         }
     }
 
-    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageModifier.() -> Unit): Message? {
+    suspend fun send(vararg files: File = emptyArray(), message: suspend MessageModifier.() -> Unit): Result<Message> {
         return send(files = files, message = MessageModifier().also { message.invoke(it) })
     }
 
-    suspend fun send(vararg files: File): Message? {
+    suspend fun send(vararg files: File): Result<Message> {
         return send(files = files, message = MessageModifier())
     }
 
-    suspend fun getMessage(id: String): Message? = Diskord.getMessage(data.id, id)
+    suspend fun getMessage(id: String): Result<Message> = Diskord.getMessage(data.id, id)
 
-    suspend fun getMessages(max: Int = 100, before: String? = null, after: String? = null): List<Message> = Diskord.fetchMessages(data.id, max, before, after)
+    suspend fun getMessages(max: Int = 100, before: String? = null, after: String? = null) = Diskord.fetchMessages(data.id, max, before, after)
 
     suspend fun deleteMessages(ids: List<String>, reason: String? = null) = RestClient.execute(Endpoints.bulkDeleteMessages) {
         if (ids.size < 2) throw IllegalArgumentException("There must be at least 2 messages to delete")

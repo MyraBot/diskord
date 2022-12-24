@@ -8,6 +8,6 @@ class PrivateMessageCreateEvent(
     val message: Message
 ) : Event() {
 
-    suspend fun getChannel():DmChannel? = message.getChannelAs()
+    suspend fun getChannel() = message.getChannelAs<DmChannel>()
 
 }

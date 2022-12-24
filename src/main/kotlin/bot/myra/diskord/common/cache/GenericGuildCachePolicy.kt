@@ -1,5 +1,6 @@
 package bot.myra.diskord.common.cache
 
+import bot.myra.diskord.rest.request.Result
 import kotlinx.coroutines.sync.withLock
 
 abstract class GenericGuildCachePolicy<K, V>(
@@ -28,7 +29,7 @@ abstract class GenericGuildCachePolicy<K, V>(
         return super.view()
     }
 
-    override suspend fun get(key: K): V? {
+    override suspend fun get(key: K): Result<V> {
         return super.get(key)
     }
 
@@ -48,6 +49,6 @@ abstract class GenericGuildCachePolicy<K, V>(
 
     suspend fun viewByGuild(guild: String): List<V>? = mutex.withLock { guildView?.invoke(guild) }
 
-    suspend fun getGuild(id: K): String? = get(id)?.let { value -> isFromGuild(value) }
+    suspend fun getGuild(id: K): String? = get(id).value?.let { value -> isFromGuild(value) }
 
 }

@@ -15,7 +15,7 @@ class ButtonClickEvent(
     override val component: InteractionComponentData
 ) : GenericMessageComponentEvent(interaction, component) {
     val message: Message = interaction.message.value!!
-    val guild: Guild? get() = runBlocking { EntityProvider.getGuild(interaction.guildId.value!!) }
+    val guild: Guild? get() = runBlocking { EntityProvider.getGuild(interaction.guildId.value!!).value }
     val member: Member? get() = interaction.member
     val button: Button
         get() = message.components

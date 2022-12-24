@@ -5,6 +5,7 @@ import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
 import bot.myra.diskord.rest.request.RestClient
+import bot.myra.diskord.rest.request.Result
 import java.net.URLEncoder
 
 @Suppress("unused")
@@ -19,7 +20,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
      * @param messageModifier The new message.
      * @return Returns the new message.
      */
-    suspend fun edit(messageModifier: MessageModifier): Message = RestClient.execute(Endpoints.editMessage) {
+    suspend fun edit(messageModifier: MessageModifier): Result<Message> = RestClient.execute(Endpoints.editMessage) {
         json = messageModifier.toJson()
         arguments {
             arg("channel.id", message.channelId)
@@ -27,7 +28,7 @@ interface MessageBehavior : GetTextChannelBehavior, Entity {
         }
     }
 
-    suspend fun edit(messageModifier: suspend MessageModifier.() -> Unit): Message = edit(message.asModifier().apply { messageModifier.invoke(this) })
+    suspend fun edit(messageModifier: suspend MessageModifier.() -> Unit) = edit(message.asModifier().apply { messageModifier.invoke(this) })
 
     suspend fun delete() = RestClient.execute(Endpoints.deleteMessage) {
         arguments {

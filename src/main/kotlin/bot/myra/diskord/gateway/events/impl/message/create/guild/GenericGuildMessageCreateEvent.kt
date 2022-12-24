@@ -11,5 +11,5 @@ abstract class GenericGuildMessageCreateEvent(
 ) : GenericMessageCreateEvent(message) {
     suspend fun getGuild() = message.getGuild()!!
     open suspend fun getMember(): Member? = message.getMember()
-    suspend fun getChannel(): TextChannel = message.getChannelAs()!!
+    suspend fun getChannel() = message.getChannelAs<TextChannel>().value!!
 }

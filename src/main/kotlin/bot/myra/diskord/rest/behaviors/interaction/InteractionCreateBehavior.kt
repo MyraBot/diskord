@@ -5,7 +5,6 @@ import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackType
 import bot.myra.diskord.common.entities.applicationCommands.InteractionResponseData
-import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.InteractionModifier
@@ -71,7 +70,7 @@ interface InteractionCreateBehavior {
 
     suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply { modifier.invoke(this) })
 
-    suspend fun getInteractionResponse(): Message = RestClient.execute(Endpoints.getOriginalInteractionResponse) {
+    suspend fun getInteractionResponse() = RestClient.execute(Endpoints.getOriginalInteractionResponse) {
         arguments {
             arg("application.id", Diskord.id)
             arg("interaction.token", interaction.token)

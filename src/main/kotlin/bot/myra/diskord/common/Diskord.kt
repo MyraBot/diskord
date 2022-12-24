@@ -7,8 +7,6 @@ import bot.myra.diskord.common.Diskord.listeners
 import bot.myra.diskord.common.cache.CachePolicy
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.guild.Guild
-import bot.myra.diskord.common.entities.guild.Member
-import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.utilities.FileFormats
 import bot.myra.diskord.common.utilities.toJson
@@ -83,7 +81,7 @@ object Diskord : GetTextChannelBehavior {
         gateway.updatePresence(newPresence)
     }
 
-    suspend fun updateAvatar(bytes: ByteArray, file: FileFormats): User {
+    suspend fun updateAvatar(bytes: ByteArray, file: FileFormats): User? {
         val supportedFileTypes = listOf(FileFormats.JPEG, FileFormats.PNG)
         if (file !in supportedFileTypes) throw UnsupportedOperationException("${file.name} isn't supported as avatars")
 
@@ -91,35 +89,33 @@ object Diskord : GetTextChannelBehavior {
         val avatarString = "data:image/${file.extension};base64,$base64"
         return RestClient.execute(Endpoints.modifyCurrentUser) {
             json = ModifyCurrentUser(getBotUser().username, avatarString).toJson()
-        }
+        }.value
     }
 
     suspend fun getApplicationCommands(): List<SlashCommand> = EntityProvider.getApplicationCommands()
     suspend fun getBotUser(): User = EntityProvider.getUserNonNull(this.id)
-    suspend fun getUser(id: String): User? = EntityProvider.getUser(id)
+    suspend fun getUser(id: String) = EntityProvider.getUser(id)
 
     fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = guildIds.toList()
-        when (cachePolicy.guild.update === null) {
-            true  -> copiedIds.forEach { id -> emitGuildFromCache(id) }
-            false -> copiedIds.forEach { id -> this@Diskord.getGuild(id)?.let { emit(it) } }
+        when (cachePolicy.guild.update === null) { // Whether cache is disabled
+            true  -> copiedIds.forEach { id -> emitGuildFromCache(id) } //TODO shouldnt these be the other way round?
+            false -> copiedIds.forEach { id -> this@Diskord.getGuild(id).value?.let { emit(it) } }
         }
     }
 
     private suspend fun FlowCollector<Guild>.emitGuildFromCache(id: String) {
-        val guild: Guild? = cachePolicy.guild.get(id) ?: run {
-            pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id)
+        val guild: Guild? = cachePolicy.guild.get(id).value ?: run {
+            pendingGuilds[id]?.await() ?: EntityProvider.getGuild(id).value
         }
         guild?.let { emit(it) }
     }
 
-    suspend fun getGuild(id: String): Guild? = EntityProvider.getGuild(id)
-    suspend fun fetchGuild(id: String): Guild? = EntityProvider.fetchGuild(id)
-    suspend fun getMember(guild: String, member: String): Member? = EntityProvider.getMember(guild, member)
-    suspend fun getMessage(channel: String, message: String): Message? = EntityProvider.getMessage(channel, message)
-    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null): List<Message> =
-        EntityProvider.fetchMessages(channel, max, before, after)
-
+    suspend fun getGuild(id: String) = EntityProvider.getGuild(id)
+    suspend fun fetchGuild(id: String) = EntityProvider.fetchGuild(id)
+    suspend fun getMember(guild: String, member: String) = EntityProvider.getMember(guild, member)
+    suspend fun getMessage(channel: String, message: String) = EntityProvider.getMessage(channel, message)
+    suspend fun fetchMessages(channel: String, max: Int = 100, before: String? = null, after: String? = null) = EntityProvider.fetchMessages(channel, max, before, after)
 }
 
 fun diskord(builder: suspend Diskord.() -> Unit) = CoroutineScope(Dispatchers.Default).launch {

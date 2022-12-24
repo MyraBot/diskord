@@ -4,6 +4,7 @@ import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.request.RestClient
+import bot.myra.diskord.rest.request.Result
 
 @Suppress("unused")
 interface MemberBehavior : Entity {
@@ -12,7 +13,7 @@ interface MemberBehavior : Entity {
 
     suspend fun addRole(role: Role) = addRole(role.id)
 
-    suspend fun addRole(id: String) {
+    suspend fun addRole(id: String): Result<Unit> {
         return RestClient.execute(Endpoints.addMemberRole) {
             arguments {
                 arg("guild.id", guildId)
@@ -24,7 +25,7 @@ interface MemberBehavior : Entity {
 
     suspend fun removeRole(role: Role) = removeRole(role.id)
 
-    suspend fun removeRole(id: String) {
+    suspend fun removeRole(id: String): Result<Unit> {
         return RestClient.execute(Endpoints.removeMemberRole) {
             arguments {
                 arg("guild.id", guildId)

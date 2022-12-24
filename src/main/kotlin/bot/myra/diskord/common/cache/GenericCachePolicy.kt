@@ -1,6 +1,8 @@
 package bot.myra.diskord.common.cache
 
 import bot.myra.diskord.gateway.events.EventListener
+import bot.myra.diskord.rest.request.Result
+import io.ktor.http.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -25,7 +27,12 @@ abstract class GenericCachePolicy<K, V>(
     fun remove(action: RemoveCache<CacheKey<K>>) = run { remove = action }
 
     open suspend fun view(): List<V> = mutex.withLock { view?.invoke() ?: emptyList() }
-    open suspend fun get(key: K) = mutex.withLock { get?.invoke(key) }
+    open suspend fun get(key: K): Result<V> = mutex.withLock {
+        val value = get?.invoke(key)
+        if (value == null) Result(null, HttpStatusCode.NotFound, null)
+        else Result(value, HttpStatusCode.OK, null)
+    }
+
     open suspend fun update(value: V) = mutex.withLock { update?.invoke(value) }
     open suspend fun remove(key: K, guild: String? = null) = mutex.withLock { remove?.invoke(CacheKey(guild, key)) }
 

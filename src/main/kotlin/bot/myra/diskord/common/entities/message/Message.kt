@@ -55,11 +55,11 @@ data class Message(
     suspend fun getMember(): Member? {
         return if (guildId.missing) null
         else if (memberData != null) Member.withUser(memberData, guildId.value!!, user)
-        else Diskord.getMember(guildId.value!!, id)
+        else Diskord.getMember(guildId.value!!, id).value
     }
 
-    suspend fun getChannel(): ChannelData? = Diskord.getChannel(channelId)
-    suspend inline fun <reified T> getChannelAs(): T? = Diskord.getChannel<T>(channelId)
+    suspend fun getChannel() = Diskord.getChannel<ChannelData>(channelId)
+    suspend inline fun <reified T> getChannelAs() = Diskord.getChannel<T>(channelId)
 
     fun asModifier(): MessageModifier = MessageModifier().apply {
         content = this@Message.content

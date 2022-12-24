@@ -9,5 +9,5 @@ import kotlinx.coroutines.runBlocking
 @Suppress("unused")
 abstract class GenericGuildDeleteEvent(
     open val guild: UnavailableGuild,
-    var cachedGuild: Guild? = runBlocking { Diskord.getGuild(guild.id) }
+    var cachedGuild: Guild? = runBlocking { Diskord.getGuild(guild.id).value }
 ) : Event()

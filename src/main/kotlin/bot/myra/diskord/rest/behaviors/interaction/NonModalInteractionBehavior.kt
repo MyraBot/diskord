@@ -7,5 +7,5 @@ import bot.myra.diskord.rest.behaviors.getChannel
 
 interface NonModalInteractionBehavior {
     val interaction: Interaction
-    suspend fun getChannel(): TextChannel? = Diskord.getChannel(interaction.channelId.value!!)
+    suspend fun getChannel() = Diskord.getChannel<TextChannel>(interaction.channelId.value!!)
 }

@@ -6,6 +6,6 @@ import bot.myra.diskord.rest.request.RestClient
 
 interface DefaultBehavior {
 
-    suspend fun getApplication():Application = RestClient.execute(Endpoints.getBotApplication)
+    suspend fun getApplication(): Application = RestClient.execute(Endpoints.getBotApplication).getOrThrow()
 
 }
