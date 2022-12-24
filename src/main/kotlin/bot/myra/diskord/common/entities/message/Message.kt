@@ -25,7 +25,7 @@ import java.time.Instant
 data class Message(
     override val id: String,
     @SerialName("channel_id") val channelId: String,
-    @SerialName("guild_id") internal val guildId: Optional<String> = Optional.Missing(),
+    @SerialName("guild_id") val guildId: Optional<String> = Optional.Missing(),
     @SerialName("author") val user: User,
     @SerialName("member") internal val memberData: MemberData? = null,
     val content: String,
