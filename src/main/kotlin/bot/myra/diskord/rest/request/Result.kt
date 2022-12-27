@@ -1,38 +1,44 @@
 package bot.myra.diskord.rest.request
 
+import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.rest.request.error.BadReqException
 import bot.myra.diskord.rest.request.error.MissingPermissionsException
-import bot.myra.diskord.rest.request.error.ModificationException
 import bot.myra.diskord.rest.request.error.NotFoundException
+import bot.myra.diskord.rest.request.error.RestStatus
 import io.ktor.http.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonElement
 
 data class Result<T>(
     val value: T? = null,
-    val status: HttpStatusCode,
-    val errorMessage: String?
+    private val statusRaw: HttpStatusCode,
+    val error: JsonElement?
 ) {
+    val status: RestStatus = RestStatus.getByStatusCode(statusRaw.value)
 
     fun getOrThrow(): T {
-        if (status.isSuccess()) return value!!
+        if (status.success) return value!!
 
-        val message = errorMessage ?: "No error message provided"
         throw when (status) {
-            HttpStatusCode.NotModified      -> ModificationException(message)
-            HttpStatusCode.BadRequest       -> BadReqException(message)
-            HttpStatusCode.Unauthorized     -> Exception("Unauthorized") // Internal exception
-            HttpStatusCode.Forbidden        -> MissingPermissionsException(message)
-            HttpStatusCode.NotFound         -> NotFoundException(message)
-            HttpStatusCode.MethodNotAllowed -> Exception("Method not allowed") // Internal exception
-            else                            -> Exception("Unknown error: ${status.description} (${status.value}) - $message")
+            is RestStatus.BadRequest         -> BadReqException(status.message)
+            is RestStatus.Unauthorized       -> Exception(status.message) // Internal exception
+            is RestStatus.MissingPermissions -> MissingPermissionsException(status.message)
+            is RestStatus.NotFound           -> NotFoundException(status.message)
+            is RestStatus.MethodNotAllowed   -> Exception(status.message) // Internal exception
+            is RestStatus.GatewayUnavailable -> Exception(status.message)
+            else                             -> {
+                val jsonString = error?.let { JSON.encodeToString(it) }
+                Exception("Unknown error: ${statusRaw.description} (${statusRaw.value}) - $jsonString")
+            }
         }
     }
 
     fun <R> transformValue(function: (T) -> R): Result<R> {
-        return Result(value?.let(function), status, errorMessage)
+        return Result(value?.let(function), statusRaw, error)
     }
 
     suspend fun orTry(result: suspend () -> Result<T>): Result<T> {
-        return if (status.isSuccess()) this
+        return if (status.success) this
         else result.invoke()
     }
 

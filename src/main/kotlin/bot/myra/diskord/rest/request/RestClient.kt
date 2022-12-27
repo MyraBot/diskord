@@ -4,9 +4,9 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.utilities.FileFormats
 import bot.myra.diskord.common.utilities.JSON
-import bot.myra.diskord.common.utilities.string
 import bot.myra.diskord.rest.Route
 import bot.myra.diskord.rest.request.error.RecoverableException
+import bot.myra.diskord.rest.request.error.RestStatus
 import bot.myra.diskord.rest.request.error.rateLimits.RateLimitWorker
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
@@ -17,7 +17,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.slf4j.LoggerFactory
 
@@ -75,11 +75,10 @@ object RestClient {
             }
             Result(value, status, null)
         } else {
-            val error = JSON.decodeFromString<JsonObject>(response.bodyAsText())
-            val errorMessage = error["message"]?.string
-
-            if (status == HttpStatusCode.TooManyRequests) RateLimitWorker.queue(req, JSON.decodeFromJsonElement(error))
-            return Result(null, status, errorMessage)
+            val error = JSON.decodeFromString<JsonElement>(response.bodyAsText())
+            val restStatus = RestStatus.getByStatusCode(status.value)
+            if (restStatus is RestStatus.TooManyRequests)RateLimitWorker.queue(req, JSON.decodeFromJsonElement(error))
+            return Result(null, status, error)
         }
     }
 
