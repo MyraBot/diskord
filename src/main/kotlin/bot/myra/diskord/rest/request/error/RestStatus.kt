@@ -4,7 +4,7 @@ import kotlin.reflect.full.primaryConstructor
 
 
 sealed class RestStatus(
-    val status: Int,
+    val code: Int,
     val success: Boolean,
     val message: String
 ) {
@@ -15,7 +15,7 @@ sealed class RestStatus(
                 .asSequence()
                 .filter { it != UnknownError::class }
                 .mapNotNull { it.primaryConstructor?.call() }
-                .find { it.status == status }
+                .find { it.code == status }
                 ?: UnknownError(status)
     }
 
