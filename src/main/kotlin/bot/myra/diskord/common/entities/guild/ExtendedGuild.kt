@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 data class ExtendedGuild(
     override val id: String,
     val name: String,
+    @SerialName("icon")
     val iconHash: String?,
     val splashHash: String?,
     val discoverySplashHash: String?,
