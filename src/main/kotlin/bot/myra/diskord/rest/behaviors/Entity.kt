@@ -1,7 +1,10 @@
 package bot.myra.diskord.rest.behaviors
 
-interface Entity : DefaultBehavior {
+import bot.myra.diskord.common.Diskord
 
+interface Entity : DefaultBehavior, DiskordObject {
     val id: String
-
+}
+interface DiskordObject {
+    val diskord: Diskord
 }

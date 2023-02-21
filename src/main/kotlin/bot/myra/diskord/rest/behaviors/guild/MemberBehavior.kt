@@ -8,13 +8,12 @@ import bot.myra.diskord.rest.request.Result
 
 @Suppress("unused")
 interface MemberBehavior : Entity {
-
     val guildId: String
 
     suspend fun addRole(role: Role) = addRole(role.id)
 
     suspend fun addRole(id: String): Result<Unit> {
-        return RestClient.execute(Endpoints.addMemberRole) {
+        return diskord.rest.execute(Endpoints.addMemberRole) {
             arguments {
                 arg("guild.id", guildId)
                 arg("user.id", this@MemberBehavior.id)
@@ -26,7 +25,7 @@ interface MemberBehavior : Entity {
     suspend fun removeRole(role: Role) = removeRole(role.id)
 
     suspend fun removeRole(id: String): Result<Unit> {
-        return RestClient.execute(Endpoints.removeMemberRole) {
+        return diskord.rest.execute(Endpoints.removeMemberRole) {
             arguments {
                 arg("guild.id", guildId)
                 arg("user.id", this@MemberBehavior.id)

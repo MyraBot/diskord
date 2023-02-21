@@ -3,11 +3,11 @@ package bot.myra.diskord.common.cache.caches.default
 import bot.myra.diskord.common.cache.VoiceStateCacheKey
 import bot.myra.diskord.common.cache.models.MutableVoiceStateCachePolicy
 import bot.myra.diskord.common.cache.models.VoiceStateCachePolicy
-import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.common.entities.guild.voice.VoiceStateData
 
 class DefaultVoiceStateCache {
 
-    private val map = mutableMapOf<VoiceStateCacheKey, VoiceState>()
+    private val map = mutableMapOf<VoiceStateCacheKey, VoiceStateData>()
 
     fun policy(): VoiceStateCachePolicy = MutableVoiceStateCachePolicy().apply {
         view {

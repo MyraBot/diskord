@@ -1,5 +1,6 @@
 package bot.myra.diskord.voice.gateway
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.OpPacket
@@ -20,7 +21,8 @@ class VoiceGateway(
     endpoint: String,
     internal val token: String,
     internal val session: String,
-    internal val guildId: String
+    internal val guildId: String,
+    val diskord: Diskord
 ) : GenericGateway(LoggerFactory.getLogger(VoiceGateway::class.java), scope) {
     val url: String = "wss://$endpoint/?v=4"
     val eventDispatcher = MutableSharedFlow<OpPacket>()
@@ -28,7 +30,7 @@ class VoiceGateway(
 
     init {
         VoiceHeartbeatAcknowledgeEventHandler(this).listen()
-        VoiceHelloEventHandler(this).listen()
+        VoiceHelloEventHandler(this, diskord).listen()
         VoiceReadyEventHandler(this).listen()
         VoiceSessionDescriptionEventHandler(this).listen()
     }

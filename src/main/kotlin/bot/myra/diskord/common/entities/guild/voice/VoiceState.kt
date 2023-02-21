@@ -1,15 +1,37 @@
 package bot.myra.diskord.common.entities.guild.voice
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.channel.VoiceChannel
 import bot.myra.diskord.common.entities.guild.Member
-import bot.myra.diskord.common.entities.guild.MemberData
+import bot.myra.diskord.common.entities.guild.PartialMemberData
 import bot.myra.diskord.common.serializers.SInstant
-import bot.myra.diskord.rest.behaviors.getChannel
-import bot.myra.diskord.rest.request.Result
+import bot.myra.diskord.rest.behaviors.DiskordObject
+import bot.myra.diskord.rest.behaviors.guild.VoiceStateBehavior
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.Instant
+
+@Suppress("unused")
+class VoiceState(
+    override val data: VoiceStateData,
+    override val diskord: Diskord
+) : DiskordObject, VoiceStateBehavior {
+    val isMuted get() = data.isSelfMute || data.isGuildMuted
+    val isDeaf get() = data.isSelfDeaf || data.isGuildDeaf
+    val member get() = data.guildId?.let { Member.fromPartialMember(data.memberData!!, it, diskord) }
+
+    val guildId get() = data.guildId
+    val channelId get() = data.channelId
+    val userId get() = data.userId
+    val memberData get() = data.memberData
+    val sessionId get() = data.sessionId
+    val isGuildDeaf get() = data.isGuildDeaf
+    val isGuildMuted get() = data.isGuildMuted
+    val isSelfDeaf get() = data.isSelfDeaf
+    val isSelfMute get() = data.isSelfMute
+    val isStreaming get() = data.isStreaming
+    val hasVideo get() = data.hasVideo
+    val requestToSpeak get() = data.requestToSpeak
+}
 
 /**
  * [Documentation](https://discord.com/developers/docs/resources/voice#voice-state-object)
@@ -28,11 +50,11 @@ import java.time.Instant
  * @property requestToSpeak Time the user requested to speak. If null, the user isn't raising his hand.
  */
 @Serializable
-data class VoiceState(
+data class VoiceStateData(
     @SerialName("guild_id") internal var guildId: String? = null,
     @SerialName("channel_id") val channelId: String? = null,
     @SerialName("user_id") val userId: String,
-    @SerialName("member") private val memberData: MemberData? = null,
+    @SerialName("member") val memberData: PartialMemberData? = null,
     @SerialName("session_id") val sessionId: String,
     @SerialName("deaf") val isGuildDeaf: Boolean,
     @SerialName("mute") val isGuildMuted: Boolean,
@@ -41,10 +63,4 @@ data class VoiceState(
     @SerialName("self_stream") val isStreaming: Boolean? = null,
     @SerialName("self_video") val hasVideo: Boolean,
     @Serializable(with = SInstant::class) @SerialName("request_to_speak_timestamp") val requestToSpeak: Instant? = null,
-) {
-    val isMuted: Boolean = isSelfMute || isGuildMuted
-    val isDeaf: Boolean = isSelfDeaf || isGuildDeaf
-
-    fun getMember(): Member? = guildId?.let { Member.withUserInMember(memberData!!, it) }
-    suspend fun getChannel(): Result<VoiceChannel>? = channelId?.let { Diskord.getChannel(it) }
-}
+)

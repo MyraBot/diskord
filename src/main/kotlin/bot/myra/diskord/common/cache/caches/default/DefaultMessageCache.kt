@@ -2,11 +2,11 @@ package bot.myra.diskord.common.cache.caches.default
 
 import bot.myra.diskord.common.cache.models.MessageCachePolicy
 import bot.myra.diskord.common.cache.models.MutableMessageCachePolicy
-import bot.myra.diskord.common.entities.message.Message
+import bot.myra.diskord.common.entities.message.MessageData
 
 class DefaultMessageCache {
 
-    private val map = mutableMapOf<String, Message>()
+    private val map = mutableMapOf<String, MessageData>()
 
     fun policy(): MessageCachePolicy = MutableMessageCachePolicy().apply {
         view { map.values.toList() }

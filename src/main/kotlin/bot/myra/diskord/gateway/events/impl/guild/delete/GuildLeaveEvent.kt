@@ -1,5 +1,7 @@
 package bot.myra.diskord.gateway.events.impl.guild.delete
 
+import bot.myra.diskord.common.Diskord
+import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.UnavailableGuild
 
 /**
@@ -9,4 +11,6 @@ import bot.myra.diskord.common.entities.guild.UnavailableGuild
  */
 data class GuildLeaveEvent(
     override val guild: UnavailableGuild,
+    val cachedGuild: Guild?,
+    override val diskord: Diskord
 ) : GenericGuildDeleteEvent(guild)

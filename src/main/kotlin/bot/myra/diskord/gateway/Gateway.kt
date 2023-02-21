@@ -5,7 +5,6 @@ import bot.myra.diskord.common.utilities.GenericGateway
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.commands.GatewayCommand
 import bot.myra.diskord.gateway.commands.PresenceUpdate
-import bot.myra.diskord.gateway.events.Events
 import bot.myra.diskord.gateway.handlers.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineName
@@ -21,7 +20,7 @@ import java.util.concurrent.ForkJoinPool
  * The Gateway websocket to listen to discord events.
  */
 class Gateway(
-    internal val intents: MutableSet<GatewayIntent> = mutableSetOf(),
+    val diskord: Diskord,
     override val coroutineScope: CoroutineScope = CoroutineScope(ForkJoinPool.commonPool().asCoroutineDispatcher() + CoroutineName("Gateway"))
 ) : GenericGateway(LoggerFactory.getLogger(Gateway::class.java), coroutineScope) {
     lateinit var session: String
@@ -36,10 +35,10 @@ class Gateway(
     val eventFlow = MutableSharedFlow<OpPacket>()
 
     init {
-        DispatchEventHandler(this).listen()
+        DispatchEventHandler(this, diskord).listen()
         HeartbeatAcknowledgeEventHandler(this).listen()
         HeartbeatEventHandler(this).listen()
-        HelloEventHandler(this).listen()
+        HelloEventHandler(this,diskord).listen()
         InvalidSessionHandler(this).listen()
         ReconnectEventHandler(this).listen()
     }
@@ -121,11 +120,7 @@ class Gateway(
  * @return Returns the [Diskord] object. Just for laziness.
  */
 fun Diskord.connectGateway() {
-    logger.info("Registering discord event listeners")
-    listenersPackage.forEach { Events.findListeners(it) }
-
     if (hasWebsocketConnection()) throw Exception("The websocket is already connected")
-    val ws = Gateway(this.intents) // Create websocket
-    Diskord.apply { gateway = ws }
-    ws.connect() // Open websocket connection
+    gateway = Gateway(this)
+    gateway.connect()
 }

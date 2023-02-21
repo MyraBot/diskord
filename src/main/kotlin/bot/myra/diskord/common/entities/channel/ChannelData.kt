@@ -1,10 +1,18 @@
 package bot.myra.diskord.common.entities.channel
 
+import bot.myra.diskord.common.Diskord
+import bot.myra.diskord.common.entities.user.UserData
 import bot.myra.diskord.rest.Optional
-import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.rest.behaviors.Entity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
+class GenericChannel(
+    val data: ChannelData,
+    override val diskord: Diskord
+) : Entity {
+    override val id: String get() = data.id
+}
 
 /**
  * [Documentation](https://discord.com/developers/docs/resources/channel#channel-object-channel-structure)
@@ -24,7 +32,7 @@ import kotlinx.serialization.Serializable
  * @property userLimit User limit of a voice channel.
  * @property rateLimitPerUser Amount of seconds, a user has to wait before sending another message.
  * @property recipients Recipients of a group or dm.
- * @property icon The icon hash.
+ * @property icon The icon hash of a group.
  * @property ownerId The creator id of a group dm or thread.
  * @property applicationId The application of the group dm, if it's bot-created.
  * @property parentId ID of the parent category for a channel. If [source] is a thread, it's the id of the text channel this thread was created.
@@ -33,7 +41,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ChannelData(
-    override val id: String,
+    val id: String,
     @SerialName("type") val source: ChannelType,
     @SerialName("guild_id") val guildId: Optional<String> = Optional.Missing(),
     val position: Optional<Int> = Optional.Missing(),
@@ -44,11 +52,11 @@ data class ChannelData(
     val bitrate: Optional<Int> = Optional.Missing(),
     @SerialName("user_limit") val userLimit: Optional<Int> = Optional.Missing(),
     @SerialName("rate_limit_per_user") val rateLimitPerUser: Optional<Int> = Optional.Missing(),
-    val recipients: Optional<List<User>> = Optional.Missing(),
+    val recipients: Optional<List<UserData>> = Optional.Missing(),
     val icon: Optional<String?> = Optional.Missing(),
     @SerialName("owner_id") val ownerId: Optional<String> = Optional.Missing(),
     @SerialName("application_id") val applicationId: Optional<String> = Optional.Missing(),
     @SerialName("parent_id") val parentId: Optional<String?> = Optional.Missing(),
     @SerialName("last_pin_timestamp") val lastPinTimestamp: Optional<String?> = Optional.Missing(),
     @SerialName("rtc_region") val voiceRegion: Optional<String?> = Optional.Missing()
-) : Entity
+)

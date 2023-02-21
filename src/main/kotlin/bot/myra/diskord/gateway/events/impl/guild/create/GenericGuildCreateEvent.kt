@@ -1,19 +1,21 @@
 package bot.myra.diskord.gateway.events.impl.guild.create
 
-import bot.myra.diskord.common.entities.guild.ExtendedGuild
+import bot.myra.diskord.common.entities.guild.PossibleUnavailableGuild
 import bot.myra.diskord.gateway.events.types.Event
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
 
 /**
- * Can be fired in three different scenarios:
- * 1. To backfill information for unavailable guilds sent in the [bot.myra.diskord.gateway.events.impl.ReadyEvent].
- * 2. When a guild becomes available again to the client.
- * 3. When the bot joins a new Guild.
+ * [Documentation](https://discord.com/developers/docs/topics/gateway-events#guild-create)
+ *
+ * This event can be sent in three different scenarios:
+ *
+ * - When a user is initially connecting, to lazily load and backfill information for all unavailable guilds sent in the Ready event. Guilds that are unavailable due to an outage will send a Guild Delete event.
+ * - When a Guild becomes available again to the client.
+ * - When the current user joins a new Guild.
+ *
+ * During an outage, the guild object in scenarios 1 and 3 may be marked as unavailable.
  *
  * @property guild The guild.
  */
-@Serializable
 abstract class GenericGuildCreateEvent(
-    @Contextual open val guild: ExtendedGuild
+  open val guild: PossibleUnavailableGuild
 ) : Event()

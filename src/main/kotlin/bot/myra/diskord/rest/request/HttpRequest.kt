@@ -12,7 +12,7 @@ data class HttpRequest<T>(
     var logReason: String? = null,
     var attachments: List<File> = emptyList(),
     val arguments: Arguments = Arguments(),
-    var ignoreBadRequest: Boolean = false
+    var ignoreBadRequest: Boolean = false,
 ) {
     fun arguments(arguments: Arguments.() -> Unit) {
         this.arguments.apply(arguments)

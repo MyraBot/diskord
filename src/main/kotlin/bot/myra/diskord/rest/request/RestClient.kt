@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 /**
  * Http client for executing rest requests.
  */
-object RestClient {
+class RestClient(val diskord: Diskord) {
 
     val logger = LoggerFactory.getLogger(RestClient::class.java)
     private val httpClient: HttpClient = HttpClient(OkHttp) {
@@ -35,7 +35,7 @@ object RestClient {
         expectSuccess = false // Disables throwing exceptions
         defaultRequest {
             url { protocol = URLProtocol.HTTPS }
-            header("Authorization", "Bot ${Diskord.token}")
+            header("Authorization", "Bot ${diskord.token}")
         }
     }
 
@@ -69,7 +69,7 @@ object RestClient {
 
         val status = response.status
         return if (status.isSuccess()) {
-            val value = when(req.route.serializer == Unit.serializer()) {
+            val value = when (req.route.serializer == Unit.serializer()) {
                 true -> Unit as R
                 false -> JSON.decodeFromString(req.route.serializer, response.bodyAsText())
             }
@@ -77,7 +77,7 @@ object RestClient {
         } else {
             val error = JSON.decodeFromString<JsonElement>(response.bodyAsText())
             val restStatus = RestStatus.getByStatusCode(status.value)
-            if (restStatus is RestStatus.TooManyRequests)RateLimitWorker.queue(req, JSON.decodeFromJsonElement(error))
+            if (restStatus is RestStatus.TooManyRequests) RateLimitWorker(diskord).queue(req, JSON.decodeFromJsonElement(error))
             return Result(null, status, error)
         }
     }

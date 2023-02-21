@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 class MessageModifier : GenericMessageModifier() {
 
-    suspend fun transform() {
-        val transform = Diskord.transformer
-        content?.let { content = Diskord.transformer.onText(this, it) }
+    override suspend fun transform(diskord: Diskord) {
+        val transform = diskord.transformer
+        content?.let { content = diskord.transformer.onText(this, it) }
         embeds.onEach { embed ->
             transform.onEmbed(embed)
 

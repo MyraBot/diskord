@@ -27,10 +27,11 @@ class VoiceConnection(
     val session: String,
     val token: String,
     val guildId: String,
+    val diskord: Diskord,
     val scope: CoroutineScope
 ) {
     val logger = LoggerFactory.getLogger("Voice-$session")
-    private val gateway = VoiceGateway(scope, endpoint, token, session, guildId)
+    private val gateway = VoiceGateway(scope, endpoint, token, session, guildId, diskord)
     var udp: UdpSocket? = null
 
     suspend fun openConnection() {
@@ -40,7 +41,7 @@ class VoiceConnection(
             .let { it.d ?: throw IllegalStateException("Invalid voice ready payload") }
             .let { JSON.decodeFromJsonElement<ConnectionReadyPayload>(it) }
         udp = UdpSocket(scope, gateway, connectionDetails).apply { openSocketConnection() }
-        logger.debug( "Successfully created voice connection for $guildId" )
+        logger.debug("Successfully created voice connection for $guildId")
     }
 
     /**
@@ -65,7 +66,7 @@ class VoiceConnection(
             s = null,
             t = null
         )
-        Diskord.gateway.send(op)
+        diskord.gateway.send(op)
     }
 
 }

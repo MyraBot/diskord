@@ -1,6 +1,5 @@
 package bot.myra.diskord.gateway.events
 
-import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.gateway.events.types.Event
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
@@ -19,13 +18,6 @@ interface EventListener {
                 val klass: KClassifier = it.valueParameters.firstOrNull()?.type?.classifier ?: return@filter true
                 Event::class.isSuperclassOf(klass as KClass<*>)
             }
-    }
-
-    /**
-     * Loads all functions of this listener in [Diskord.listeners].
-     */
-    fun loadListeners() {
-        Diskord.listeners[this] = findEventFunction()
     }
 
 }

@@ -1,6 +1,8 @@
 package bot.myra.diskord.gateway.events.types
 
-abstract class EventBroker : EventAction() {
+import bot.myra.diskord.rest.behaviors.DiskordObject
+
+abstract class EventBroker : EventAction(), DiskordObject {
 
     final override suspend fun handle() {
         choose()?.handle()

@@ -2,13 +2,13 @@ package bot.myra.diskord.common.cache.caches.timeout
 
 import bot.myra.diskord.common.cache.models.GuildCachePolicy
 import bot.myra.diskord.common.cache.models.MutableGuildCachePolicy
-import bot.myra.diskord.common.entities.guild.Guild
+import bot.myra.diskord.common.entities.guild.GuildData
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Suppress("unused")
-class TimeoutGuildCache(expireIn: Duration = 10.minutes) : TimeoutCache<String, Guild>(expireIn) {
-    private val cache = mutableMapOf<String, Guild>()
+class TimeoutGuildCache(expireIn: Duration = 10.minutes) : TimeoutCache<String, GuildData>(expireIn) {
+    private val cache = mutableMapOf<String, GuildData>()
 
     override fun policy(): GuildCachePolicy = MutableGuildCachePolicy().apply {
         view {

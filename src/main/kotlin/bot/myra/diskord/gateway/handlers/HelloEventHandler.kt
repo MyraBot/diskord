@@ -16,9 +16,10 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 
 internal class HelloEventHandler(
-    override val gateway: Gateway
+    override val gateway: Gateway,
+    val diskord: Diskord
 ) : GatewayEventHandler(OpCode.HELLO, gateway) {
-    var heartbeatJob: Job? = null
+    private var heartbeatJob: Job? = null
 
     override suspend fun onEvent(packet: OpPacket) {
         startHeartbeat(packet)
@@ -34,8 +35,9 @@ internal class HelloEventHandler(
      * With this the bot loads its required intents.
      */
     private suspend fun identify() {
-        gateway.logger.info("Logging in with intents of ${gateway.intents} (${GatewayIntent.getID(gateway.intents)})")
-        gateway.send(IdentifyResponse(Diskord.token, GatewayIntent.getID(gateway.intents), IdentifyResponse.Properties()))
+        val intents = gateway.diskord.intents
+        gateway.logger.info("Logging in with intents of $intents (${GatewayIntent.getID(intents)})")
+        gateway.send(IdentifyResponse(diskord.token, GatewayIntent.getID(intents), IdentifyResponse.Properties()))
     }
 
     /**
@@ -44,7 +46,7 @@ internal class HelloEventHandler(
      */
     private suspend fun resume() {
         gateway.logger.info("Resuming connection...")
-        gateway.send(GatewayResume(Diskord.token, gateway.session, gateway.sequence))
+        gateway.send(GatewayResume(diskord.token, gateway.session, gateway.sequence))
     }
 
     /**

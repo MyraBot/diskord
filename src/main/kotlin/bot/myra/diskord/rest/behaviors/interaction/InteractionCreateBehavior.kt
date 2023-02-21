@@ -1,56 +1,55 @@
 package bot.myra.diskord.rest.behaviors.interaction
 
-import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.File
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionCallbackType
+import bot.myra.diskord.common.entities.applicationCommands.InteractionData
 import bot.myra.diskord.common.entities.applicationCommands.InteractionResponseData
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
+import bot.myra.diskord.rest.behaviors.DefaultBehavior
 import bot.myra.diskord.rest.modifiers.InteractionModifier
-import bot.myra.diskord.rest.request.RestClient
 
-interface InteractionCreateBehavior {
+interface InteractionCreateBehavior : DefaultBehavior {
+    val data: InteractionData
 
-    val interaction: Interaction
-
-    suspend fun acknowledge() = RestClient.execute(Endpoints.acknowledgeInteraction) {
+    suspend fun acknowledge() = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
         arguments {
-            arg("interaction.id", interaction.id)
-            arg("interaction.token", interaction.token)
+            arg("interaction.id", data.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 
-    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
-        json = InteractionResponseData(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, message.apply { transform() }).toJson()
+    suspend fun acknowledge(vararg files: File = emptyArray(), message: InteractionModifier) = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, message.apply { transform(diskord) }).toJson()
         if (files.any { it.bytes.size / 1000000 > 8 }) throw Exception("A file is too big")
         attachments = files.toList()
         arguments {
-            arg("interaction.id", interaction.id)
-            arg("interaction.token", interaction.token)
+            arg("interaction.id", data.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
-        acknowledge(files = files, message = interaction.asModifier().apply { message.invoke(this) })
+        acknowledge(files = files, message = data.asModifier().apply { message.invoke(this) })
 
-    suspend fun thinking() = RestClient.execute(Endpoints.acknowledgeInteraction) {
+    suspend fun thinking() = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE).toJson()
         arguments {
-            arg("interaction.id", interaction.id)
-            arg("interaction.token", interaction.token)
+            arg("interaction.id", data.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 
     suspend fun editOriginal(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
-        editOriginal(files.asList(), interaction.asModifier().apply { message.invoke(this) })
+        editOriginal(files.asList(), data.asModifier().apply { message.invoke(this) })
 
-    suspend fun editOriginal(files: List<File> = emptyList(), message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeOriginalResponse) {
-        json = message.apply { transform() }.toJson()
+    suspend fun editOriginal(files: List<File> = emptyList(), message: InteractionModifier) = diskord.rest.execute(Endpoints.acknowledgeOriginalResponse) {
+        json = message.apply { transform(diskord) }.toJson()
         arguments {
-            arg("application.id", Diskord.id)
-            arg("interaction.token", interaction.token)
+            arg("application.id", diskord.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 
@@ -60,20 +59,20 @@ interface InteractionCreateBehavior {
      *
      * @param message The new interaction.
      */
-    suspend fun edit(message: InteractionModifier) = RestClient.execute(Endpoints.acknowledgeInteraction) {
-        json = InteractionResponseData(InteractionCallbackType.UPDATE_MESSAGE, message.apply { transform() }).toJson()
+    suspend fun edit(message: InteractionModifier) = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
+        json = InteractionResponseData(InteractionCallbackType.UPDATE_MESSAGE, message.apply { transform(diskord) }).toJson()
         arguments {
-            arg("interaction.id", interaction.id)
-            arg("interaction.token", interaction.token)
+            arg("interaction.id", data.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 
-    suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(interaction.asFollowupModifier().apply { modifier.invoke(this) })
+    suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(data.asFollowupModifier().apply { modifier.invoke(this) })
 
-    suspend fun getInteractionResponse() = RestClient.execute(Endpoints.getOriginalInteractionResponse) {
+    suspend fun getInteractionResponse() = diskord.rest.execute(Endpoints.getOriginalInteractionResponse) {
         arguments {
-            arg("application.id", Diskord.id)
-            arg("interaction.token", interaction.token)
+            arg("application.id", diskord.id)
+            arg("interaction.token", data.token)
         }
     }.value!!
 

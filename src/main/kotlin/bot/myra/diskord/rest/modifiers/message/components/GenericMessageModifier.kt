@@ -1,5 +1,6 @@
 package bot.myra.diskord.rest.modifiers.message.components
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.components.Component
 import bot.myra.diskord.common.entities.message.Attachment
 import bot.myra.diskord.common.entities.message.MessageFlag
@@ -19,5 +20,7 @@ abstract class GenericMessageModifier(
 
     @Suppress("unused")
     fun ephemeral() = flags.add(MessageFlag.EPHEMERAL)
+
+    abstract suspend fun transform(diskord: Diskord)
 
 }

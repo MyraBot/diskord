@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonElement
 
 data class Result<T>(
     val value: T? = null,
-    private val statusRaw: HttpStatusCode,
+    internal val statusRaw: HttpStatusCode,
     val error: JsonElement?
 ) {
     val status: RestStatus = RestStatus.getByStatusCode(statusRaw.value)
@@ -42,4 +42,8 @@ data class Result<T>(
         else result.invoke()
     }
 
+}
+
+fun <T, R> Result<List<T>>.transformEach(transform: (T) -> R): Result<List<R>> {
+    return Result(value?.map(transform), statusRaw, error)
 }

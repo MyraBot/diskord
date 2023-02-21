@@ -13,14 +13,14 @@ class MutableChannelCachePolicy : ChannelCachePolicy() {
     override fun isFromGuild(value: ChannelData): String? = value.guildId.value
 
     @ListenTo(ChannelCreateEvent::class)
-    suspend fun onChannelCreate(event: ChannelCreateEvent) = update(event.channelData)
+    suspend fun onChannelCreate(event: ChannelCreateEvent) = update(event.channel.data)
 
     @ListenTo(ChannelUpdateEvent::class)
-    suspend fun onChannelUpdate(event: ChannelUpdateEvent) = update(event.channelData)
+    suspend fun onChannelUpdate(event: ChannelUpdateEvent) = update(event.channel.data)
 
     @ListenTo(ChannelDeleteEvent::class)
     suspend fun onChannelDelete(event: ChannelDeleteEvent) {
-        remove(event.channelData.id)
+        remove(event.channel.id)
     }
 
     @ListenTo(GuildLeaveEvent::class)

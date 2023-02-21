@@ -1,5 +1,6 @@
 package bot.myra.diskord.gateway.handlers
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.gateway.Gateway
 import bot.myra.diskord.gateway.OpCode
@@ -29,7 +30,8 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 
 internal class DispatchEventHandler(
-    override val gateway: Gateway
+    override val gateway: Gateway,
+    val diskord: Diskord
 ) : GatewayEventHandler(OpCode.DISPATCH, gateway) {
 
     override suspend fun onEvent(packet: OpPacket) {
@@ -39,25 +41,25 @@ internal class DispatchEventHandler(
         val json = packet.d ?: return
         try {
             when (packet.t!!) {
-                "RESUMED"             -> ResumedEvent()
-                "CHANNEL_CREATE"      -> ChannelCreateEvent(json.decode())
-                "CHANNEL_DELETE"      -> ChannelDeleteEvent(json.decode())
-                "CHANNEL_UPDATE"      -> ChannelUpdateEvent(json.decode())
-                "GUILD_CREATE"        -> GuildCreateEventBroker(json.decode())
-                "GUILD_DELETE"        -> GuildDeleteEventBroker(json.decode())
-                "GUILD_MEMBER_ADD"    -> MemberJoinEvent(json.decode())
-                "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent(json.decode())
-                "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent(json.decode())
-                "INTERACTION_CREATE"  -> InteractionCreateEventBroker(json.decode())
-                "MESSAGE_CREATE"      -> MessageCreateEventBroker(json.decode())
-                "MESSAGE_UPDATE"      -> MessageUpdateEvent(json.decode())
-                "MESSAGE_DELETE"      -> MessageDeleteEvent(json.decode())
-                "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent(json.decode())
-                "GUILD_ROLE_CREATE"   -> json.decode<RoleCreateEvent>()
-                "GUILD_ROLE_UPDATE"   -> json.decode<RoleUpdateEvent>()
-                "GUILD_ROLE_DELETE"   -> json.decode<RoleDeleteEvent>()
-                "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent(json.decode())
-                "READY"               -> json.decode<ReadyEvent>()
+                "RESUMED"             -> ResumedEvent(diskord)
+                "CHANNEL_CREATE"      -> ChannelCreateEvent.deserialize(json, JSON, diskord)
+                "CHANNEL_DELETE"      -> ChannelDeleteEvent.deserialize(json, JSON, diskord)
+                "CHANNEL_UPDATE"      -> ChannelUpdateEvent.deserialize(json, JSON, diskord)
+                "GUILD_CREATE"        -> GuildCreateEventBroker.deserialize(json, JSON, diskord)
+                "GUILD_DELETE"        -> GuildDeleteEventBroker.deserialize(json, JSON, diskord)
+                "GUILD_MEMBER_ADD"    -> MemberJoinEvent.deserialize(json, JSON, diskord)
+                "GUILD_MEMBER_REMOVE" -> MemberRemoveEvent.deserialize(json, JSON, diskord)
+                "GUILD_MEMBER_UPDATE" -> MemberUpdateEvent.deserialize(json, JSON, diskord)
+                "INTERACTION_CREATE"  -> InteractionCreateEventBroker.deserialize(json, JSON, diskord)
+                "MESSAGE_CREATE"      -> MessageCreateEventBroker.deserialize(json, JSON, diskord)
+                "MESSAGE_UPDATE"      -> MessageUpdateEvent.deserialize(json, JSON, diskord)
+                "MESSAGE_DELETE"      -> MessageDeleteEvent.deserialize(json, JSON, diskord)
+                "MESSAGE_DELETE_BULK" -> BulkMessageDeleteEvent.deserialize(json, JSON, diskord)
+                "GUILD_ROLE_CREATE"   -> RoleCreateEvent.deserialize(json, JSON, diskord)
+                "GUILD_ROLE_UPDATE"   -> RoleUpdateEvent.deserialize(json, JSON, diskord)
+                "GUILD_ROLE_DELETE"   -> RoleDeleteEvent.deserialize(json, JSON, diskord)
+                "VOICE_STATE_UPDATE"  -> VoiceStateUpdateEvent.deserialize(json, JSON, diskord)
+                "READY"               -> ReadyEvent.deserialize(json, JSON, diskord)
                 else                  -> null
             }?.handle()
         } catch (e: SerializationException) {

@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest.modifiers
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.applicationCommands.Interaction
+import bot.myra.diskord.common.entities.applicationCommands.InteractionData
 import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -12,19 +12,19 @@ import kotlinx.serialization.Transient
  * interactions, like [bot.myra.diskord.rest.modifiers.message.components.MessageModifier]
  * for editing messages.
  *
- * @property interaction Received interaction, wich the response belongs to.
+ * @property interaction Received interaction, which the response belongs to.
  * @property allowedMentions
  * @property flags
  * @constructor Create empty Interaction modifier
  */
 @Serializable
 class InteractionModifier(
-    @Transient val interaction: Interaction? = null
+    @Transient val interaction: InteractionData? = null
 ) : GenericMessageModifier() {
 
-    suspend fun transform() {
-        val transform = Diskord.transformer
-        content?.let { content = Diskord.transformer.onInteractionText(this, it) }
+    override suspend fun transform(diskord: Diskord) {
+        val transform = diskord.transformer
+        content?.let { content = diskord.transformer.onInteractionText(this, it) }
         embeds.map { transform.onInteractionEmbed(this, it) }
             .onEach { embed ->
                 embed.title?.let { embed.title == transform.onInteractionText(this, it) }

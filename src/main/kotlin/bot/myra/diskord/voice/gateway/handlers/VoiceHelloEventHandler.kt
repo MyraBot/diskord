@@ -19,9 +19,11 @@ import kotlinx.serialization.json.decodeFromJsonElement
  * Does identification and starts the heartbeat.
  *
  * @param gateway The used [VoiceGateway].
+ * @param diskord The current [Diskord] instance.
  */
 internal class VoiceHelloEventHandler(
-    gateway: VoiceGateway
+    gateway: VoiceGateway,
+    val diskord: Diskord
 ) : VoiceGatewayEventHandler(Operations.HELLO, gateway) {
 
     override suspend fun onEvent(packet: OpPacket) {
@@ -31,7 +33,7 @@ internal class VoiceHelloEventHandler(
                 send(Resume(guildId, session, token))
             } else {
                 logger.info("Creating connection $session")
-                send(Identify(guildId, Diskord.id, session, token))
+                send(Identify(guildId, diskord.id, session, token))
             }
         }
 

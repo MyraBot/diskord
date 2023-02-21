@@ -1,5 +1,6 @@
 package bot.myra.diskord.gateway.events.impl.interactions
 
+import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.AutoCompleteOption
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
@@ -10,14 +11,16 @@ import kotlinx.serialization.json.decodeFromJsonElement
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class AutoCompleteEvent(
-    override val interaction: Interaction,
-) : GenericInteractionCreateEvent(interaction), AutoCompleteBehavior {
-    val autoCompletion: AutoCompleteOption get() = JSON.decodeFromJsonElement(interaction.data.value!!)
+    val interaction: Interaction,
+    override val diskord: Diskord,
+) : GenericInteractionCreateEvent(interaction.data, diskord), AutoCompleteBehavior {
+    val autoCompletion: AutoCompleteOption get() = JSON.decodeFromJsonElement(interaction.interactionData.value!!)
     val command: AutoCompleteOption get() = autoCompletion
     val subcommandGroup: AutoCompleteOption? get() = autoCompletion.options!!.find { it.type == SlashCommandOptionType.SUB_COMMAND_GROUP && hasFocused(it) }
     val subcommand: AutoCompleteOption? get() = (subcommandGroup?.options ?: autoCompletion.options!!).find { it.type == SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
     val option: AutoCompleteOption?
-        get() = (subcommand?.options ?: autoCompletion.options!!).find { it.type != SlashCommandOptionType.SUB_COMMAND_GROUP && it.type != SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
+        get() = (subcommand?.options
+            ?: autoCompletion.options!!).find { it.type != SlashCommandOptionType.SUB_COMMAND_GROUP && it.type != SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
     val focused: AutoCompleteOption get() = findFocused(autoCompletion.options!!)
     val member: Member? = interaction.member
 
@@ -30,5 +33,4 @@ class AutoCompleteEvent(
         return if (option.type in subcommandTypes) option.options!!.any { hasFocused(it) }
         else option.focused == true
     }
-
 }
