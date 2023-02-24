@@ -22,8 +22,8 @@ class MutableVoiceStateCachePolicy : VoiceStateCachePolicy() {
     suspend fun onGuildCreate(event: GenericGuildCreateEvent) {
         checkIntents(event)
         if (event.guild.available) {
-            val guild = event.guild.asExtendedGuild()
-            guild.voiceStates.forEach { updateVoiceState(it) }
+            val guild = event.guild.asExtendedGuild() ?: return
+            guild.voiceStates.forEach { updateVoiceState(it.data) }
         }
     }
 

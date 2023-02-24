@@ -17,5 +17,13 @@ import bot.myra.diskord.gateway.events.types.Event
  * @property guild The guild.
  */
 abstract class GenericGuildCreateEvent(
-  open val guild: PossibleUnavailableGuild
-) : Event()
+    open val guild: PossibleUnavailableGuild
+) : Event() {
+    override suspend fun handle() {
+        diskord.unavailableGuilds.remove(guild.id)?.also {
+            guild.asExtendedGuild()?.asGuild()?.let { fullGuild ->
+                it.complete(fullGuild)
+            }
+        }
+    }
+}

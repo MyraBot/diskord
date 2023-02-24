@@ -9,8 +9,11 @@ class GuildLazyLoadEvent(
 ) : GenericGuildCreateEvent(guild) {
 
     override suspend fun handle() {
-        // TODO #asExtendedGuild doesn't work when the guild is a unavailable guild.
-        diskord.unavailableGuilds.remove(guild.id)?.complete(guild.asExtendedGuild().asGuild())
+        diskord.unavailableGuilds.remove(guild.id)?.also {
+            guild.asExtendedGuild()?.asGuild()?.let { fullGuild ->
+                it.complete(fullGuild)
+            }
+        }
     }
 
 }

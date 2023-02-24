@@ -24,11 +24,9 @@ class MutableGuildCachePolicy : GuildCachePolicy() {
     suspend fun onGuildCreate(event: GenericGuildCreateEvent) {
         checkIntents(event)
 
-        // TODO Can fail when guild is a unavailable guild object
-        val guild = event.guild.asExtendedGuild()
-        update(guild.guildData)
-
-        event.diskord.unavailableGuilds.remove(event.guild.id)?.complete(guild.asGuild())
+        event.guild.asExtendedGuild()?.also {
+            update(it.guildData)
+        }
     }
 
     @ListenTo(GuildLeaveEvent::class)
