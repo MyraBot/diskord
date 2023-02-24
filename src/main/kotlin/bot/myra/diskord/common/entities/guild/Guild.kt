@@ -3,7 +3,6 @@ package bot.myra.diskord.common.entities.guild
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Emoji
 import bot.myra.diskord.common.entities.Locale
-import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.guild.GuildBehavior
 import kotlinx.serialization.SerialName
@@ -31,10 +30,6 @@ class Guild(
     val approximateOnlineCount get() = data.approximateOnlineCount
 
     override val guildData: GuildData get() = data
-
-    val icon: String? get() = iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild_id", id); arg("guild_icon", it) } }
-    val splash: String? get() = splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
-    val discoverySplash: String? get() = discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 }
 
 /**

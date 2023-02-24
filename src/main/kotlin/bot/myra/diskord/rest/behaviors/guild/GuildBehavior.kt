@@ -6,16 +6,20 @@ import bot.myra.diskord.common.entities.channel.GenericChannel
 import bot.myra.diskord.common.entities.guild.GuildData
 import bot.myra.diskord.common.entities.guild.Role
 import bot.myra.diskord.common.utilities.toJson
+import bot.myra.diskord.rest.CdnEndpoints
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.behaviors.Entity
 import bot.myra.diskord.rest.bodies.ModifyGuildRole
 import bot.myra.diskord.rest.getChannel
-import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.Result
 
 @Suppress("unused")
 interface GuildBehavior : Entity {
     val guildData: GuildData
+
+    val icon: String? get() = guildData.iconHash?.let { CdnEndpoints.guildIcon.apply { arg("guild_id", id); arg("guild_icon", it) } }
+    val splash: String? get() = guildData.splashHash?.let { CdnEndpoints.guildSplash.apply { arg("guild_id", id); arg("guild_splash", it) } }
+    val discoverySplash: String? get() = guildData.discoverySplashHash?.let { CdnEndpoints.guildDiscoverySplash.apply { arg("guild_id", id); arg("guild_discovery_splash", it) } }
 
     suspend fun getOwner() = getMember(guildData.ownerId)
     suspend fun getMemberCount(): Int? = diskord.fetchGuild(id).value?.approximateMemberCount?.value
