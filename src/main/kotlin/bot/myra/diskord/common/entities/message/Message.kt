@@ -44,6 +44,7 @@ class Message(
     val flags get() = data.flags
     val components get() = data.components
 
+    val modifier get() = data.modifier
     val isWebhook get() = data.webhookId != null
     val isSystem get() = data.flags.contains(MessageFlag.URGENT)
 
@@ -88,11 +89,12 @@ data class MessageData(
     val flags: MessageFlags = MessageFlags(),
     val components: MutableList<Component> = mutableListOf(),
 ) {
-    fun asModifier(): MessageModifier = MessageModifier().apply {
-        content = this@MessageData.content
-        tts = this@MessageData.tts
-        embeds = this@MessageData.embeds
-        components = this@MessageData.components
-        attachments = this@MessageData.attachments.toMutableList()
-    }
+    val modifier
+        get() = MessageModifier().apply {
+            content = this@MessageData.content
+            tts = this@MessageData.tts
+            embeds = this@MessageData.embeds
+            components = this@MessageData.components
+            attachments = this@MessageData.attachments.toMutableList()
+        }
 }
