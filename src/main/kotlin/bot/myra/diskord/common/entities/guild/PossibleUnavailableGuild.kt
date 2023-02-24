@@ -32,7 +32,8 @@ class PossibleUnavailableGuild(
         }
     }
 
-    fun asExtendedGuild(): ExtendedGuild {
+    fun asExtendedGuild(): ExtendedGuild? {
+        if (unavailable) return null
         val data = decoder.decodeFromJsonElement<ExtendedGuildData>(json)
         return ExtendedGuild(data, diskord)
     }
