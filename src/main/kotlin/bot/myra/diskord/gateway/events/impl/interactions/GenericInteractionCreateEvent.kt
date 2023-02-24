@@ -4,6 +4,7 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.InteractionData
 import bot.myra.diskord.common.entities.message.Message
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.gateway.events.types.Event
 import bot.myra.diskord.rest.behaviors.interaction.InteractionCreateBehavior
 
@@ -19,7 +20,7 @@ abstract class GenericInteractionCreateEvent(
     val interactionData get() = data.data
     val guildId get() = data.guildId
     val channelId get() = data.channelId
-    val user get() = data.user
+    val user get() = User(data.memberData.value?.user ?: data.user.value!!, diskord)
     open val member get() = interaction.member
     val token get() = data.token
     val version get() = data.version
