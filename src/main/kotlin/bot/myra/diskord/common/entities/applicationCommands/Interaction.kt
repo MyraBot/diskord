@@ -24,7 +24,7 @@ class Interaction(
     val interactionData get() = data.data
     val guildId get() = data.guildId
     val channelId get() = data.channelId
-    val user get() = data.user.value?.let { User(it, diskord) }
+    val user get() = User(data.memberData.value?.user ?: data.user.value!!, diskord)
     val token get() = data.token
     val version get() = data.version
     val message get() = data.message

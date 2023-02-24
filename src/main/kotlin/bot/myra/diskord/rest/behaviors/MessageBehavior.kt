@@ -5,7 +5,6 @@ import bot.myra.diskord.common.entities.message.MessageData
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.Endpoints
 import bot.myra.diskord.rest.modifiers.message.components.MessageModifier
-import bot.myra.diskord.rest.request.RestClient
 import bot.myra.diskord.rest.request.Result
 import java.net.URLEncoder
 
@@ -28,7 +27,7 @@ interface MessageBehavior : Entity {
         }
     }.transformValue { Message(it, diskord) }
 
-    suspend fun edit(messageModifier: suspend MessageModifier.() -> Unit) = edit(data.asModifier().apply { messageModifier.invoke(this) })
+    suspend fun edit(messageModifier: suspend MessageModifier.() -> Unit) = edit(data.modifier.apply { messageModifier.invoke(this) })
 
     suspend fun delete() = diskord.rest.execute(Endpoints.deleteMessage) {
         arguments {

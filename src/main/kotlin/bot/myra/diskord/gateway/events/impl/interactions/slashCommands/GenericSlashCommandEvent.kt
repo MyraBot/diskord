@@ -17,12 +17,11 @@ import bot.myra.diskord.rest.behaviors.interaction.NonModalInteractionBehavior
 import kotlinx.serialization.json.*
 
 abstract class GenericSlashCommandEvent(
-    open val interaction: Interaction,
+    override val interaction: Interaction,
     override val diskord: Diskord
-) : GenericInteractionCreateEvent(interaction.data, diskord), NonModalInteractionBehavior {
+) : GenericInteractionCreateEvent(interaction, diskord), NonModalInteractionBehavior {
     val command: SlashCommandData get() = JSON.decodeFromJsonElement(interaction.interactionData.value!!)
     val resolved: Resolved get() = Resolved(command.resolved, interaction.guildId.value!!, diskord)
-    open val member: Member? get() = interaction.member
     val arguments: List<SlashCommandOptionData>
         get() = command.options.flatMap { option ->
             when (SlashCommandOptionType.isArgument(option.type)) {

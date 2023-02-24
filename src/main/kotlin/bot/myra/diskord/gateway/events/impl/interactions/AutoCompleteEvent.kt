@@ -4,16 +4,15 @@ import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.AutoCompleteOption
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandOptionType
-import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.rest.behaviors.interaction.AutoCompleteBehavior
 import kotlinx.serialization.json.decodeFromJsonElement
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class AutoCompleteEvent(
-    val interaction: Interaction,
+    override val interaction: Interaction,
     override val diskord: Diskord,
-) : GenericInteractionCreateEvent(interaction.data, diskord), AutoCompleteBehavior {
+) : GenericInteractionCreateEvent(interaction, diskord), AutoCompleteBehavior {
     val autoCompletion: AutoCompleteOption get() = JSON.decodeFromJsonElement(interaction.interactionData.value!!)
     val command: AutoCompleteOption get() = autoCompletion
     val subcommandGroup: AutoCompleteOption? get() = autoCompletion.options!!.find { it.type == SlashCommandOptionType.SUB_COMMAND_GROUP && hasFocused(it) }
@@ -22,7 +21,6 @@ class AutoCompleteEvent(
         get() = (subcommand?.options
             ?: autoCompletion.options!!).find { it.type != SlashCommandOptionType.SUB_COMMAND_GROUP && it.type != SlashCommandOptionType.SUB_COMMAND && hasFocused(it) }
     val focused: AutoCompleteOption get() = findFocused(autoCompletion.options!!)
-    val member: Member? = interaction.member
 
     private val subcommandTypes = listOf(SlashCommandOptionType.SUB_COMMAND_GROUP, SlashCommandOptionType.SUB_COMMAND)
     private fun findFocused(options: List<AutoCompleteOption>): AutoCompleteOption =
