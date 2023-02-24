@@ -3,6 +3,7 @@ package bot.myra.diskord.common.entities.guild
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.Emoji
 import bot.myra.diskord.common.entities.Locale
+import bot.myra.diskord.common.entities.guild.voice.VoiceState
 import bot.myra.diskord.common.entities.guild.voice.VoiceStateData
 import bot.myra.diskord.rest.Optional
 import bot.myra.diskord.rest.behaviors.guild.GuildBehavior
@@ -35,7 +36,7 @@ class ExtendedGuild(
     val large get() = this.data.large
     val available get() = this.data.available
     val memberCount get() = this.data.memberCount
-    val voiceStates get() = this.data.voiceStates
+    val voiceStates get() = this.data.voiceStates.map { VoiceState(it, diskord) }
 
     override val guildData: GuildData = GuildData(
         id, name, iconHash, splashHash, discoverySplashHash, ownerId, roles, emojis, features, vanity, description, boostingTier, locale, approximateMemberCount,
