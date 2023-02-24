@@ -31,9 +31,11 @@ class Interaction(
     val locale get() = data.locale
     val guildLocale get() = data.guildLocale
 
-    val member: Member? get() = data.memberData.value?.let {
-        Member.fromPartialMember(it, guildId.value!!, diskord)
-    }
+    val modifier get() = data.modifier
+    val member: Member?
+        get() = data.memberData.value?.let {
+            Member.fromPartialMember(it, guildId.value!!, diskord)
+        }
 }
 
 /**
@@ -55,7 +57,7 @@ data class InteractionData(
     val locale: Optional<Locale> = Optional.Missing(),
     @SerialName("guild_locale") val guildLocale: Optional<Locale> = Optional.Missing(),
 ) {
-    fun asModifier(): InteractionModifier = InteractionModifier(interaction = this)
+    val modifier get() = InteractionModifier(interaction = this)
 
     fun asFollowupModifier(): InteractionModifier = InteractionModifier(interaction = this).apply {
         this@InteractionData.message.value?.let { message ->
