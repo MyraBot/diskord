@@ -2,6 +2,7 @@ package bot.myra.diskord.common.entities.guild
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.common.entities.user.UserData
 import bot.myra.diskord.common.serializers.SInstant
 import bot.myra.diskord.common.utilities.Mention
@@ -42,7 +43,7 @@ data class Member(
     }
 
     override val guildId: String get() = data.guildId
-    val user get() = data.user
+    val user get() = User(data.user, diskord)
     val nick get() = data.nick
     val avatar get() = data.avatar
     val roleIds get() = data.roles
