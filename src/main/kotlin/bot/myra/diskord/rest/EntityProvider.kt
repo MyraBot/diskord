@@ -7,6 +7,9 @@ import bot.myra.diskord.common.cache.cacheEach
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandData
 import bot.myra.diskord.common.entities.channel.*
+import bot.myra.diskord.common.entities.channel.text.DmChannel
+import bot.myra.diskord.common.entities.channel.text.GenericTextChannel
+import bot.myra.diskord.common.entities.channel.text.TextChannel
 import bot.myra.diskord.common.entities.guild.Guild
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.Role
@@ -139,10 +142,11 @@ interface EntityProvider {
 
 suspend inline fun <reified T> EntityProvider.getChannel(id: String): Result<T> = getChannel(id).transformValue {
     when (T::class) {
-        ChannelData::class  -> it.data
-        DmChannel::class    -> DmChannel(it.data, diskord)
-        TextChannel::class  -> TextChannel(it.data, diskord)
-        VoiceChannel::class -> VoiceChannel(it.data, diskord)
-        else                -> throw IllegalStateException("Unknown channel to cast: ${T::class.simpleName}")
+        ChannelData::class        -> it.data
+        GenericTextChannel::class -> GenericTextChannel(it.data, diskord)
+        DmChannel::class          -> DmChannel(it.data, diskord)
+        TextChannel::class        -> TextChannel(it.data, diskord)
+        VoiceChannel::class       -> VoiceChannel(it.data, diskord)
+        else                      -> throw IllegalStateException("Unknown channel to cast: ${T::class.simpleName}")
     } as T
 }

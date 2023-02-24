@@ -1,7 +1,7 @@
 package bot.myra.diskord.common.entities.user
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.channel.DmChannel
+import bot.myra.diskord.common.entities.channel.text.DmChannel
 import bot.myra.diskord.common.utilities.Mention
 import bot.myra.diskord.common.utilities.toJson
 import bot.myra.diskord.rest.CdnEndpoints
