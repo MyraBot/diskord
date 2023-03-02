@@ -13,8 +13,6 @@ import kotlinx.serialization.Transient
  * for editing messages.
  *
  * @property interaction Received interaction, which the response belongs to.
- * @property allowedMentions
- * @property flags
  * @constructor Create empty Interaction modifier
  */
 @Serializable
