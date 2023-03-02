@@ -12,5 +12,8 @@ open class GuildSlashCommandEvent(
     override val interaction: Interaction,
     override val diskord: Diskord
 ) : GenericSlashCommandEvent(interaction, diskord) {
+    override val modifier = interaction.modifier
+    override val followupModifier = interaction.followupModifier
+
     override val member: Member get() = interaction.member!!
 }

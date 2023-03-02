@@ -2,7 +2,6 @@ package bot.myra.diskord.gateway.events.impl.interactions
 
 import bot.myra.diskord.common.Diskord
 import bot.myra.diskord.common.entities.applicationCommands.Interaction
-import bot.myra.diskord.common.entities.applicationCommands.InteractionData
 import bot.myra.diskord.common.entities.message.Message
 import bot.myra.diskord.common.entities.user.User
 import bot.myra.diskord.gateway.events.types.Event
@@ -12,7 +11,7 @@ abstract class GenericInteractionCreateEvent(
     open val interaction: Interaction,
     override val diskord: Diskord
 ) : Event(), InteractionCreateBehavior {
-    override val data: InteractionData get() = interaction.data
+    override val data get() = interaction.data
 
     val id get() = data.id
     val applicationId get() = data.applicationId

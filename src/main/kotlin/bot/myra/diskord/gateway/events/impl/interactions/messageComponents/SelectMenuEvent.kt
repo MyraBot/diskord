@@ -21,6 +21,9 @@ class SelectMenuEvent(
     override val component: InteractionComponentData,
     override val diskord: Diskord
 ) : GenericMessageComponentEvent(interaction, component, diskord) {
+    override val modifier = interaction.modifier
+    override val followupModifier = interaction.followupModifier
+
     val selectMenu: SelectMenu
         get() = message.components
             .asSequence()

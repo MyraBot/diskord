@@ -1,7 +1,7 @@
 package bot.myra.diskord.rest.modifiers
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.entities.applicationCommands.InteractionData
+import bot.myra.diskord.common.entities.applicationCommands.Interaction
 import bot.myra.diskord.rest.modifiers.message.components.GenericMessageModifier
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -19,7 +19,7 @@ import kotlinx.serialization.Transient
  */
 @Serializable
 class InteractionModifier(
-    @Transient val interaction: InteractionData? = null
+    @Transient val interaction: Interaction? = null
 ) : GenericMessageModifier() {
 
     override suspend fun transform(diskord: Diskord) {

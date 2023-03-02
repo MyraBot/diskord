@@ -13,6 +13,9 @@ class ButtonClickEvent(
     override val component: InteractionComponentData,
     override val diskord: Diskord,
 ) : GenericMessageComponentEvent(interaction, component, diskord) {
+    override val modifier = interaction.modifier
+    override val followupModifier = interaction.followupModifier
+
     val guild: Guild? get() = runBlocking { diskord.getGuild(interaction.guildId.value!!).value }
     val button: Button
         get() = message.components

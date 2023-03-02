@@ -13,6 +13,8 @@ import bot.myra.diskord.rest.modifiers.InteractionModifier
 
 interface InteractionCreateBehavior : DefaultBehavior {
     val data: InteractionData
+    val modifier: InteractionModifier
+    val followupModifier: InteractionModifier
 
     suspend fun acknowledge() = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.DEFERRED_UPDATE_MESSAGE).toJson()
@@ -33,7 +35,7 @@ interface InteractionCreateBehavior : DefaultBehavior {
     }.value!!
 
     suspend fun acknowledge(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
-        acknowledge(files = files, message = data.modifier.apply { message.invoke(this) })
+        acknowledge(files = files, message = modifier.apply { message.invoke(this) })
 
     suspend fun thinking() = diskord.rest.execute(Endpoints.acknowledgeInteraction) {
         json = InteractionResponseData(InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE).toJson()
@@ -44,7 +46,7 @@ interface InteractionCreateBehavior : DefaultBehavior {
     }.value!!
 
     suspend fun editOriginal(vararg files: File = emptyArray(), message: suspend InteractionModifier.() -> Unit) =
-        editOriginal(files.asList(), data.modifier.apply { message.invoke(this) })
+        editOriginal(files.asList(), modifier.apply { message.invoke(this) })
 
     suspend fun editOriginal(files: List<File> = emptyList(), message: InteractionModifier) = diskord.rest.execute(Endpoints.acknowledgeOriginalResponse) {
         json = message.apply { transform(diskord) }.toJson()
@@ -68,7 +70,7 @@ interface InteractionCreateBehavior : DefaultBehavior {
         }
     }.value!!
 
-    suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(data.followupModifier.apply { modifier.invoke(this) })
+    suspend fun edit(modifier: suspend InteractionModifier.() -> Unit) = edit(followupModifier.apply { modifier.invoke(this) })
 
     suspend fun getInteractionResponse(): Message {
         val data = diskord.rest.execute(Endpoints.getOriginalInteractionResponse) {

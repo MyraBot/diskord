@@ -11,8 +11,11 @@ import kotlinx.serialization.json.decodeFromJsonElement
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class AutoCompleteEvent(
     override val interaction: Interaction,
-    override val diskord: Diskord,
+    override val diskord: Diskord
 ) : GenericInteractionCreateEvent(interaction, diskord), AutoCompleteBehavior {
+    override val modifier = interaction.modifier
+    override val followupModifier = interaction.followupModifier
+
     val autoCompletion: AutoCompleteOption get() = JSON.decodeFromJsonElement(interaction.interactionData.value!!)
     val command: AutoCompleteOption get() = autoCompletion
     val subcommandGroup: AutoCompleteOption? get() = autoCompletion.options!!.find { it.type == SlashCommandOptionType.SUB_COMMAND_GROUP && hasFocused(it) }

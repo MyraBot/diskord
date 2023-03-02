@@ -10,4 +10,7 @@ import bot.myra.diskord.common.entities.applicationCommands.Interaction
 open class PrivateSlashCommandEvent(
     override val interaction: Interaction,
     override val diskord: Diskord
-) : GenericSlashCommandEvent(interaction, diskord)
+) : GenericSlashCommandEvent(interaction, diskord) {
+    override val modifier = interaction.modifier
+    override val followupModifier = interaction.followupModifier
+}
