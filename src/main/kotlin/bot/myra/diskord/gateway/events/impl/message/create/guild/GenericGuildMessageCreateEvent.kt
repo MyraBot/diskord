@@ -6,6 +6,5 @@ import bot.myra.diskord.gateway.events.impl.message.create.GenericMessageCreateE
 abstract class GenericGuildMessageCreateEvent(
     override val message: Message
 ) : GenericMessageCreateEvent(message) {
-    suspend fun getChannel() = message.getChannel()
     suspend inline fun <reified T> getChannelAs() = message.getChannelAs<T>()
 }
