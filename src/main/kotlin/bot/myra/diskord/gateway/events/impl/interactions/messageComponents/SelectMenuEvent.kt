@@ -16,6 +16,7 @@ data class SelectMenuEventData(
     val component: InteractionComponentData
 )
 
+@Suppress("unused")
 class SelectMenuEvent(
     override val interaction: Interaction,
     override val component: InteractionComponentData,
