@@ -22,7 +22,8 @@ enum class UserFlag(val value: Int) {
     VERIFIED_BOT(1 shl 16),
     VERIFIED_DEVELOPER(1 shl 17),
     CERTIFIED_MODERATOR(1 shl 18),
-    BOT_HTTP_INTERACTIONS(1 shl 19);
+    BOT_HTTP_INTERACTIONS(1 shl 19),
+    ACTIVE_DEVELOPER(1 shl 22);
 
     internal object Serializer : KSerializer<Optional<List<UserFlag>>> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Badge", PrimitiveKind.INT)
