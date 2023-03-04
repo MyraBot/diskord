@@ -77,12 +77,15 @@ class UdpSocket(
 
     private suspend fun discoverIp(): InetSocketAddress {
         send {
+            writeShort(0x1) // Type ➜ 0x1 for request
+            writeShort(70) // Message length
+            // Actual message (70 bytes)
             writeInt(connectDetails.ssrc) // Ssrc
             writeFully(ByteArray(66)) // Address and port
         }
 
         return with(socket.incoming.receive().packet) {
-            discard(4)
+            discard(8)
             val ip = String(readBytes(64)).trimEnd(0.toChar())
             val port = readUShort().toInt()
             logger.debug("Ip discovery successful, connecting to ${ip}:${port}")
