@@ -63,7 +63,7 @@ class RestClient(val diskord: Diskord) {
         logger.debug("Rest >>> ${req.route.httpMethod}: ${req.getFullPath()} - ${req.json}")
 
         val response = if (req.attachments.isEmpty()) bodyRequest(req) // Request doesn't contain files
-        else formDataRequest(req.getFullPath(), req.json!!, req.attachments) // Request needs to send files
+        else formDataRequest(req, req.json!!, req.attachments) // Request needs to send files
 
         logger.debug("Rest <<< ${response.bodyAsText()}")
 
@@ -125,15 +125,14 @@ class RestClient(val diskord: Diskord) {
      * Used to send files with messages. See [Discords documentation](https://discord.com/developers/docs/reference#uploading-files)
      * or the [documentation of ktor to upload a file](https://ktor.io/docs/request.html#upload_file).
      *
-     * @param route The route to execute the request on.
+     * @param request Http request information.
      * @param json Optional json body.
      * @param files File to u upload.
      * @return Returns the response as a [Result].
      */
-    private suspend fun formDataRequest(route: String, json: String, files: List<File>): HttpResponse =
+    private suspend fun formDataRequest(request: HttpRequest<*>, json: String, files: List<File>): HttpResponse =
         httpClient.submitFormWithBinaryData(
-            url = route,
-            formData = formData {
+            formData {
                 append("payload_json", json)
                 files.forEachIndexed { n, file ->
                     append("files[$n]", file.bytes, Headers.build {
@@ -142,7 +141,10 @@ class RestClient(val diskord: Diskord) {
                     })
                 }
             }
-        )
+        ) {
+            url(request.getFullPath())
+            method = request.route.httpMethod
+        }
 
     private fun getContentType(file: File): ContentType {
         return when (file.type) {
