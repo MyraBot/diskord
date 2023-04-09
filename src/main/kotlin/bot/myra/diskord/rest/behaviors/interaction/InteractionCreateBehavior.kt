@@ -50,6 +50,8 @@ interface InteractionCreateBehavior : DefaultBehavior {
 
     suspend fun editOriginal(files: List<File> = emptyList(), message: InteractionModifier) = diskord.rest.execute(Endpoints.acknowledgeOriginalResponse) {
         json = message.apply { transform(diskord) }.toJson()
+        if (files.any { it.bytes.size / 1000000 > 8 }) throw Exception("A file is too big")
+        attachments = files.toList()
         arguments {
             arg("application.id", diskord.id)
             arg("interaction.token", data.token)
