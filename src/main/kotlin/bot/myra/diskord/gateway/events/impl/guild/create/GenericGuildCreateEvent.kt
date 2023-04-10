@@ -25,5 +25,6 @@ abstract class GenericGuildCreateEvent(
                 it.complete(fullGuild)
             }
         }
+        call()
     }
 }
