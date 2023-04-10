@@ -83,8 +83,7 @@ interface EntityProvider {
     fun getGuilds(): Flow<Guild> = flow {
         val copiedIds = diskord.guildIds.toList()
         copiedIds.forEach { id ->
-            println("Pending guilds: ${diskord.unavailableGuilds}")
-            val guild = diskord.unavailableGuilds[id]?.await()?.also { println("getting from pending guilds") } ?: getGuild(id).value
+            val guild = diskord.unavailableGuilds[id]?.await() ?: getGuild(id).value
             guild?.let { emit(it) }
         }
     }
