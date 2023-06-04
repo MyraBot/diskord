@@ -3,6 +3,7 @@ package bot.myra.diskord.voice
 import bot.myra.diskord.common.entities.channel.ChannelData
 import bot.myra.diskord.common.entities.guild.Member
 import bot.myra.diskord.common.entities.guild.voice.VoiceState
+import bot.myra.diskord.common.entities.guild.voice.VoiceStateData
 import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.GatewayIntent
@@ -39,7 +40,10 @@ interface VoiceChannelBehavior : DiskordObject {
             diskord.gateway.eventFlow
                 .filter { it.t == "VOICE_STATE_UPDATE" }
                 .mapNotNull { it.d }
-                .map { JSON.decodeFromJsonElement<VoiceState>(it) }
+                .map {
+                    val data = JSON.decodeFromJsonElement<VoiceStateData>(it)
+                    VoiceState(data, diskord)
+                }
                 .first { it.guildId == state.guildId }
         }
         val voiceServerUpdateAwait = scope.async {
