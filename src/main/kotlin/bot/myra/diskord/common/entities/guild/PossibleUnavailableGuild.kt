@@ -20,7 +20,7 @@ class PossibleUnavailableGuild(
     private val decoder: Json,
     override val diskord: Diskord
 ) : Entity {
-    val available get() = unavailable
+    val available get() = !unavailable
 
     companion object {
         @Serializable
