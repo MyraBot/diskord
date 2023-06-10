@@ -12,6 +12,7 @@ class GenericChannel(
     override val diskord: Diskord
 ) : Entity {
     override val id: String get() = data.id
+    val source: ChannelType = data.source
 }
 
 /**
