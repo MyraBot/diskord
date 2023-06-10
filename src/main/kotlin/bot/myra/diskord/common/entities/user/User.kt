@@ -20,7 +20,7 @@ class User(
 ) : Entity {
     override val id get() = data.id
     val username get() = data.username
-    val discriminator get() = data.discriminator
+    val globalName get() = data.globalName
     val avatarHash get() = data.avatarHash
     val isBot get() = data.isBot
     val system get() = data.system
@@ -31,8 +31,7 @@ class User(
     val avatar: String
         get() = avatarHash?.let {
             CdnEndpoints.userAvatar.apply { arg("user_id", id); arg("user_avatar", it) }
-        } ?: CdnEndpoints.defaultUserAvatar.apply { arg("user_discriminator", discriminator.toInt() % 5) }
-    val asTag: String get() = "$username#$discriminator"
+        } ?: CdnEndpoints.defaultUserAvatar.apply { arg("user_id", (id.toLong() shr 22) % 6) }
     val mention: String get() = Mention.user(id)
     val link: String get() = "https://discord.com/users/$id"
 
@@ -74,7 +73,7 @@ class User(
 class UserData(
     val id: String,
     val username: String,
-    val discriminator: String,
+    @SerialName("global_name") val globalName: String?,
     @SerialName("avatar") val avatarHash: String?,
     @SerialName("bot") val isBot: Boolean = false,
     val system: Boolean = false,

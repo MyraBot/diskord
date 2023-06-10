@@ -17,7 +17,12 @@ import kotlinx.serialization.encoding.Encoder
 enum class ComponentType(val type: Int) {
     ACTION_ROW(1),
     BUTTON(2),
-    SELECT_MENU(3);
+    SELECT_MENU(3),
+    TEXT_INPUT(4),
+    USER_SELECT_MENU(5),
+    ROLE_SELECT_MENU(6),
+    MENTIONABLE_SELECT_MENU(7),
+    CHANNEL_SELECT_MENU(8);
 
     internal object Serializer : KSerializer<ComponentType> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ComponentType", PrimitiveKind.INT)

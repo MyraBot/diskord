@@ -18,7 +18,7 @@ data class SlashCommand(
  * [Documentation](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data-structure)
  *
  * @property id The command id.
- * @property name The name and executor of the command.
+ * @property name The name of the command, including subcommands and subcommand groups.
  */
 @Serializable
 data class SlashCommandData(
