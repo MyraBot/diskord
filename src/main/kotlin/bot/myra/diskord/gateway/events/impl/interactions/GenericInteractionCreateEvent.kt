@@ -18,7 +18,7 @@ abstract class GenericInteractionCreateEvent(
     val type get() = data.type
     val interactionData get() = data.data
     val guildId get() = data.guildId
-    val channelId get() = data.channelId
+    val channel get() = data.channel
     val user get() = User(data.memberData.value?.user ?: data.user.value!!, diskord)
     open val member get() = interaction.member
     val token get() = data.token
