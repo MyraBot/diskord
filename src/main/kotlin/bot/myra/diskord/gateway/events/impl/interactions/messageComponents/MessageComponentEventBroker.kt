@@ -18,6 +18,11 @@ class MessageComponentEventBroker(
         ComponentType.ACTION_ROW  -> throw IllegalStateException()
         ComponentType.BUTTON      -> ButtonClickEvent(interaction, component, diskord)
         ComponentType.SELECT_MENU -> SelectMenuEvent(interaction, component, diskord)
+        ComponentType.TEXT_INPUT  -> TODO()
+        ComponentType.USER_SELECT_MENU -> SelectMenuEvent(interaction, component, diskord)
+        ComponentType.ROLE_SELECT_MENU -> SelectMenuEvent(interaction, component, diskord)
+        ComponentType.MENTIONABLE_SELECT_MENU -> SelectMenuEvent(interaction, component, diskord)
+        ComponentType.CHANNEL_SELECT_MENU -> SelectMenuEvent(interaction, component, diskord)
     }
 
 }
