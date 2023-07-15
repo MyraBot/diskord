@@ -6,8 +6,6 @@ import bot.myra.diskord.voice.udp.packets.PayloadType
 import com.codahale.xsalsa20poly1305.SecretBox
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
 import java.nio.ByteBuffer
 import kotlin.math.max
 
@@ -19,7 +17,7 @@ class AudioProvider(
     private val scope: CoroutineScope
 ) {
     private var provider: Job? = null
-    private val queuedFrames = Channel<ByteArray?>()
+    private val queuedFrames = mutableListOf<ByteArray>()
     private var sentPackets: Short = 0
 
     private var speaking = false
@@ -30,11 +28,19 @@ class AudioProvider(
         provider = null
     }
 
-    fun provide(bytes: () -> ByteArray?) {
+    fun provide(bytes: ByteArray) {
+        queuedFrames.add(bytes)
+    }
+
+    /**
+     * Starts sending audio frames to discord.
+     * The frames get pulled from the [queuedFrames].
+     */
+    fun start() {
         this.provider = scope.launch {
             var idealFrameTimestamp = System.currentTimeMillis()
             while (isActive) {
-                queuedFrames.send(bytes.invoke())
+                sendChunk()
                 idealFrameTimestamp += config.millisPerPacket.toLong()
                 val durationToWaitToReachIdealTime = idealFrameTimestamp - System.currentTimeMillis() // Calculate the theory millis to wait to reach the ideal frame timestamp
                 val wait = max(0, durationToWaitToReachIdealTime) // We don't want negative delay
@@ -43,33 +49,30 @@ class AudioProvider(
         }
     }
 
-    /**
-     * Starts sending audio frames to discord.
-     * The frames get pulled from the [queuedFrames].
-     */
-    fun start() {
-        queuedFrames.consumeAsFlow()
-            .map { data ->
-                data?.let {
-                    if (!speaking) startSpeaking() // First audio frame ➜ tell Discord that we want tos peak
-                    AudioFrame.fromBytes(data)
-                } ?: provideNullFrame()
+    private suspend fun sendChunk() {
+        val data = if (queuedFrames.isEmpty()) {
+            provideNullFrame()
+        } else {
+            if (!speaking) {
+                startSpeaking() // First audio frame ➜ tell Discord that we want tos peak
             }
-            .filterNotNull()
-            .onEach { sendAudioPacket(it) }
-            .onEach { sentPackets++ }
-            .launchIn(scope)
+            val bytes = queuedFrames.reduce { all, current -> all + current }
+            queuedFrames.clear()
+            AudioFrame.fromBytes(bytes)
+        } ?: return
+        sendAudioPacket(data)
+        sentPackets++
     }
 
     private suspend fun startSpeaking() {
         silenceFrames = 5 // Reset silent frames
         speaking = true
-        gateway.send(SpeakingPayload(5, 0, socket.connectDetails.ssrc))
+        gateway.send(SpeakingPayload(5, socket.connectDetails.ssrc))
     }
 
     private suspend fun stopSpeaking() {
         speaking = false
-        gateway.send(SpeakingPayload(0, 0, socket.connectDetails.ssrc))
+        gateway.send(SpeakingPayload(0, socket.connectDetails.ssrc))
     }
 
     /**
