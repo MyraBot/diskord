@@ -1,5 +1,7 @@
 package bot.myra.diskord.common.entities
 
+import bot.myra.diskord.rest.Optional
+import bot.myra.diskord.rest.Optional.Companion.Missing
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -51,17 +53,40 @@ enum class Permission(val value: Long) {
 
     internal object Serializer : KSerializer<List<Permission>> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Permission", PrimitiveKind.STRING)
-        override fun serialize(encoder: Encoder, value: List<Permission>) = encoder.encodeString(value.sum().toString())
+        override fun serialize(encoder: Encoder, value: List<Permission>) = encoder.encodeString(value.sumOf { it.value }.toString())
         override fun deserialize(decoder: Decoder): List<Permission> = decoder.decodeString().toLong().let {
             values().filter { permission -> it and permission.value == permission.value }
         }
     }
-}
 
-fun List<Permission>.sum(): Long = this.fold(0L) { acc, permission -> acc or permission.value }
+    internal object OptionalSerializer : KSerializer<Optional<List<Permission>>> {
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Permission", PrimitiveKind.STRING)
+        override fun serialize(encoder: Encoder, value: Optional<List<Permission>>) {
+            when (value.missing) {
+                true  -> encoder.encodeNull()
+                false -> encoder.encodeString(value.value!!.sumOf { it.value }.toString())
+            }
+        }
 
-fun List<Permission>.has(vararg permissions: Permission): Boolean {
-    val bitField = this.sum()
-    permissions.forEach { if (bitField and it.value != it.value) return false }
-    return true
+        override fun deserialize(decoder: Decoder): Optional<List<Permission>> {
+            return if (decoder.decodeNotNullMark()) {
+                val test = decoder.decodeString().toLong().let {
+                    values().filter { permission -> it and permission.value == permission.value }
+                }
+                Optional(test)
+            } else {
+                decoder.decodeNull()
+                Missing()
+            }
+        }
+    }
+
+    fun List<Permission>.sum(): Long = this.fold(0L) { acc, permission -> acc or permission.value }
+
+    fun List<Permission>.has(vararg permissions: Permission): Boolean {
+        val bitField = this.sum()
+        permissions.forEach { if (bitField and it.value != it.value) return false }
+        return true
+    }
+
 }

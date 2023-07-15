@@ -66,7 +66,7 @@ data class InteractionData(
     val token: String,
     val version: Int,
     val message: Optional<MessageData> = Optional.Missing(),
-    @Serializable(with = Permission.Serializer::class) @SerialName("app_permissions") val appPermissions: Optional<List<Permission>> = Optional.Missing(),
+    @Serializable(with = Permission.OptionalSerializer::class) @SerialName("app_permissions") val appPermissions: Optional<List<Permission>> = Optional.Missing(),
     val locale: Optional<Locale> = Optional.Missing(),
     @SerialName("guild_locale") val guildLocale: Optional<Locale> = Optional.Missing(),
 )
