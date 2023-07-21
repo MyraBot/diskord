@@ -10,6 +10,7 @@ import bot.myra.diskord.voice.gateway.events.VoiceEvent
 import bot.myra.diskord.voice.gateway.events.impl.VoiceReadyEvent
 import bot.myra.diskord.voice.udp.UdpSocket
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
@@ -38,8 +39,11 @@ class VoiceConnection(
 ) {
     val logger = LoggerFactory.getLogger("Voice-$session")
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId, diskord)
+    private var udp: UdpSocket? = null
+
     val eventDispatcher = gateway.eventDispatcher
-    var udp: UdpSocket? = null
+    val audioProvider = udp?.audioProvider
+    val audioReceiver = udp?.audioReceiver
 
     suspend inline fun <reified T : GenericVoiceEvent> onEvent(crossinline callback: (T) -> Unit) {
         val operation = T::class.findAnnotation<VoiceEvent>()?.operation ?: return
@@ -58,7 +62,7 @@ class VoiceConnection(
         }
     }
 
-    suspend fun openConnection() {
+    suspend fun connect() {
         gateway.connect()
         val connectionDetails = gateway.awaitEvent<VoiceReadyEvent>() ?: TODO()
         udp = UdpSocket(scope, gateway, connectionDetails).apply { openSocketConnection() }
@@ -72,6 +76,7 @@ class VoiceConnection(
     suspend fun disconnect() {
         gateway.disconnect()
         udp?.disconnect()
+        scope.cancel("Disconnect requested by user")
     }
 
     suspend fun leave() {
