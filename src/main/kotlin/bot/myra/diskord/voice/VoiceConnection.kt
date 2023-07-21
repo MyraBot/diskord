@@ -1,18 +1,24 @@
 package bot.myra.diskord.voice
 
 import bot.myra.diskord.common.Diskord
-import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.common.utilities.toJsonObj
 import bot.myra.diskord.gateway.OpPacket
 import bot.myra.diskord.gateway.commands.VoiceUpdate
 import bot.myra.diskord.voice.gateway.VoiceGateway
-import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
-import bot.myra.diskord.voice.gateway.models.Operations
+import bot.myra.diskord.voice.gateway.events.GenericVoiceEvent
+import bot.myra.diskord.voice.gateway.events.VoiceEvent
+import bot.myra.diskord.voice.gateway.events.impl.VoiceReadyEvent
 import bot.myra.diskord.voice.udp.UdpSocket
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import org.slf4j.LoggerFactory
+import kotlin.reflect.full.findAnnotation
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Voice connection
@@ -32,14 +38,29 @@ class VoiceConnection(
 ) {
     val logger = LoggerFactory.getLogger("Voice-$session")
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId, diskord)
+    val eventDispatcher = gateway.eventDispatcher
     var udp: UdpSocket? = null
+
+    suspend inline fun <reified T : GenericVoiceEvent> onEvent(crossinline callback: (T) -> Unit) {
+        val operation = T::class.findAnnotation<VoiceEvent>()?.operation ?: return
+        scope.launch {
+            eventDispatcher
+                .filter { it.operation == operation }
+                .mapNotNull { it as T? }
+                .collect { callback(it) }
+        }
+    }
+
+    suspend inline fun <reified T : GenericVoiceEvent> awaitEvent(timeout: Duration = 5.seconds): T? {
+        val operation = T::class.findAnnotation<VoiceEvent>()?.operation ?: return null
+        return withTimeoutOrNull(timeout) {
+            eventDispatcher.first { it.operation == operation } as T?
+        }
+    }
 
     suspend fun openConnection() {
         gateway.connect()
-        val connectionDetails = gateway.eventDispatcher
-            .first { it.op == Operations.READY.code }
-            .let { it.d ?: throw IllegalStateException("Invalid voice ready payload") }
-            .let { JSON.decodeFromJsonElement<ConnectionReadyPayload>(it) }
+        val connectionDetails = gateway.awaitEvent<VoiceReadyEvent>() ?: TODO()
         udp = UdpSocket(scope, gateway, connectionDetails).apply { openSocketConnection() }
         logger.debug("Successfully created voice connection for $guildId")
     }

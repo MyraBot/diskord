@@ -1,6 +1,5 @@
-package bot.myra.diskord.voice.udp
+package bot.myra.diskord.voice.udp.packets
 
-import bot.myra.diskord.voice.udp.packets.PayloadType
 import com.codahale.xsalsa20poly1305.SecretBox
 import io.ktor.utils.io.core.*
 import java.nio.ByteBuffer

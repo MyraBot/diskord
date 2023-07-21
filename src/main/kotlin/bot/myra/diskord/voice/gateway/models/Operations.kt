@@ -37,7 +37,7 @@ enum class Operations(val code: Int) {
     }
 
     companion object {
-        fun from(code: Int): Operations = values().first { it.code == code }
+        fun from(code: Int): Operations = values().find { it.code == code } ?: INVALID
     }
 
 }

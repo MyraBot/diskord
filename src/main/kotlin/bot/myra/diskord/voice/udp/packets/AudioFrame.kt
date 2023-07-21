@@ -1,4 +1,4 @@
-package bot.myra.diskord.voice.udp
+package bot.myra.diskord.voice.udp.packets
 
 data class AudioFrame(val bytes: ByteArray) {
 

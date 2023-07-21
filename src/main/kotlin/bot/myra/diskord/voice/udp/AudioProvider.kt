@@ -1,7 +1,8 @@
 package bot.myra.diskord.voice.udp
 
 import bot.myra.diskord.voice.gateway.VoiceGateway
-import bot.myra.diskord.voice.gateway.models.SpeakingPayload
+import bot.myra.diskord.voice.gateway.events.impl.VoiceSpeakingData
+import bot.myra.diskord.voice.udp.packets.AudioFrame
 import bot.myra.diskord.voice.udp.packets.PayloadType
 import com.codahale.xsalsa20poly1305.SecretBox
 import io.ktor.utils.io.core.*
@@ -67,12 +68,12 @@ class AudioProvider(
     private suspend fun startSpeaking() {
         silenceFrames = 5 // Reset silent frames
         speaking = true
-        gateway.send(SpeakingPayload(5, socket.connectDetails.ssrc))
+        gateway.send(VoiceSpeakingData(userId = gateway.diskord.id, delay = 0, ssrc = socket.connectDetails.ssrc, speaking = 5))
     }
 
     private suspend fun stopSpeaking() {
         speaking = false
-        gateway.send(SpeakingPayload(0, socket.connectDetails.ssrc))
+        gateway.send(VoiceSpeakingData(userId = gateway.diskord.id, delay = 0, ssrc = socket.connectDetails.ssrc, speaking = 0))
     }
 
     /**
@@ -106,7 +107,7 @@ class AudioProvider(
             put(PayloadType.Audio.raw) // Payload type
             putShort(sentPackets) // Sequence, the count on how many packets have been sent yet
             putInt(sentPackets.toInt() * config.timestampPerPacket.toInt()) // Timestamp
-            putInt(socket.connectDetails.ssrc) // SSRC
+            putInt(socket.connectDetails.ssrc.toInt()) // SSRC
         }
         writeFully(header.array())
         return header.array()

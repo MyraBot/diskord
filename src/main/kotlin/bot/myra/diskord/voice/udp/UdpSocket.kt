@@ -1,13 +1,13 @@
 package bot.myra.diskord.voice.udp
 
-import bot.myra.diskord.common.utilities.JSON
 import bot.myra.diskord.voice.gateway.VoiceGateway
 import bot.myra.diskord.voice.gateway.commands.ProtocolDetails
 import bot.myra.diskord.voice.gateway.commands.SelectProtocol
-import bot.myra.diskord.voice.gateway.models.ConnectionReadyPayload
-import bot.myra.diskord.voice.gateway.models.Operations
-import bot.myra.diskord.voice.gateway.models.SessionDescriptionPayload
+import bot.myra.diskord.voice.gateway.events.impl.VoiceReadyEvent
+import bot.myra.diskord.voice.gateway.events.impl.VoiceSessionDescriptionEvent
+import bot.myra.diskord.voice.udp.packets.IncomingUserAudioPacket
 import bot.myra.diskord.voice.udp.packets.PayloadType
+import bot.myra.diskord.voice.udp.packets.RtpPacket
 import com.codahale.xsalsa20poly1305.SecretBox
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
@@ -17,10 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.decodeFromJsonElement
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory
 class UdpSocket(
     private val scope: CoroutineScope,
     val gateway: VoiceGateway,
-    val connectDetails: ConnectionReadyPayload,
+    val connectDetails: VoiceReadyEvent,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(UdpSocket::class.java)
 
@@ -43,7 +42,7 @@ class UdpSocket(
 
     private lateinit var encryption: SecretBox
     lateinit var audioProvider: AudioProvider
-    val audioReceiver: Channel<RtpPacket> = Channel()
+    val audioReceiver: Channel<IncomingUserAudioPacket> = Channel()
 
     suspend fun openSocketConnection() {
         socket = aSocket(ActorSelectorManager(Dispatchers.IO)).udp().connect(remoteAddress = voiceServer)
@@ -51,11 +50,7 @@ class UdpSocket(
         val selectProtocol = SelectProtocol("udp", ProtocolDetails(remoteAddress.hostname, remoteAddress.port, "xsalsa20_poly1305"))
         gateway.send(selectProtocol)
 
-        val secretKey = gateway.eventDispatcher
-            .first { it.op == Operations.SESSION_DESCRIPTION.code }
-            .let { it.d ?: throw IllegalStateException() }
-            .let { JSON.decodeFromJsonElement<SessionDescriptionPayload>(it) }
-            .secretKey
+        val secretKey = gateway.awaitEvent<VoiceSessionDescriptionEvent>()?.secretKey ?: TODO()
         encryption = SecretBox(secretKey.toUByteArray().toByteArray())
 
         audioProvider = AudioProvider(
@@ -71,6 +66,10 @@ class UdpSocket(
                 .filter { voiceServer == it.address }
                 .mapNotNull { RtpPacket.fromPacket(it.packet, encryption) }
                 .filter { it.payloadType == PayloadType.Audio }
+                .map {
+                    val userId = gateway.ssrcToUserId[it.ssrc.toUInt()]
+                    IncomingUserAudioPacket(userId, it)
+                }
                 .collect { audioReceiver.send(it) }
         }
     }
@@ -80,7 +79,7 @@ class UdpSocket(
             writeShort(0x1) // Type ➜ 0x1 for request
             writeShort(70) // Message length
             // Actual message (70 bytes)
-            writeInt(connectDetails.ssrc) // Ssrc
+            writeUInt(connectDetails.ssrc) // Ssrc
             writeFully(ByteArray(66)) // Address and port
         }
 
