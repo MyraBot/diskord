@@ -42,8 +42,8 @@ class VoiceConnection(
     private var udp: UdpSocket? = null
 
     val eventDispatcher = gateway.eventDispatcher
-    val audioProvider = udp?.audioProvider
-    val audioReceiver = udp?.audioReceiver
+    val audioProvider get() = udp?.audioProvider
+    val audioReceiver get() = udp?.audioReceiver
 
     suspend inline fun <reified T : GenericVoiceEvent> onEvent(crossinline callback: (T) -> Unit) {
         val operation = T::class.findAnnotation<VoiceEvent>()?.operation ?: return
