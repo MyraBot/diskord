@@ -80,7 +80,7 @@ class UserData(
     @SerialName("bot") val isBot: Boolean = false,
     val system: Boolean = false,
     @SerialName("banner") val bannerHash: Optional<String?> = Optional.Missing(),
-    val accentColor: Optional<Int?> = Optional.Missing(),
+    @SerialName("accent_color") val accentColor: Optional<Int?> = Optional.Missing(),
     @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
     @Serializable(with = UserFlag.Serializer::class) @SerialName("public_flags") val flags: Optional<List<UserFlag>> = Optional.Missing()
 )
