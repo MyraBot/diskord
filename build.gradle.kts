@@ -43,6 +43,10 @@ dependencies {
     // Voice encryption
     implementation("com.codahale:xsalsa20poly1305:0.11.0")
 
+    implementation("club.minnced", "opus-java", "1.1.1") // Opus encoder / decoder
+    implementation("club.minnced", "opus-java-natives", "1.1.1")
+    compileOnly("net.java.dev.jna", "jna", "5.13.0") // Java native bindings
+
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.4.0")
 
     testImplementation(kotlin("reflect"))

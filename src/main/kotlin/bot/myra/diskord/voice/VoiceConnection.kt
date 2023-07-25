@@ -8,6 +8,8 @@ import bot.myra.diskord.voice.gateway.VoiceGateway
 import bot.myra.diskord.voice.gateway.events.GenericVoiceEvent
 import bot.myra.diskord.voice.gateway.events.VoiceEvent
 import bot.myra.diskord.voice.gateway.events.impl.VoiceReadyEvent
+import bot.myra.diskord.voice.udp.AudioProvidingConfiguration
+import bot.myra.diskord.voice.udp.CombinedAudioReceiver
 import bot.myra.diskord.voice.udp.UdpSocket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -38,12 +40,15 @@ class VoiceConnection(
     val scope: CoroutineScope
 ) {
     val logger = LoggerFactory.getLogger("Voice-$session")
+    private val config: AudioProvidingConfiguration = AudioProvidingConfiguration()
+
     private val gateway = VoiceGateway(scope, endpoint, token, session, guildId, diskord)
     private var udp: UdpSocket? = null
 
     val eventDispatcher = gateway.eventDispatcher
     val audioProvider get() = udp?.audioProvider
     val audioReceiver get() = udp?.audioReceiver
+    val combinedAudioReceiver get() = audioReceiver?.let { CombinedAudioReceiver(scope, config, it) }
 
     suspend inline fun <reified T : GenericVoiceEvent> onEvent(crossinline callback: (T) -> Unit) {
         val operation = T::class.findAnnotation<VoiceEvent>()?.operation ?: return
