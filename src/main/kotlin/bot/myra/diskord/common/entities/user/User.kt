@@ -12,6 +12,7 @@ import bot.myra.diskord.rest.bodies.DmCreation
 import bot.myra.diskord.rest.request.Result
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.awt.Color
 
 @Suppress("unused")
 class User(
@@ -25,6 +26,7 @@ class User(
     val isBot get() = data.isBot
     val system get() = data.system
     val bannerHash get() = data.bannerHash
+    val accentColor get() = data.accentColor.value?.let { Color.decode(it.toString()) }
     val mfaEnabled get() = data.mfaEnabled
     val flags get() = data.flags
 
@@ -78,6 +80,7 @@ class UserData(
     @SerialName("bot") val isBot: Boolean = false,
     val system: Boolean = false,
     @SerialName("banner") val bannerHash: Optional<String?> = Optional.Missing(),
+    val accentColor: Optional<Int?> = Optional.Missing(),
     @SerialName("mfa_enabled") val mfaEnabled: Boolean = false,
     @Serializable(with = UserFlag.Serializer::class) @SerialName("public_flags") val flags: Optional<List<UserFlag>> = Optional.Missing()
 )
