@@ -63,9 +63,13 @@ abstract class GenericGateway(
 
     fun openSocketConnection(url: String, resume: Boolean) {
         coroutineScope.launch {
-            // Make sure no other socket runs
-            withTimeout(5.seconds) {
-                while (connected) delay(500)
+            try {
+                // Make sure no other socket runs
+                withTimeout(5.seconds) {
+                    while (connected) delay(500)
+                }
+            } catch (e: Exception) {
+                logger.error("Caught something")
             }
 
             resumedConnection = resume
@@ -75,7 +79,7 @@ abstract class GenericGateway(
             try {
                 socket = client.webSocketSession(url) { expectSuccess = false }
             } catch (e: EOFException) {
-               logger.error("ERROR!!! = ${e.message}")
+                logger.error("ERROR!!! = ${e.message}")
             }
 
             socket?.apply {
