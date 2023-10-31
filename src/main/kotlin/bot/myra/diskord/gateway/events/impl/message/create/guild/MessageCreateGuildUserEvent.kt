@@ -11,6 +11,8 @@ class MessageCreateGuildUserEvent(
     override val message: Message,
     override val diskord: Diskord
 ) : GenericGuildMessageCreateEvent(message) {
+    val guildId = message.guildId.value!!
+
     suspend fun getMember(): Member = message.getMember()!!
     suspend fun getGuild(): Result<Guild> = message.getGuild()!!
 }
