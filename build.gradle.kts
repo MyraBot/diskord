@@ -8,7 +8,7 @@ val kotlinx: String by project
 val kotlinxSerialization: String by project
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.9.20"
     kotlin("plugin.serialization") version "1.6.21"
     `maven-publish`
 }
