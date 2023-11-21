@@ -6,7 +6,9 @@ import bot.myra.diskord.common.cache.cache
 import bot.myra.diskord.common.cache.cacheEach
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommand
 import bot.myra.diskord.common.entities.applicationCommands.slashCommands.SlashCommandData
-import bot.myra.diskord.common.entities.channel.*
+import bot.myra.diskord.common.entities.channel.ChannelData
+import bot.myra.diskord.common.entities.channel.GenericChannel
+import bot.myra.diskord.common.entities.channel.VoiceChannel
 import bot.myra.diskord.common.entities.channel.text.DmChannel
 import bot.myra.diskord.common.entities.channel.text.GenericTextChannel
 import bot.myra.diskord.common.entities.channel.text.TextChannel
@@ -88,7 +90,12 @@ interface EntityProvider {
         }
     }
 
-    suspend fun getGuildChannels(id: String): List<GenericChannel> = diskord.cachePolicy.channel.viewByGuild(id)?.map { GenericChannel(it, diskord) } ?: fetchGuildChannels(id)
+    // TODO do not check for empty cache... unsafe cuz what if the guild has no channels?
+    suspend fun getGuildChannels(id: String): List<GenericChannel> {
+        val cacheChannels = diskord.cachePolicy.channel.viewByGuild(id)?.map { GenericChannel(it, diskord) }
+        return if (cacheChannels.isNullOrEmpty()) fetchGuildChannels(id)
+        else cacheChannels
+    }
 
     suspend fun fetchGuildChannels(id: String): List<GenericChannel> =
         diskord.rest.execute(Endpoints.getChannels) {

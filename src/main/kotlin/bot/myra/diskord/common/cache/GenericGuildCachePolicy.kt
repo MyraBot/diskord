@@ -35,7 +35,10 @@ abstract class GenericGuildCachePolicy<K, V>(
 
     override suspend fun update(value: V) {
         isFromGuild(value)?.apply {
-            mutex.withLock { guildUpdate?.invoke(GuildSafeValue(this, value)) }
+            val entries = mutex.withLock { guildView?.invoke(this) }
+            if (!entries.isNullOrEmpty()) {
+                mutex.withLock { guildUpdate?.invoke(GuildSafeValue(this, value)) }
+            }
         }
         super.update(value)
     }
