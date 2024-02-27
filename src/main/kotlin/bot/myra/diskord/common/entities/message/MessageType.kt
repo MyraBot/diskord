@@ -35,7 +35,15 @@ enum class MessageType(val code: Int) {
     CHAT_INPUT_COMMAND(20),
     THREAD_STARTER_MESSAGE(21),
     GUILD_INVITE_REMINDER(22),
-    CONTEXT_MENU_COMMAND(23);
+    CONTEXT_MENU_COMMAND(23),
+    AUTO_MODERATION_ACTION(24),
+    ROLE_SUBSCRIPTION_PURCHASE(25),
+    INTERACTION_PREMIUM_UPSELL(26),
+    STAGE_START(27),
+    STAGE_END(28),
+    STAGE_SPEAKER(29),
+    STAGE_TOPIC(31),
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION(32);
 
     internal object Serializer : KSerializer<MessageType> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("MessageType", PrimitiveKind.INT)
