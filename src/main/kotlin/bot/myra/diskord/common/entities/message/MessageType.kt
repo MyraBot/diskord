@@ -48,6 +48,8 @@ enum class MessageType(val code: Int) {
     internal object Serializer : KSerializer<MessageType> {
         override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("MessageType", PrimitiveKind.INT)
         override fun serialize(encoder: Encoder, value: MessageType) = encoder.encodeInt(value.code)
-        override fun deserialize(decoder: Decoder): MessageType = decoder.decodeInt().let { values().first { type -> type.code == it } }
+        override fun deserialize(decoder: Decoder): MessageType = decoder.decodeInt().let {
+            entries.firstOrNull { type -> type.code == it } ?: throw IllegalStateException("Unknown MessageType: $it")
+        }
     }
 }
