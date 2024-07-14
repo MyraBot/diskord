@@ -2,6 +2,18 @@
 
 Diskord is a Discord wrapper written in Kotlin, making use of coroutines and Kotlins async model.
 
+![Warning](https://raw.githubusercontent.com/MyraBot/.github/main/code-advise.png)
+
+This library is not stable! The gateway connection isn't stable and errors with messages like these:
+
+## Features
+
+- [x] Gateway
+- [x] Rest
+- [x] Caching (Gateway + Rest)
+- [x] Voice
+- [ ] Sharding
+
 ## TODO
 
 - [ ] Make all events `open` classes
